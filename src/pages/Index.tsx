@@ -1,12 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Header from '@/components/Header';
+import HeroSection from '@/components/HeroSection';
+import CategoriesGrid from '@/components/CategoriesGrid';
+import LiveStreaming from '@/components/LiveStreaming';
+import PaymentOptions from '@/components/PaymentOptions';
+import Footer from '@/components/Footer';
 
 const Index = () => {
+  const [language, setLanguage] = useState<'fr' | 'en'>('fr');
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header 
+        language={language} 
+        onLanguageChange={setLanguage} 
+      />
+      
+      <main>
+        <HeroSection language={language} />
+        <CategoriesGrid language={language} />
+        <LiveStreaming language={language} />
+        <PaymentOptions language={language} />
+      </main>
+      
+      <Footer language={language} />
     </div>
   );
 };
