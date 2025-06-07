@@ -8,6 +8,8 @@ import SocialFeed from '@/components/SocialFeed';
 import UserProfile from '@/components/UserProfile';
 import LiveStreaming from '@/components/LiveStreaming';
 import PaymentOptions from '@/components/PaymentOptions';
+import DailyNews from '@/components/DailyNews';
+import DailyEntertainment from '@/components/DailyEntertainment';
 import Footer from '@/components/Footer';
 import { Language } from '@/types/language';
 
@@ -25,6 +27,8 @@ const Index = () => {
         <HeroSection language={language} />
         <CategoriesGrid language={language} />
         <ContentCreation language={language} />
+        <DailyNews language={language} />
+        <DailyEntertainment language={language} />
         <SocialFeed language={language} />
         <UserProfile language={language} />
         <LiveStreaming language={language} />
