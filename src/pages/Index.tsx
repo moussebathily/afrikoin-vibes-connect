@@ -9,9 +9,10 @@ import UserProfile from '@/components/UserProfile';
 import LiveStreaming from '@/components/LiveStreaming';
 import PaymentOptions from '@/components/PaymentOptions';
 import Footer from '@/components/Footer';
+import { Language } from '@/types/language';
 
 const Index = () => {
-  const [language, setLanguage] = useState<'fr' | 'en'>('fr');
+  const [language, setLanguage] = useState<Language>('fr');
 
   return (
     <div className="min-h-screen bg-background">

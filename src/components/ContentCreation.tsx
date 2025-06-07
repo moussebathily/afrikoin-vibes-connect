@@ -1,13 +1,13 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Camera, Video, Music, Upload, MapPin, DollarSign, Users } from 'lucide-react';
+import { Language } from '@/types/language';
 
 interface ContentCreationProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const ContentCreation: React.FC<ContentCreationProps> = ({ language }) => {
@@ -48,6 +48,142 @@ const ContentCreation: React.FC<ContentCreationProps> = ({ language }) => {
       selectFile: 'Select file',
       addLocation: 'Add location',
       fcfa: 'FCFA'
+    },
+    bm: {
+      title: 'Kɔnɔ dɔ',
+      subtitle: 'I ja ni i filimu tɔgɔba ye jamana la',
+      photo: 'Ja',
+      video: 'Filimu',
+      addMusic: 'Donkili fara a kan',
+      location: 'Yɔrɔ',
+      description: 'Kɔrɔlen',
+      price: 'Sɔngɔ',
+      enableMonetization: 'Wariko baara bila',
+      publish: 'Kɛ',
+      followers: 'tɔbɔla',
+      uploading: 'Ka ta...',
+      selectFile: 'Fiili sugandi',
+      addLocation: 'Yɔrɔ fara a kan',
+      fcfa: 'FCFA'
+    },
+    ar: {
+      title: 'إنشاء محتوى',
+      subtitle: 'شارك صورك ومقاطع الفيديو مع المجتمع',
+      photo: 'صورة',
+      video: 'فيديو',
+      addMusic: 'إضافة موسيقى',
+      location: 'الموقع',
+      description: 'الوصف',
+      price: 'السعر (اختياري)',
+      enableMonetization: 'تفعيل الربح',
+      publish: 'نشر',
+      followers: 'متابعين',
+      uploading: 'جاري الرفع...',
+      selectFile: 'اختر ملف',
+      addLocation: 'إضافة موقع',
+      fcfa: 'فرنك'
+    },
+    ti: {
+      title: 'ትሕዝቶ ፍጠር',
+      subtitle: 'ዕስልታትኩምን ቪድዮታትኩምን ምስ ማሕበረሰብ ኣካፍሉ',
+      photo: 'ስእሊ',
+      video: 'ቪድዮ',
+      addMusic: 'ሙዚቃ ወስኽ',
+      location: 'ቦታ',
+      description: 'መግለጺ',
+      price: 'ዋጋ',
+      enableMonetization: 'ገንዘብ ምክንያት ኣብጽሕ',
+      publish: 'ዝርግሕ',
+      followers: 'ተኸተልቲ',
+      uploading: 'ከቐርብ...',
+      selectFile: 'ፋይል ምረጽ',
+      addLocation: 'ቦታ ወስኽ',
+      fcfa: 'ፍራንክ'
+    },
+    pt: {
+      title: 'Criar conteúdo',
+      subtitle: 'Compartilhe suas fotos e vídeos com a comunidade',
+      photo: 'Foto',
+      video: 'Vídeo',
+      addMusic: 'Adicionar música',
+      location: 'Localização',
+      description: 'Descrição',
+      price: 'Preço (opcional)',
+      enableMonetization: 'Ativar monetização',
+      publish: 'Publicar',
+      followers: 'seguidores',
+      uploading: 'Enviando...',
+      selectFile: 'Selecionar arquivo',
+      addLocation: 'Adicionar localização',
+      fcfa: 'FCFA'
+    },
+    es: {
+      title: 'Crear contenido',
+      subtitle: 'Comparte tus fotos y videos con la comunidad',
+      photo: 'Foto',
+      video: 'Video',
+      addMusic: 'Agregar música',
+      location: 'Ubicación',
+      description: 'Descripción',
+      price: 'Precio (opcional)',
+      enableMonetization: 'Activar monetización',
+      publish: 'Publicar',
+      followers: 'seguidores',
+      uploading: 'Subiendo...',
+      selectFile: 'Seleccionar archivo',
+      addLocation: 'Agregar ubicación',
+      fcfa: 'FCFA'
+    },
+    zh: {
+      title: '创建内容',
+      subtitle: '与社区分享您的照片和视频',
+      photo: '照片',
+      video: '视频',
+      addMusic: '添加音乐',
+      location: '位置',
+      description: '描述',
+      price: '价格（可选）',
+      enableMonetization: '启用变现',
+      publish: '发布',
+      followers: '关注者',
+      uploading: '上传中...',
+      selectFile: '选择文件',
+      addLocation: '添加位置',
+      fcfa: '非洲法郎'
+    },
+    ru: {
+      title: 'Создать контент',
+      subtitle: 'Поделитесь фотографиями и видео с сообществом',
+      photo: 'Фото',
+      video: 'Видео',
+      addMusic: 'Добавить музыку',
+      location: 'Местоположение',
+      description: 'Описание',
+      price: 'Цена (опционально)',
+      enableMonetization: 'Включить монетизацию',
+      publish: 'Опубликовать',
+      followers: 'подписчиков',
+      uploading: 'Загрузка...',
+      selectFile: 'Выбрать файл',
+      addLocation: 'Добавить местоположение',
+      fcfa: 'Франк КФА'
+    },
+    hi: {
+      title: 'सामग्री बनाएं',
+      subtitle: 'समुदाय के साथ अपनी तस्वीरें और वीडियो साझा करें',
+      photo: 'फोटो',
+      video: 'वीडियो',
+      addMusic: 'संगीत जोड़ें',
+      location: 'स्थान',
+      description: 'विवरण',
+      price: 'मूल्य (वैकल्पिक)',
+      enableMonetization: 'मुद्रीकरण सक्षम करें',
+      publish: 'प्रकाशित करें',
+      followers: 'फॉलोअर्स',
+      uploading: 'अपलोड हो रहा है...',
+      selectFile: 'फाइल चुनें',
+      addLocation: 'स्थान जोड़ें',
+      fcfa: 'सीएफए फ्रैंक'
     }
   };
 

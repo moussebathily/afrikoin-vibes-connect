@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Mic, Video, Upload, MapPin, Shield, CreditCard } from 'lucide-react';
+import LanguageSelector from '@/components/LanguageSelector';
+import { Language } from '@/types/language';
 
 interface HeaderProps {
-  language: 'fr' | 'en';
-  onLanguageChange: (lang: 'fr' | 'en') => void;
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
@@ -32,6 +34,86 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
       locate: 'Locate',
       secure: 'Secure',
       payment: 'Payment'
+    },
+    bm: {
+      title: 'AfriKoin',
+      subtitle: 'I panafrika sugu yɔrɔ',
+      publish: 'Bila',
+      live: 'Live',
+      voice: 'Kumakan',
+      locate: 'Yɔrɔ',
+      secure: 'Lakana',
+      payment: 'Sara'
+    },
+    ar: {
+      title: 'Afريكوين',
+      subtitle: 'سوقكم الأفريقي الشامل',
+      publish: 'نشر',
+      live: 'مباشر',
+      voice: 'صوت',
+      locate: 'موقع',
+      secure: 'آمن',
+      payment: 'دفع'
+    },
+    ti: {
+      title: 'AfriKoin',
+      subtitle: 'ናትኩም ፓን-አፍሪካዊ ገበያ',
+      publish: 'ኣተንብብ',
+      live: 'ቀጥታ',
+      voice: 'ድምጺ',
+      locate: 'ቦታ',
+      secure: 'ውሑስ',
+      payment: 'ክፍሊት'
+    },
+    pt: {
+      title: 'AfriKoin',
+      subtitle: 'Seu mercado pan-africano',
+      publish: 'Publicar',
+      live: 'Ao vivo',
+      voice: 'Voz',
+      locate: 'Localizar',
+      secure: 'Seguro',
+      payment: 'Pagamento'
+    },
+    es: {
+      title: 'AfriKoin',
+      subtitle: 'Tu mercado panafricano',
+      publish: 'Publicar',
+      live: 'En vivo',
+      voice: 'Voz',
+      locate: 'Localizar',
+      secure: 'Seguro',
+      payment: 'Pago'
+    },
+    zh: {
+      title: 'AfriKoin',
+      subtitle: '您的泛非市场',
+      publish: '发布',
+      live: '直播',
+      voice: '语音',
+      locate: '定位',
+      secure: '安全',
+      payment: '支付'
+    },
+    ru: {
+      title: 'AfriKoin',
+      subtitle: 'Ваш панафриканский рынок',
+      publish: 'Опубликовать',
+      live: 'Прямой эфир',
+      voice: 'Голос',
+      locate: 'Локация',
+      secure: 'Безопасно',
+      payment: 'Оплата'
+    },
+    hi: {
+      title: 'AfriKoin',
+      subtitle: 'आपका पैन-अफ्रीकी बाजार',
+      publish: 'प्रकाशित',
+      live: 'लाइव',
+      voice: 'आवाज',
+      locate: 'स्थान',
+      secure: 'सुरक्षित',
+      payment: 'भुगतान'
     }
   };
 
@@ -79,24 +161,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
           </div>
 
           {/* Sélecteur de langue */}
-          <div className="flex items-center space-x-2">
-            <Button
-              variant={language === 'fr' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onLanguageChange('fr')}
-              className={language === 'fr' ? 'bg-white text-primary' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}
-            >
-              FR
-            </Button>
-            <Button
-              variant={language === 'en' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => onLanguageChange('en')}
-              className={language === 'en' ? 'bg-white text-primary' : 'bg-white/20 border-white/30 text-white hover:bg-white/30'}
-            >
-              EN
-            </Button>
-          </div>
+          <LanguageSelector language={language} onLanguageChange={onLanguageChange} />
         </div>
 
         {/* Barre de fonctionnalités */}
