@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Heart, MessageCircle, Share, Play, Camera, Settings, Crown } from 'lucide-react';
+import { Users, Heart, MessageCircle, Share, Play, Camera, Settings, Crown, Gem } from 'lucide-react';
+import { Language } from '@/types/language';
 
 interface UserProfileProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
@@ -27,6 +28,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
       views: 'vues',
       likes: 'j\'aime',
       comments: 'commentaires',
+      gems: 'gemmes',
       fcfa: 'FCFA',
       bio: 'Créateur de contenu passionné | Artisan traditionnel | Dakar, Sénégal'
     },
@@ -44,10 +46,157 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
       views: 'views',
       likes: 'likes',
       comments: 'comments',
+      gems: 'gems',
       fcfa: 'FCFA',
       bio: 'Passionate content creator | Traditional craftsman | Dakar, Senegal'
+    },
+    bm: {
+      followers: 'Tɔbɔla',
+      following: 'Tɔbɔ',
+      posts: 'Kɔnɔko',
+      videos: 'Filimu',
+      about: 'Kɔrɔlen',
+      follow: 'Tɔbɔ',
+      unfollow: 'Tɔbɔ ban',
+      message: 'Cikan',
+      premium: 'Kɛrɛnkɛrɛnnen',
+      earnings: 'Kalo in na sɔrɔ',
+      views: 'filɛ',
+      likes: 'ka di',
+      comments: 'kuma',
+      gems: 'bere',
+      fcfa: 'FCFA',
+      bio: 'Kɔnɔko da ɲuman | Baarakɛla laadala | Dakar, Senegal'
+    },
+    ar: {
+      followers: 'متابعين',
+      following: 'متابَعين',
+      posts: 'منشورات',
+      videos: 'فيديوهات',
+      about: 'حول',
+      follow: 'متابعة',
+      unfollow: 'إلغاء المتابعة',
+      message: 'رسالة',
+      premium: 'محتوى مميز',
+      earnings: 'أرباح هذا الشهر',
+      views: 'مشاهدات',
+      likes: 'إعجابات',
+      comments: 'تعليقات',
+      gems: 'جواهر',
+      fcfa: 'فرنك',
+      bio: 'منشئ محتوى شغوف | حرفي تقليدي | داكار، السنغال'
+    },
+    ti: {
+      followers: 'ተኸተልቲ',
+      following: 'ዝኸተሎም',
+      posts: 'ትሕዝቶ',
+      videos: 'ቪድዮታት',
+      about: 'ብዛዕባ',
+      follow: 'ተኸተል',
+      unfollow: 'ምኽታል ገዲፍ',
+      message: 'መልእኽቲ',
+      premium: 'ልዩ ትሕዝቶ',
+      earnings: 'ናይዚ ወርሒ ኣታዊ',
+      views: 'ዕይነት',
+      likes: 'ፍቕሪ',
+      comments: 'መልእኽቲ',
+      gems: 'ድንጋይ',
+      fcfa: 'ፍራንክ',
+      bio: 'ትሕዝቶ ፈጣሪ | ባህላዊ ጥበበኛ | ዳካር፣ ሰነጋል'
+    },
+    pt: {
+      followers: 'Seguidores',
+      following: 'Seguindo',
+      posts: 'Posts',
+      videos: 'Vídeos',
+      about: 'Sobre',
+      follow: 'Seguir',
+      unfollow: 'Deixar de seguir',
+      message: 'Mensagem',
+      premium: 'Conteúdo Premium',
+      earnings: 'Ganhos deste mês',
+      views: 'visualizações',
+      likes: 'curtidas',
+      comments: 'comentários',
+      gems: 'gemas',
+      fcfa: 'FCFA',
+      bio: 'Criador de conteúdo apaixonado | Artesão tradicional | Dakar, Senegal'
+    },
+    es: {
+      followers: 'Seguidores',
+      following: 'Siguiendo',
+      posts: 'Posts',
+      videos: 'Videos',
+      about: 'Acerca de',
+      follow: 'Seguir',
+      unfollow: 'Dejar de seguir',
+      message: 'Mensaje',
+      premium: 'Contenido Premium',
+      earnings: 'Ganancias de este mes',
+      views: 'visualizaciones',
+      likes: 'me gusta',
+      comments: 'comentarios',
+      gems: 'gemas',
+      fcfa: 'FCFA',
+      bio: 'Creador de contenido apasionado | Artesano tradicional | Dakar, Senegal'
+    },
+    zh: {
+      followers: '关注者',
+      following: '关注中',
+      posts: '帖子',
+      videos: '视频',
+      about: '关于',
+      follow: '关注',
+      unfollow: '取消关注',
+      message: '消息',
+      premium: '高级内容',
+      earnings: '本月收入',
+      views: '观看',
+      likes: '赞',
+      comments: '评论',
+      gems: '宝石',
+      fcfa: '非洲法郎',
+      bio: '热情的内容创作者 | 传统工匠 | 达喀尔，塞内加尔'
+    },
+    ru: {
+      followers: 'Подписчики',
+      following: 'Подписки',
+      posts: 'Посты',
+      videos: 'Видео',
+      about: 'О себе',
+      follow: 'Подписаться',
+      unfollow: 'Отписаться',
+      message: 'Сообщение',
+      premium: 'Премиум контент',
+      earnings: 'Доходы за месяц',
+      views: 'просмотров',
+      likes: 'лайков',
+      comments: 'комментариев',
+      gems: 'самоцветов',
+      fcfa: 'Франк КФА',
+      bio: 'Страстный создатель контента | Традиционный мастер | Дакар, Сенегал'
+    },
+    hi: {
+      followers: 'फॉलोअर्स',
+      following: 'फॉलोइंग',
+      posts: 'पोस्ट',
+      videos: 'वीडियो',
+      about: 'बारे में',
+      follow: 'फॉलो करें',
+      unfollow: 'अनफॉलो करें',
+      message: 'संदेश',
+      premium: 'प्रीमियम सामग्री',
+      earnings: 'इस महीने की कमाई',
+      views: 'देखे गए',
+      likes: 'लाइक',
+      comments: 'टिप्पणियां',
+      gems: 'रत्न',
+      fcfa: 'सीएफए फ्रैंक',
+      bio: 'भावुक सामग्री निर्माता | पारंपरिक शिल्पकार | डकार, सेनेगल'
     }
   };
+
+  const currentText = text[language] || text.fr;
 
   const userData = {
     name: 'Amina Diallo',
@@ -68,6 +217,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
       likes: 234,
       comments: 45,
       views: 1250,
+      gems: 12,
       isPremium: false
     },
     {
@@ -77,6 +227,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
       likes: 567,
       comments: 89,
       views: 3420,
+      gems: 34,
       isPremium: true
     },
     {
@@ -86,6 +237,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
       likes: 123,
       comments: 23,
       views: 890,
+      gems: 8,
       isPremium: false
     }
   ];
@@ -178,13 +330,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {text[language][tab as keyof typeof text[typeof language]]}
+                  {currentText[tab as keyof typeof currentText]}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Grille de contenu */}
+          {/* Grille de contenu avec nouvelles interactions */}
           {(activeTab === 'posts' || activeTab === 'videos') && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userContent.map((content) => (
@@ -202,11 +354,11 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
                     {/* Badge Premium */}
                     {content.isPremium && (
                       <div className="absolute top-2 right-2 bg-afrikoin-gold text-white px-2 py-1 rounded text-xs font-bold">
-                        {text[language].premium}
+                        {currentText.premium}
                       </div>
                     )}
 
-                    {/* Overlay avec statistiques */}
+                    {/* Overlay avec statistiques améliorées */}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <div className="text-white text-center">
                         <div className="flex items-center justify-center space-x-4 mb-2">
@@ -215,12 +367,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
                             {content.likes}
                           </div>
                           <div className="flex items-center">
+                            <Gem className="w-4 h-4 mr-1" />
+                            {content.gems}
+                          </div>
+                          <div className="flex items-center">
                             <MessageCircle className="w-4 h-4 mr-1" />
                             {content.comments}
                           </div>
                         </div>
                         <div className="text-sm">
-                          {content.views} {text[language].views}
+                          {content.views} {currentText.views}
                         </div>
                       </div>
                     </div>
