@@ -10,6 +10,8 @@ import LiveStreaming from '@/components/LiveStreaming';
 import PaymentOptions from '@/components/PaymentOptions';
 import DailyNews from '@/components/DailyNews';
 import DailyEntertainment from '@/components/DailyEntertainment';
+import MessagingCenter from '@/components/MessagingCenter';
+import AppDownload from '@/components/AppDownload';
 import Footer from '@/components/Footer';
 import { Language } from '@/types/language';
 
@@ -30,9 +32,11 @@ const Index = () => {
         <DailyNews language={language} />
         <DailyEntertainment language={language} />
         <SocialFeed language={language} />
+        <MessagingCenter language={language} />
         <UserProfile language={language} />
         <LiveStreaming language={language} />
         <PaymentOptions language={language} />
+        <AppDownload language={language} />
       </main>
       
       <Footer language={language} />
