@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
@@ -12,6 +11,7 @@ import DailyNews from '@/components/DailyNews';
 import DailyEntertainment from '@/components/DailyEntertainment';
 import MessagingCenter from '@/components/MessagingCenter';
 import AppDownload from '@/components/AppDownload';
+import AppBundleUploader from '@/components/AppBundleUploader';
 import Footer from '@/components/Footer';
 import { Language } from '@/types/language';
 
@@ -36,6 +36,7 @@ const Index = () => {
         <UserProfile language={language} />
         <LiveStreaming language={language} />
         <PaymentOptions language={language} />
+        <AppBundleUploader language={language} />
         <AppDownload language={language} />
       </main>
       
