@@ -2,9 +2,10 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { CreditCard, Shield } from 'lucide-react';
+import { Language } from '@/types/language';
 
 interface PaymentOptionsProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const PaymentOptions: React.FC<PaymentOptionsProps> = ({ language }) => {
@@ -39,22 +40,24 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ language }) => {
     }
   };
 
+  const currentText = text[language] || text.fr;
+
   const paymentMethods = [
     {
-      name: text[language].orangeMoney,
-      description: text[language].orangeDesc,
+      name: currentText.orangeMoney,
+      description: currentText.orangeDesc,
       color: 'from-orange-500 to-orange-600',
       logo: '🧡'
     },
     {
-      name: text[language].wave,
-      description: text[language].waveDesc,
+      name: currentText.wave,
+      description: currentText.waveDesc,
       color: 'from-blue-500 to-blue-600',
       logo: '🌊'
     },
     {
-      name: text[language].stripe,
-      description: text[language].stripeDesc,
+      name: currentText.stripe,
+      description: currentText.stripeDesc,
       color: 'from-purple-500 to-purple-600',
       logo: '💳'
     }
@@ -63,13 +66,13 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ language }) => {
   const features = [
     {
       icon: Shield,
-      title: text[language].security,
-      description: text[language].securityDesc
+      title: currentText.security,
+      description: currentText.securityDesc
     },
     {
       icon: CreditCard,
-      title: text[language].fees,
-      description: text[language].feesDesc
+      title: currentText.fees,
+      description: currentText.feesDesc
     }
   ];
 
@@ -79,10 +82,10 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({ language }) => {
         {/* En-tête */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            {text[language].title}
+            {currentText.title}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {text[language].subtitle}
+            {currentText.subtitle}
           </p>
         </div>
 

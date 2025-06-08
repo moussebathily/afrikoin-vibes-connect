@@ -3,9 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Mic, Video, Upload, MapPin } from 'lucide-react';
+import { Language } from '@/types/language';
 
 interface HeroSectionProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ language }) => {
@@ -40,11 +41,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language }) => {
     }
   };
 
+  const currentText = text[language] || text.fr;
+
   const highlights = [
-    { icon: Upload, label: text[language].features[0] },
-    { icon: Video, label: text[language].features[1] },
-    { icon: Mic, label: text[language].features[2] },
-    { icon: MapPin, label: text[language].features[3] }
+    { icon: Upload, label: currentText.features[0] },
+    { icon: Video, label: currentText.features[1] },
+    { icon: Mic, label: currentText.features[2] },
+    { icon: MapPin, label: currentText.features[3] }
   ];
 
   useEffect(() => {
@@ -65,13 +68,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language }) => {
           <div className="space-y-8 animate-fade-in-up">
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent leading-tight">
-                {text[language].mainTitle}
+                {currentText.mainTitle}
               </h1>
               <h2 className="text-xl lg:text-2xl text-muted-foreground">
-                {text[language].subtitle}
+                {currentText.subtitle}
               </h2>
               <p className="text-lg text-foreground/80 max-w-lg">
-                {text[language].description}
+                {currentText.description}
               </p>
             </div>
 
@@ -79,10 +82,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({ language }) => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8 py-3 text-lg animate-pulse-glow">
                 <Upload className="w-5 h-5 mr-2" />
-                {text[language].startSelling}
+                {currentText.startSelling}
               </Button>
               <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/10 px-8 py-3 text-lg">
-                {text[language].exploreMarket}
+                {currentText.exploreMarket}
               </Button>
             </div>
 

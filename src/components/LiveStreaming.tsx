@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Video, Mic, MapPin } from 'lucide-react';
+import { Language } from '@/types/language';
 
 interface LiveStreamingProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
@@ -74,22 +75,24 @@ const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
     }
   };
 
+  const currentText = text[language] || text.fr;
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
         {/* En-tête */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            {text[language].title}
+            {currentText.title}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {text[language].subtitle}
+            {currentText.subtitle}
           </p>
         </div>
 
         {/* Streams en direct */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {text[language].streams.map((stream, index) => (
+          {currentText.streams.map((stream, index) => (
             <Card key={index} className="overflow-hidden group cursor-pointer">
               {/* Vidéo placeholder */}
               <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-secondary/20">
@@ -99,18 +102,18 @@ const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
                 
                 {/* Badge LIVE */}
                 <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-xs font-bold animate-pulse">
-                  {text[language].live}
+                  {currentText.live}
                 </div>
                 
                 {/* Nombre de spectateurs */}
                 <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded text-xs">
-                  {stream.viewers} {text[language].viewers}
+                  {stream.viewers} {currentText.viewers}
                 </div>
 
                 {/* Overlay au hover */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Button className="bg-white text-black hover:bg-white/90">
-                    {text[language].joinLive}
+                    {currentText.joinLive}
                   </Button>
                 </div>
               </div>

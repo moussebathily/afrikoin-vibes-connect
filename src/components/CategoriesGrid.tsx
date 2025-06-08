@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/card';
+import { Language } from '@/types/language';
 
 interface CategoriesGridProps {
-  language: 'fr' | 'en';
+  language: Language;
 }
 
 const CategoriesGrid: React.FC<CategoriesGridProps> = ({ language }) => {
@@ -38,22 +39,24 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({ language }) => {
     }
   };
 
+  const currentText = text[language] || text.fr;
+
   return (
     <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         {/* En-tête */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-            {text[language].title}
+            {currentText.title}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {text[language].subtitle}
+            {currentText.subtitle}
           </p>
         </div>
 
         {/* Grille de catégories */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {text[language].categories.map((category, index) => (
+          {currentText.categories.map((category, index) => (
             <Card
               key={index}
               className="p-6 text-center hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group"
