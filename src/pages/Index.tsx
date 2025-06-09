@@ -12,6 +12,7 @@ import DailyNews from '@/components/DailyNews';
 import DailyEntertainment from '@/components/DailyEntertainment';
 import MessagingCenter from '@/components/MessagingCenter';
 import Footer from '@/components/Footer';
+import NavigationMenu from '@/components/NavigationMenu';
 import { Language } from '@/types/language';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -46,7 +47,7 @@ const Index = () => {
         onLanguageChange={setLanguage} 
       />
       
-      <main className={isMobile ? 'mobile-spacing' : ''}>
+      <main className={`${isMobile ? 'mobile-spacing pb-20' : ''}`}>
         <HeroSection language={language} />
         <CategoriesGrid language={language} />
         <ContentCreation language={language} />
@@ -60,6 +61,8 @@ const Index = () => {
       </main>
       
       <Footer language={language} />
+      
+      {isMobile && <NavigationMenu />}
     </div>
   );
 };
