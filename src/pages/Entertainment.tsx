@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,8 @@ import {
   Volume2,
   Mic,
   Trophy,
-  Star
+  Star,
+  Clock
 } from 'lucide-react';
 import { Language } from '@/types/language';
 
