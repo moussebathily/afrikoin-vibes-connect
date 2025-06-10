@@ -25,4 +25,45 @@ jobs:
     - name: Build
       run: |
         npm install
-        grunt
+        grunt            - nom : Configuration du JDK Java
+  utilisations : actions/setup-java@v3.14.1
+  avec:
+    # La version Java à configurer. Nécessite une version Java complète ou partielle. Voir des exemples de syntaxe prise en charge dans le fichier README.
+    java-version: # facultatif
+    # Chemin d'accès au fichier « .java-version ». Voir des exemples de syntaxe prise en charge dans le fichier README.
+    fichier-version-java : # facultatif
+    # Distribution Java. Consultez la liste des distributions prises en charge dans le fichier README.
+    distribution:
+    # Le type de package (jdk, jre, jdk+fx, jre+fx)
+    java-package : # facultatif, la valeur par défaut est jdk
+    # L'architecture du package (par défaut, l'architecture du lanceur d'action)
+    architecture : # facultatif
+    # Chemin vers l'emplacement du JDK compressé
+    jdkFile : # facultatif
+    # Définissez cette option si vous souhaitez que l'action vérifie la dernière version disponible qui satisfait aux spécifications de version
+    check-latest : # facultatif
+    # ID du dépôt distributionManagement dans le fichier pom.xml. La valeur par défaut est « github ».
+    server-id : # facultatif, la valeur par défaut est github
+    # Nom de la variable d'environnement pour l'authentification auprès du dépôt Apache Maven. La valeur par défaut est $GITHUB_ACTOR.
+    server-username : # facultatif, la valeur par défaut est GITHUB_ACTOR
+    # Nom de la variable d'environnement pour le mot de passe ou le jeton d'authentification auprès du dépôt Apache Maven. La valeur par défaut est $GITHUB_TOKEN.
+    server-password : # facultatif, la valeur par défaut est GITHUB_TOKEN
+    # Chemin d'accès vers lequel le fichier settings.xml sera écrit. La valeur par défaut est ~/.m2.
+    paramètres-chemin : # facultatif
+    # Remplacer le fichier settings.xml s'il existe. La valeur par défaut est « true ».
+    overwrite-settings : # facultatif, la valeur par défaut est true
+    # Clé privée GPG à importer. La valeur par défaut est une chaîne vide.
+    gpg-private-key : # facultatif
+    # Nom de la variable d'environnement pour la phrase secrète de la clé privée GPG. La valeur par défaut est $GPG_PASSPHRASE.
+    gpg-passphrase : # facultatif
+    # Nom de la plateforme de build pour mettre en cache les dépendances. Il peut s'agir de « maven », « gradle » ou « sbt ».
+    cache : # facultatif
+    # Solution de contournement pour transmettre le statut de la tâche à l'étape de publication. Cette variable n'est pas destinée à un réglage manuel.
+    job-status : # facultatif, la valeur par défaut est ${{ job.status }}
+    # Jeton utilisé pour l'authentification lors de la récupération des manifestes de version hébergés sur github.com, comme pour la version Microsoft d'OpenJDK. Lors de l'exécution de cette action sur github.com, la valeur par défaut est suffisante. Lors de l'exécution sur GHES, vous pouvez transmettre un jeton d'accès personnel pour github.com si vous rencontrez une limitation de débit.
+    jeton : # facultatif, la valeur par défaut est ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Nom de l'identifiant de la chaîne d'outils Maven si le nom par défaut « ${distribution}_${java-version} » n'est pas souhaité. Voir des exemples de syntaxe prise en charge dans le fichier d'utilisation avancée.
+    mvn-toolchain-id : # facultatif
+    # Nom du fournisseur de la chaîne d'outils Maven si le nom par défaut « ${distribution} » n'est pas souhaité. Voir des exemples de syntaxe prise en charge dans le fichier d'utilisation avancée.
+    mvn-toolchain-vendor : # facultatif
+          
