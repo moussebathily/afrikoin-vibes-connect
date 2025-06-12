@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Video, Mic, MapPin, Package } from 'lucide-react';
+import { Video, Mic, MapPin } from 'lucide-react';
 import { Language } from '@/types/language';
-import PackageTracking from './PackageTracking';
 
 interface LiveStreamingProps {
   language: Language;
@@ -11,7 +11,6 @@ interface LiveStreamingProps {
 
 const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
   const [activeStream, setActiveStream] = useState(0);
-  const [showPackageTracking, setShowPackageTracking] = useState(false);
 
   const text = {
     fr: {
@@ -20,8 +19,6 @@ const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
       joinLive: 'Rejoindre le live',
       viewers: 'spectateurs',
       live: 'EN DIRECT',
-      packageTracking: 'Suivi de colis',
-      viewPackages: 'Voir mes colis',
       streams: [
         {
           title: 'Vente de bijoux traditionnels',
@@ -52,8 +49,6 @@ const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
       joinLive: 'Join live',
       viewers: 'viewers',
       live: 'LIVE',
-      packageTracking: 'Package tracking',
-      viewPackages: 'View my packages',
       streams: [
         {
           title: 'Traditional jewelry sale',
@@ -82,35 +77,9 @@ const LiveStreaming: React.FC<LiveStreamingProps> = ({ language }) => {
 
   const currentText = text[language] || text.fr;
 
-  if (showPackageTracking) {
-    return <PackageTracking language={language} />;
-  }
-
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        {/* Navigation entre Live et Colis */}
-        <div className="flex justify-center mb-8">
-          <div className="flex bg-muted rounded-lg p-1">
-            <Button
-              variant={!showPackageTracking ? "default" : "ghost"}
-              onClick={() => setShowPackageTracking(false)}
-              className="flex items-center space-x-2"
-            >
-              <Video className="w-4 h-4" />
-              <span>{currentText.title}</span>
-            </Button>
-            <Button
-              variant={showPackageTracking ? "default" : "ghost"}
-              onClick={() => setShowPackageTracking(true)}
-              className="flex items-center space-x-2"
-            >
-              <Package className="w-4 h-4" />
-              <span>{currentText.packageTracking}</span>
-            </Button>
-          </div>
-        </div>
-
         {/* En-tête */}
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
