@@ -1,0 +1,46 @@
+Build Android AAB
+name: Build Android AAB
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Cloner le dépôt
+        uses: actions/checkout@v3
+
+      - name: 🧰 Installer Node.js, Yarn & Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 📁 Créer le fichier keystore
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > my-release-key.keystore
+
+      - name: 🛠️ Configurer credentials.json
+        run: |
+          mkdir -p android
+          echo '{
+            "android": {
+              "keystore": {
+                "dataBase64": "${{ secrets.ANDROID_KEYSTORE_BASE64 }}",
+                "keystorePassword": "${{ secrets.KEYSTORE_PASSWORD }}",
+                "keyAlias": "${{ secrets.KEY_ALIAS }}",
+                "keyPassword": "${{ secrets.KEY_PASSWORD }}"
+              }
+            }
+          }' > credentials.json
+
+      - name: 🚀 Build .aab avec EAS
+        run: |
+          npx eas-cli build --platform android --profile production --non-interactive --local
+
+      - name: 📦 Upload de l’AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: afrikoin-aab
+          path: dist/*.aab
