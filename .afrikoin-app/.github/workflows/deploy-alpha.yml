@@ -1,0 +1,71 @@
+name: Build and Deploy to Google Play (Alpha)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+      PACKAGE_NAME: ${{ secrets.PACKAGE_NAME }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Login to EAS
+        run: eas login --token $EAS_TOKEN
+
+      - name: Build AAB (Production)
+        run: |
+          eas build --platform android --profile production --non-interactive --json > build-info.json
+          BUILD_ID=$(cat build-info.json | jq -r '.id')
+
+          echo "Attente de la fin du build..."
+          for i in {1..30}; do
+            STATUS=$(eas build:view --platform android --id "$BUILD_ID" --json | jq -r '.status')
+            if [[ "$STATUS" == "finished" ]]; then
+              break
+            elif [[ "$STATUS" == "errored" ]]; then
+              echo "❌ Build échouée"
+              exit 1
+            fi
+            sleep 30
+          done
+
+          DOWNLOAD_URL=$(eas build:view --platform android --id "$BUILD_ID" --json | jq -r '.artifacts.buildUrl')
+          curl -L "$DOWNLOAD_URL" -o afrikoin-app.aab
+
+      - name: Setup Google Play CLI (fastlane supply)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+
+      - name: Install Fastlane
+        run: gem install fastlane
+
+      - name: Deploy to Alpha track
+        run: |
+          echo "$SERVICE_ACCOUNT_JSON" > service_account.json
+          fastlane supply \
+            --aab afrikoin-app.aab \
+            --package_name $PACKAGE_NAME \
+            --track alpha \
+            --json_key service_account.json \
+            --skip_upload_metadata true \
+            --skip_upload_images true \
+            --skip_upload_screenshots true
+        env:
+          SERVICE_ACCOUNT_JSON: ${{ secrets.SERVICE_ACCOUNT_JSON }}
