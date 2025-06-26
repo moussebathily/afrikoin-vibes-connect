@@ -1,0 +1,27 @@
+package com.afrikoin.moderation
+
+import org.junit.Assert.*
+import org.junit.Test
+
+class ModerationEngineTest {
+
+    private val moderationEngine = ModerationEngine()
+
+    @Test
+    fun `annonce normale est acceptée`() {
+        val message = "Vends vélo en bon état à Dakar"
+        assertTrue(moderationEngine.isAllowed(message))
+    }
+
+    @Test
+    fun `annonce violente est bloquée`() {
+        val message = "Je vends des armes illégales"
+        assertFalse(moderationEngine.isAllowed(message))
+    }
+
+    @Test
+    fun `message vide est bloqué`() {
+        val message = ""
+        assertFalse(moderationEngine.isAllowed(message))
+    }
+}
