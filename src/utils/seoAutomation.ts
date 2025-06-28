@@ -1,0 +1,121 @@
+
+export interface SEOConfig {
+  baseUrl: string;
+  siteName: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  googleAnalyticsId?: string;
+  googleSearchConsoleId?: string;
+}
+
+export const seoConfig: SEOConfig = {
+  baseUrl: 'https://afrikoin.com',
+  siteName: 'AfriKoin',
+  defaultTitle: 'AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique',
+  defaultDescription: 'Marketplace panafricain n°1 pour acheter, vendre et se connecter. 50K+ utilisateurs, 25 pays, paiements locaux (Orange Money, Wave), live streaming.',
+  googleAnalyticsId: 'G-AFRIKOIN2024', // Remplacez par votre vrai ID
+  googleSearchConsoleId: 'afrikoin-search-console'
+};
+
+export const generateSitemap = () => {
+  const pages = [
+    { url: '', priority: '1.0', changefreq: 'daily' },
+    { url: '/marketplace', priority: '0.9', changefreq: 'daily' },
+    { url: '/fintech', priority: '0.8', changefreq: 'weekly' },
+    { url: '/education', priority: '0.8', changefreq: 'weekly' },
+    { url: '/entertainment', priority: '0.8', changefreq: 'weekly' },
+    { url: '/profile', priority: '0.6', changefreq: 'monthly' }
+  ];
+
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${pages.map(page => `  <url>
+    <loc>${seoConfig.baseUrl}${page.url}</loc>
+    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+    <mobile:mobile/>
+  </url>`).join('\n')}
+</urlset>`;
+
+  return sitemap;
+};
+
+export const initializeGoogleServices = () => {
+  // Google Analytics
+  if (seoConfig.googleAnalyticsId) {
+    const gaScript = document.createElement('script');
+    gaScript.async = true;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${seoConfig.googleAnalyticsId}`;
+    document.head.appendChild(gaScript);
+
+    const gaConfig = document.createElement('script');
+    gaConfig.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '${seoConfig.googleAnalyticsId}', {
+        page_title: document.title,
+        page_location: window.location.href
+      });
+    `;
+    document.head.appendChild(gaConfig);
+  }
+
+  // Google Search Console verification
+  if (seoConfig.googleSearchConsoleId) {
+    const searchConsoleTag = document.createElement('meta');
+    searchConsoleTag.name = 'google-site-verification';
+    searchConsoleTag.content = seoConfig.googleSearchConsoleId;
+    document.head.appendChild(searchConsoleTag);
+  }
+};
+
+export const updateStructuredData = (pageData: {
+  type: string;
+  title: string;
+  description: string;
+  url: string;
+}) => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": pageData.type,
+    "name": pageData.title,
+    "description": pageData.description,
+    "url": pageData.url,
+    "inLanguage": ["fr", "en"],
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${seoConfig.baseUrl}/marketplace?search={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    },
+    "sameAs": [
+      "https://twitter.com/afrikoin",
+      "https://facebook.com/afrikoin", 
+      "https://instagram.com/afrikoin",
+      "https://linkedin.com/company/afrikoin"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+221-XX-XXX-XXXX",
+      "contactType": "customer service",
+      "availableLanguage": ["French", "English"]
+    }
+  };
+
+  // Supprimer l'ancien script structured data s'il existe
+  const existingScript = document.querySelector('script[type="application/ld+json"]');
+  if (existingScript) {
+    existingScript.remove();
+  }
+
+  // Ajouter le nouveau script structured data
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.text = JSON.stringify(structuredData);
+  document.head.appendChild(script);
+};

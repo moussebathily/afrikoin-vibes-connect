@@ -16,10 +16,14 @@ import NavigationMenu from '@/components/NavigationMenu';
 import SEOHead from '@/components/SEOHead';
 import { Language } from '@/types/language';
 import { useMobile } from '@/hooks/useMobile';
+import { useSEOAutomation } from '@/hooks/useSEOAutomation';
 
 const Index = () => {
   const [language, setLanguage] = useState<Language>('fr');
   const { isMobile, isCapacitor } = useMobile();
+  
+  // Automatisation SEO
+  const { submitToGoogle } = useSEOAutomation(language);
 
   useEffect(() => {
     // Configuration pour les applications mobiles Capacitor
@@ -40,34 +44,13 @@ const Index = () => {
       }
     }
 
-    // Structured data pour la page d'accueil
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "AfriKoin",
-      "url": "https://afrikoin.com",
-      "description": "Marketplace panafricain pour acheter, vendre et se connecter à travers l'Afrique",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://afrikoin.com/marketplace?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      },
-      "sameAs": [
-        "https://twitter.com/afrikoin",
-        "https://facebook.com/afrikoin",
-        "https://instagram.com/afrikoin"
-      ]
-    };
+    // Soumettre automatiquement à Google après 5 secondes
+    const timer = setTimeout(() => {
+      submitToGoogle();
+    }, 5000);
 
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.text = JSON.stringify(structuredData);
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [isCapacitor]);
+    return () => clearTimeout(timer);
+  }, [isCapacitor, submitToGoogle]);
 
   return (
     <div className={`min-h-screen bg-background ${isCapacitor ? 'safe-area-top safe-area-bottom' : ''}`}>
