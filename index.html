@@ -4,9 +4,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>AfriKoin - Votre marché panafricain</title>
-    <meta name="description" content="AfriKoin - La plateforme tout-en-un pour acheter, vendre et participer à la vie culturelle partout en Afrique. Petites annonces, live streaming, assistant vocal et paiements locaux." />
+    <title>AfriKoin - Marketplace Panafricain | Achat, Vente et Culture en Afrique</title>
+    <meta name="description" content="AfriKoin - La plateforme n°1 pour acheter, vendre et participer à la vie culturelle partout en Afrique. Petites annonces géolocalisées, live streaming, assistant vocal et paiements locaux (Orange Money, Wave). Plus de 50K utilisateurs dans 25 pays africains." />
+    <meta name="keywords" content="AfriKoin, marketplace Afrique, petites annonces Afrique, vente en ligne Afrique, achat Afrique, Orange Money, Wave, commerce africain, streaming live Afrique, assistant vocal, géolocalisation Afrique" />
     <meta name="author" content="AfriKoin Team" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://afrikoin.com" />
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "AfriKoin",
+      "description": "Marketplace panafricain pour acheter, vendre et se connecter à travers l'Afrique",
+      "url": "https://afrikoin.com",
+      "applicationCategory": "MarketplaceApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "AfriKoin",
+        "url": "https://afrikoin.com"
+      },
+      "featureList": [
+        "Petites annonces géolocalisées",
+        "Live streaming interactif",
+        "Assistant vocal intelligent",
+        "Paiements sécurisés (Orange Money, Wave, Stripe)",
+        "25+ pays africains",
+        "50K+ utilisateurs actifs"
+      ]
+    }
+    </script>
 
     <!-- Mobile app configuration -->
     <meta name="theme-color" content="#22c55e" />
@@ -15,30 +49,60 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="AfriKoin" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="AfriKoin - Votre marché panafricain" />
-    <meta property="og:description" content="Achetez, vendez et connectez-vous partout en Afrique avec AfriKoin" />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://afrikoin.com" />
+    <meta property="og:title" content="AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique" />
+    <meta property="og:description" content="Achetez, vendez et connectez-vous partout en Afrique avec AfriKoin. Plus de 50K utilisateurs dans 25 pays. Paiements locaux, live streaming et assistant vocal." />
+    <meta property="og:image" content="https://afrikoin.com/og-image.png" />
+    <meta property="og:site_name" content="AfriKoin" />
+    <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://afrikoin.com" />
+    <meta name="twitter:title" content="AfriKoin - Marketplace Panafricain" />
+    <meta name="twitter:description" content="La plateforme n°1 pour le commerce et la culture en Afrique. 50K+ utilisateurs, 25 pays, paiements locaux." />
+    <meta name="twitter:image" content="https://afrikoin.com/twitter-image.png" />
     <meta name="twitter:site" content="@afrikoin" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:creator" content="@afrikoin" />
 
-    <!-- Favicon -->
+    <!-- Additional SEO Meta Tags -->
+    <meta name="geo.region" content="Africa" />
+    <meta name="geo.placename" content="Afrique" />
+    <meta name="language" content="French" />
+    <meta name="target" content="all" />
+    <meta name="audience" content="all" />
+    <meta name="coverage" content="Worldwide" />
+    <meta name="distribution" content="Global" />
+    <meta name="rating" content="General" />
+
+    <!-- Favicon and Icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Preload des polices pour améliorer les performances -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Sitemap -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Google Analytics (à configurer avec votre ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
   </body>
 </html>

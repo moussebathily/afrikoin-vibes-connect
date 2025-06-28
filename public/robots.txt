@@ -1,8 +1,18 @@
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://afrikoin.com/sitemap.xml
+
+# Optimisations pour les moteurs de recherche
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -10,5 +20,19 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
+# Bloquer l'accès aux fichiers sensibles
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /src/
+Disallow: /node_modules/
+
+# Permettre l'accès aux ressources importantes
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: *.css
+Allow: *.js
+Allow: *.png
+Allow: *.jpg
+Allow: *.jpeg
+Allow: *.gif
+Allow: *.svg

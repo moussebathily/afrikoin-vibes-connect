@@ -13,6 +13,7 @@ import DailyEntertainment from '@/components/DailyEntertainment';
 import MessagingCenter from '@/components/MessagingCenter';
 import Footer from '@/components/Footer';
 import NavigationMenu from '@/components/NavigationMenu';
+import SEOHead from '@/components/SEOHead';
 import { Language } from '@/types/language';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -38,10 +39,46 @@ const Index = () => {
         }, 3000);
       }
     }
+
+    // Structured data pour la page d'accueil
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "AfriKoin",
+      "url": "https://afrikoin.com",
+      "description": "Marketplace panafricain pour acheter, vendre et se connecter à travers l'Afrique",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://afrikoin.com/marketplace?search={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "sameAs": [
+        "https://twitter.com/afrikoin",
+        "https://facebook.com/afrikoin",
+        "https://instagram.com/afrikoin"
+      ]
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(structuredData);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, [isCapacitor]);
 
   return (
     <div className={`min-h-screen bg-background ${isCapacitor ? 'safe-area-top safe-area-bottom' : ''}`}>
+      <SEOHead 
+        language={language}
+        title="AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique"
+        description="Découvrez AfriKoin, le marketplace n°1 en Afrique. Achetez, vendez et connectez-vous avec plus de 50K utilisateurs dans 25 pays. Paiements locaux, live streaming, assistant vocal."
+        keywords="AfriKoin, marketplace Afrique, petites annonces géolocalisées, commerce africain, Orange Money, Wave, streaming live Afrique, assistant vocal, vente en ligne Afrique"
+        url="https://afrikoin.com"
+      />
+      
       <Header 
         language={language} 
         onLanguageChange={setLanguage} 
