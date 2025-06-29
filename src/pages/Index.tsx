@@ -17,15 +17,20 @@ import SEOHead from '@/components/SEOHead';
 import { Language } from '@/types/language';
 import { useMobile } from '@/hooks/useMobile';
 import { useSEOAutomation } from '@/hooks/useSEOAutomation';
+import { useActionStore } from '@/store/actionStore';
+import { analytics } from '@/services/analyticsService';
 
 const Index = () => {
   const [language, setLanguage] = useState<Language>('fr');
   const { isMobile, isCapacitor } = useMobile();
-  
-  // Automatisation SEO
   const { submitToGoogle } = useSEOAutomation(language);
+  const { user } = useActionStore();
 
   useEffect(() => {
+    // Initialize analytics
+    analytics.initialize();
+    analytics.trackPageView('/', user?.id);
+
     // Configuration pour les applications mobiles Capacitor
     if (isCapacitor) {
       console.log('AfriKoin running in Capacitor mobile app');
@@ -50,7 +55,12 @@ const Index = () => {
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [isCapacitor, submitToGoogle]);
+  }, [isCapacitor, submitToGoogle, user?.id]);
+
+  // Track language changes
+  useEffect(() => {
+    analytics.track('language_changed', { language }, user?.id);
+  }, [language, user?.id]);
 
   return (
     <div className={`min-h-screen bg-background ${isCapacitor ? 'safe-area-top safe-area-bottom' : ''}`}>
