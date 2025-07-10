@@ -1,0 +1,4 @@
+git checkout -b feature/suivi-securise
+git add pages/suivi-securise.tsx components/SecurePaymentButton.tsx public/qr_codes
+git commit -m "Ajout page Suivi Sécurisé, QR codes et bouton Paiement sécurisé"
+git push -u origin feature/suivi-securise
