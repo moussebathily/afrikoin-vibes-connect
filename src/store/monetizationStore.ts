@@ -10,6 +10,12 @@ import {
   LoyaltyProgram, 
   RevenueMetrics 
 } from '@/types/monetization';
+import { defaultCommissions } from './data/defaultCommissions';
+import { defaultSubscriptionPlans } from './data/defaultSubscriptionPlans';
+import { defaultLoyaltyProgram } from './data/defaultLoyaltyProgram';
+import { defaultRevenueMetrics } from './data/defaultRevenueMetrics';
+import { useCommissionCalculator } from '@/hooks/useCommissionCalculator';
+import { useLoyaltyProgram } from '@/hooks/useLoyaltyProgram';
 
 interface MonetizationState {
   // Commissions
@@ -54,162 +60,6 @@ interface MonetizationState {
   setLoading: (key: string, loading: boolean) => void;
 }
 
-const defaultSubscriptionPlans: SubscriptionPlan[] = [
-  {
-    id: 'basic',
-    name: 'Basique',
-    price: 0,
-    currency: 'FCFA',
-    interval: 'month',
-    features: [
-      '10 annonces par mois',
-      'Support communautaire',
-      'Accès aux fonctionnalités de base'
-    ],
-    limits: {
-      listings: 10,
-      boosts: 0,
-      analytics: false,
-      priority: false
-    }
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    price: 5000,
-    currency: 'FCFA',
-    interval: 'month',
-    trialDays: 30,
-    originalPrice: 5000,
-    priceRange: { min: 1000, max: 5000 },
-    features: [
-      '🎁 1 mois d\'essai gratuit',
-      'Annonces illimitées',
-      '5 boosts par mois',
-      'Analytics basiques',
-      'Support prioritaire'
-    ],
-    limits: {
-      listings: -1,
-      boosts: 5,
-      analytics: true,
-      priority: true
-    },
-    popular: true
-  },
-  {
-    id: 'business',
-    name: 'Business',
-    price: 15000,
-    currency: 'FCFA',
-    interval: 'month',
-    trialDays: 30,
-    originalPrice: 15000,
-    priceRange: { min: 7500, max: 15000 },
-    features: [
-      '🎁 1 mois d\'essai gratuit',
-      'Tout Premium inclus',
-      'Boosts illimités',
-      'Analytics avancés',
-      'Support dédié',
-      'API access'
-    ],
-    limits: {
-      listings: -1,
-      boosts: -1,
-      analytics: true,
-      priority: true
-    }
-  }
-];
-
-const defaultCommissions: Commission[] = [
-  {
-    id: '1',
-    category: 'electronics',
-    rate: 0.05,
-    minRate: 0.03,
-    maxRate: 0.08,
-    newSellerRate: 0.02,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: '2',
-    category: 'fashion',
-    rate: 0.08,
-    minRate: 0.05,
-    maxRate: 0.12,
-    newSellerRate: 0.05,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    id: '3',
-    category: 'home',
-    rate: 0.06,
-    minRate: 0.04,
-    maxRate: 0.10,
-    newSellerRate: 0.03,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-];
-
-const defaultLoyaltyProgram: LoyaltyProgram = {
-  points: 0,
-  level: 'Bronze',
-  nextLevelPoints: 500,
-  rewards: [
-    {
-      id: '1',
-      title: 'Réduction 10%',
-      description: 'Réduction de 10% sur votre prochaine commission',
-      pointsCost: 100,
-      type: 'discount',
-      value: 0.1,
-      available: true
-    },
-    {
-      id: '2',
-      title: 'Boost gratuit',
-      description: 'Un boost gratuit pour votre annonce',
-      pointsCost: 250,
-      type: 'feature',
-      value: 1,
-      available: true
-    }
-  ],
-  challenges: [
-    {
-      id: '1',
-      title: 'Première vente',
-      description: 'Effectuez votre première vente ce mois',
-      pointsReward: 50,
-      progress: 0,
-      target: 1,
-      endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-      completed: false
-    }
-  ]
-};
-
-const defaultRevenueMetrics: RevenueMetrics = {
-  totalRevenue: 0,
-  commissions: 0,
-  subscriptions: 0,
-  services: 0,
-  advertising: 0,
-  creatorEconomy: 0,
-  financialServices: 0,
-  monthlyGrowth: 0,
-  activeUsers: 0,
-  conversionRate: 0
-};
-
 export const useMonetizationStore = create<MonetizationState>()(
   devtools(
     (set, get) => ({
@@ -230,15 +80,8 @@ export const useMonetizationStore = create<MonetizationState>()(
       
       calculateCommission: (amount, category, isNewSeller = false) => {
         const { commissions } = get();
-        const commission = commissions.find(c => c.category === category && c.isActive);
-        
-        if (!commission) return amount * 0.05; // Default 5%
-        
-        const rate = isNewSeller && commission.newSellerRate 
-          ? commission.newSellerRate 
-          : commission.rate;
-          
-        return amount * rate;
+        const { calculateCommission } = useCommissionCalculator(commissions);
+        return calculateCommission(amount, category, isNewSeller);
       },
       
       setSubscriptionPlans: (plans) => set({ subscriptionPlans: plans }),
@@ -262,30 +105,9 @@ export const useMonetizationStore = create<MonetizationState>()(
       updateLoyaltyProgram: (program) => set({ loyaltyProgram: program }),
       
       addLoyaltyPoints: (points) => set((state) => {
-        const newPoints = state.loyaltyProgram.points + points;
-        let newLevel = state.loyaltyProgram.level;
-        let nextLevelPoints = state.loyaltyProgram.nextLevelPoints;
-        
-        // Level progression logic
-        if (newPoints >= 500 && newLevel === 'Bronze') {
-          newLevel = 'Silver';
-          nextLevelPoints = 1500;
-        } else if (newPoints >= 1500 && newLevel === 'Silver') {
-          newLevel = 'Gold';
-          nextLevelPoints = 5000;
-        } else if (newPoints >= 5000 && newLevel === 'Gold') {
-          newLevel = 'Platinum';
-          nextLevelPoints = 10000;
-        }
-        
-        return {
-          loyaltyProgram: {
-            ...state.loyaltyProgram,
-            points: newPoints,
-            level: newLevel,
-            nextLevelPoints
-          }
-        };
+        const { addLoyaltyPoints } = useLoyaltyProgram();
+        const updatedProgram = addLoyaltyPoints(state.loyaltyProgram, points);
+        return { loyaltyProgram: updatedProgram };
       }),
       
       setRevenueMetrics: (metrics) => set({ revenueMetrics: metrics }),
