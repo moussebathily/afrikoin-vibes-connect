@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi Sécurisé – AfriKoin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      color: #1a202c;
+    }
+    .qr-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .qr-box {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 220px;
+    }
+    .qr-box img {
+      width: 100%;
+      height: auto;
+    }
+    .label {
+      margin-top: 0.5rem;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Suivi Sécurisé – AfriKoin</h1>
+  <p>Scannez ces QR codes pour accéder aux ressources officielles liées aux paiements et livraisons sécurisés.</p>
+
+  <div class="qr-container">
+    <div class="qr-box">
+      <img src="qr_codes/stripe_escrow_docs.png" alt="QR Stripe">
+      <div class="label">Stripe Escrow</div>
+    </div>
+    <div class="qr-box">
+      <img src="qr_codes/afrikoin_app.png" alt="QR App">
+      <div class="label">AfriKoin App</div>
+    </div>
+    <div class="qr-box">
+      <img src="qr_codes/conditions_g%C3%A9n%C3%A9rales_pdf.png" alt="QR CGV">
+      <div class="label">Conditions Générales</div>
+    </div>
+  </div>
+</body>
+</html>
