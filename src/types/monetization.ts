@@ -24,6 +24,12 @@ export interface SubscriptionPlan {
     priority: boolean;
   };
   popular?: boolean;
+  trialDays?: number;
+  originalPrice?: number;
+  priceRange?: {
+    min: number;
+    max: number;
+  };
 }
 
 export interface Service {

@@ -79,7 +79,11 @@ const defaultSubscriptionPlans: SubscriptionPlan[] = [
     price: 5000,
     currency: 'FCFA',
     interval: 'month',
+    trialDays: 30,
+    originalPrice: 5000,
+    priceRange: { min: 1000, max: 5000 },
     features: [
+      '🎁 1 mois d\'essai gratuit',
       'Annonces illimitées',
       '5 boosts par mois',
       'Analytics basiques',
@@ -99,7 +103,11 @@ const defaultSubscriptionPlans: SubscriptionPlan[] = [
     price: 15000,
     currency: 'FCFA',
     interval: 'month',
+    trialDays: 30,
+    originalPrice: 15000,
+    priceRange: { min: 7500, max: 15000 },
     features: [
+      '🎁 1 mois d\'essai gratuit',
       'Tout Premium inclus',
       'Boosts illimités',
       'Analytics avancés',
