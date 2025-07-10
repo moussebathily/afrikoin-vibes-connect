@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Variables
+SITE_DIR="path/to/afrikoin-web"       # Remplace par le chemin local vers ton repo web
+APP_DIR="path/to/afrikoin-app"        # Chemin vers le repo mobile React Native
+
+# Branche et message de commit
+BRANCH_SITE="feature/suivi-securise"
+BRANCH_APP="feature/suivi-securise-app"
+COMMIT_MSG_SITE="Ajout page Suivi Sécurisé, QR codes et bouton Paiement sécurisé"
+COMMIT_MSG_APP="Ajout écran WebView Suivi Sécurisé"
+
+# Fonction pour push site web
+push_site() {
+  cd "$SITE_DIR" || exit
+  git checkout -b "$BRANCH_SITE"
+  git add pages/suivi-securise.tsx components/SecurePaymentButton.tsx public/qr_codes
+  git commit -m "$COMMIT_MSG_SITE"
+  git push -u origin "$BRANCH_SITE"
+  gh pr create --title "$COMMIT_MSG_SITE" --body "Ajout de la page Suivi Sécurisé avec QR codes et bouton." --base main --head "$BRANCH_SITE"
+}
+
+# Fonction pour push app mobile
+push_app() {
+  cd "$APP_DIR" || exit
+  git checkout -b "$BRANCH_APP"
+  git add AppWebViewScreen.tsx
+  git commit -m "$COMMIT_MSG_APP"
+  git push -u origin "$BRANCH_APP"
+  gh pr create --title "$COMMIT_MSG_APP" --body "Ajout écran WebView Suivi Sécurisé." --base main --head "$BRANCH_APP"
+}
+
+echo "Pushing afrikoin-web site changes..."
+push_site
+
+echo "Pushing afrikoin-app mobile changes..."
+push_app
+
+echo "🎉 Toutes les branches et PR sont créées avec succès !"
