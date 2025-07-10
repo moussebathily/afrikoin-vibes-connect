@@ -11,6 +11,10 @@ import Profile from "./pages/Profile";
 import FinTech from "./pages/FinTech";
 import Education from "./pages/Education";
 import Entertainment from "./pages/Entertainment";
+import Subscription from "./pages/Subscription";
+import Services from "./pages/Services";
+import CreatorEconomy from "./pages/CreatorEconomy";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +31,10 @@ const App = () => (
           <Route path="/fintech" element={<FinTech language="fr" />} />
           <Route path="/education" element={<Education language="fr" />} />
           <Route path="/entertainment" element={<Entertainment language="fr" />} />
+          <Route path="/subscription" element={<Subscription language="fr" />} />
+          <Route path="/services" element={<Services language="fr" />} />
+          <Route path="/creators" element={<CreatorEconomy language="fr" />} />
+          <Route path="/analytics" element={<Analytics language="fr" />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
