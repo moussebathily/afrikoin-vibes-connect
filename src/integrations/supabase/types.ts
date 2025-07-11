@@ -14,7 +14,224 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      payment_methods: {
+        Row: {
+          account_name: string
+          account_number: string
+          created_at: string
+          id: string
+          is_default: boolean | null
+          is_verified: boolean | null
+          method_type: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          method_type: string
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          method_type?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          country: string | null
+          created_at: string
+          email: string
+          id: string
+          is_verified: boolean | null
+          name: string | null
+          phone: string | null
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          phone?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      security_logs: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          metadata: Json | null
+          reference_id: string | null
+          status: string
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          status: string
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reference_id?: string | null
+          status?: string
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_balances: {
+        Row: {
+          available_balance: number | null
+          id: string
+          last_updated: string
+          pending_balance: number | null
+          total_balance: number | null
+          user_id: string
+        }
+        Insert: {
+          available_balance?: number | null
+          id?: string
+          last_updated?: string
+          pending_balance?: number | null
+          total_balance?: number | null
+          user_id: string
+        }
+        Update: {
+          available_balance?: number | null
+          id?: string
+          last_updated?: string
+          pending_balance?: number | null
+          total_balance?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          fees: number
+          id: string
+          net_amount: number
+          payment_method_id: string
+          processed_at: string | null
+          processed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          fees?: number
+          id?: string
+          net_amount: number
+          payment_method_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          fees?: number
+          id?: string
+          net_amount?: number
+          payment_method_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_requests_payment_method_id_fkey"
+            columns: ["payment_method_id"]
+            isOneToOne: false
+            referencedRelation: "payment_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
