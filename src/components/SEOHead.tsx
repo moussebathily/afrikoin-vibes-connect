@@ -21,14 +21,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
 }) => {
   const defaultMeta = {
     fr: {
-      title: 'AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique',
-      description: 'Marketplace panafricain n°1 pour acheter, vendre et se connecter. 50K+ utilisateurs, 25 pays, paiements locaux (Orange Money, Wave), live streaming.',
-      keywords: 'AfriKoin, marketplace Afrique, petites annonces, commerce africain, Orange Money, Wave, streaming live'
+      title: 'AfriKoin - Marketplace Panafricain n°1 | Commerce, FinTech et Culture en Afrique 🌍',
+      description: 'Marketplace panafricain n°1 avec 50K+ utilisateurs actifs dans 25 pays africains. Achetez, vendez en sécurité avec Orange Money, Wave. Live streaming, assistant vocal, géolocalisation avancée.',
+      keywords: 'AfriKoin, marketplace Afrique, petites annonces Afrique, commerce africain, Orange Money, Wave, fintech Afrique, culture africaine, streaming live Afrique, assistant vocal, géolocalisation, paiements mobiles Afrique, transferts internationaux, certification professionnelle'
     },
     en: {
-      title: 'AfriKoin - Pan-African Marketplace | Commerce and Culture in Africa',
-      description: 'Africa\'s #1 marketplace to buy, sell and connect. 50K+ users, 25 countries, local payments (Orange Money, Wave), live streaming.',
-      keywords: 'AfriKoin, Africa marketplace, classified ads, African commerce, Orange Money, Wave, live streaming'
+      title: 'AfriKoin - #1 Pan-African Marketplace | Commerce, FinTech and Culture in Africa 🌍',
+      description: 'Africa\'s #1 marketplace with 50K+ active users in 25 African countries. Buy, sell securely with Orange Money, Wave. Live streaming, voice assistant, advanced geolocation.',
+      keywords: 'AfriKoin, Africa marketplace, classified ads Africa, African commerce, Orange Money, Wave, fintech Africa, African culture, live streaming Africa, voice assistant, geolocation, mobile payments Africa, international transfers, professional certification'
     }
   };
 
