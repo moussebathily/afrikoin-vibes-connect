@@ -1,6 +1,7 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { supabase } from '@/integrations/supabase/client';
 
 interface User {
   id: string;
@@ -9,7 +10,12 @@ interface User {
   role: 'user' | 'admin' | 'moderator';
   country: string;
   isVerified: boolean;
-  credits: number;
+}
+
+interface Balance {
+  available: number;
+  pending: number;
+  total: number;
 }
 
 interface ActionLimits {
@@ -24,6 +30,7 @@ interface ActionState {
   // User state
   user: User | null;
   isAuthenticated: boolean;
+  balance: Balance | null;
   
   // Action tracking
   dailyActions: Record<string, number>;
@@ -38,6 +45,8 @@ interface ActionState {
   // Actions
   setUser: (user: User | null) => void;
   setAuthenticated: (status: boolean) => void;
+  setBalance: (balance: Balance) => void;
+  fetchUserData: () => Promise<void>;
   incrementActionCount: (action: string) => void;
   setLoading: (action: string, status: boolean) => void;
   checkPermission: (permission: string) => boolean;
@@ -59,6 +68,7 @@ export const useActionStore = create<ActionState>()(
       // Initial state
       user: null,
       isAuthenticated: false,
+      balance: null,
       dailyActions: {},
       actionLimits: defaultLimits,
       isLoading: {},
@@ -68,6 +78,57 @@ export const useActionStore = create<ActionState>()(
       setUser: (user) => set({ user }),
       
       setAuthenticated: (status) => set({ isAuthenticated: status }),
+      
+      setBalance: (balance) => set({ balance }),
+      
+      fetchUserData: async () => {
+        try {
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          
+          if (!authUser) {
+            set({ user: null, isAuthenticated: false, balance: null });
+            return;
+          }
+
+          // Fetch user profile
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', authUser.id)
+            .single();
+
+          // Fetch user balance
+          const { data: userBalance } = await supabase
+            .from('user_balances')
+            .select('*')
+            .eq('user_id', authUser.id)
+            .single();
+
+          if (profile) {
+            const user: User = {
+              id: authUser.id,
+              email: profile.email,
+              name: profile.name || 'User',
+              role: profile.role as 'user' | 'admin' | 'moderator',
+              country: profile.country || '',
+              isVerified: profile.is_verified
+            };
+
+            set({ 
+              user, 
+              isAuthenticated: true,
+              balance: userBalance ? {
+                available: parseFloat(String(userBalance.available_balance || 0)),
+                pending: parseFloat(String(userBalance.pending_balance || 0)),
+                total: parseFloat(String(userBalance.total_balance || 0))
+              } : null
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          set({ user: null, isAuthenticated: false, balance: null });
+        }
+      },
       
       incrementActionCount: (action) => set((state) => ({
         dailyActions: {
@@ -89,7 +150,7 @@ export const useActionStore = create<ActionState>()(
       },
       
       canPerformAction: (action) => {
-        const { dailyActions, actionLimits, user } = get();
+        const { dailyActions, actionLimits, user, balance } = get();
         const actionCount = dailyActions[action] || 0;
         
         switch (action) {
@@ -98,9 +159,11 @@ export const useActionStore = create<ActionState>()(
           case 'send_message':
             return actionCount < actionLimits.dailyMessages;
           case 'make_payment':
-            return actionCount < actionLimits.dailyPayments && user?.isVerified;
+            return actionCount < actionLimits.dailyPayments && user?.isVerified && (balance?.available || 0) > 0;
           case 'start_stream':
             return user?.isVerified && actionCount < 5; // Max 5 streams per day
+          case 'withdraw_funds':
+            return user?.isVerified && (balance?.available || 0) > 0;
           default:
             return true;
         }

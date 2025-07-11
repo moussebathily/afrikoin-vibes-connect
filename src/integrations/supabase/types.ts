@@ -237,7 +237,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_user_balance: {
+        Args: {
+          user_id: string
+          available_change?: number
+          pending_change?: number
+        }
+        Returns: {
+          available_balance: number
+          pending_balance: number
+          total_balance: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

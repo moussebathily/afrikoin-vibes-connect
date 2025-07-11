@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Mic, Video, Upload, MapPin, Shield, CreditCard } from 'lucide-react';
+import { Mic, Video, Upload, MapPin, Shield, CreditCard, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Language } from '@/types/language';
 
@@ -13,6 +14,11 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   const text = {
     fr: {
@@ -160,8 +166,31 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
             </Button>
           </div>
 
-          {/* Sélecteur de langue */}
-          <LanguageSelector language={language} onLanguageChange={onLanguageChange} />
+          {/* User Actions */}
+          <div className="flex items-center space-x-2">
+            {user && (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  {user.email?.split('@')[0]}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+            {/* Sélecteur de langue */}
+            <LanguageSelector language={language} onLanguageChange={onLanguageChange} />
+          </div>
         </div>
 
         {/* Barre de fonctionnalités */}

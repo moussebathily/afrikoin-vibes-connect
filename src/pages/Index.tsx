@@ -15,6 +15,7 @@ import Footer from '@/components/Footer';
 import NavigationMenu from '@/components/NavigationMenu';
 import SEOHead from '@/components/SEOHead';
 import Loading from '@/components/ui/loading';
+import { AuthInitializer } from '@/components/AuthInitializer';
 import { Language } from '@/types/language';
 import { useMobile } from '@/hooks/useMobile';
 import { useSEOAutomation } from '@/hooks/useSEOAutomation';
@@ -129,6 +130,7 @@ const Index = () => {
 
   return (
     <div className={`min-h-screen bg-background ${isCapacitor ? 'safe-area-top safe-area-bottom' : ''}`}>
+      <AuthInitializer />
       <SEOHead 
         language={language}
         title="AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique"

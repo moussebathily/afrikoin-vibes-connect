@@ -43,7 +43,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ language }) => {
   const [isAddingAccount, setIsAddingAccount] = useState(false);
   const [newAccountType, setNewAccountType] = useState('');
 
-  const { balance, processWithdrawal, getWithdrawalFees, canWithdraw, isProcessing, withdrawalHistory } = useWithdrawal();
+  const { balance, processWithdrawal, getWithdrawalFees, canWithdraw, isProcessing, getWithdrawalHistory } = useWithdrawal();
   const { paymentMethods, getAllAccounts, addBanking, addMobileMoney } = usePaymentMethods();
   const { revenueStats, revenueBreakdown, optimizeWithdrawal, getRevenueInsights } = useRevenueCalculator();
   const { preferences, updatePreferences } = useWithdrawalStore();
@@ -209,7 +209,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ language }) => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {showBalance ? formatCurrency(balance.thisMonth) : '••••••'}
+                  {showBalance ? formatCurrency(balance?.available || 0) : '••••••'}
                 </div>
                 <div className="flex items-center mt-1">
                   <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
@@ -502,35 +502,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ language }) => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {withdrawalHistory.map((withdrawal) => (
-                  <div key={withdrawal.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${getStatusColor(withdrawal.status)}`} />
-                      <div>
-                        <p className="font-medium">{formatCurrency(withdrawal.amount)}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {paymentMethods.find(m => m.id === withdrawal.method)?.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(withdrawal.requestedAt).toLocaleDateString('fr-FR')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(withdrawal.status)}
-                        <Badge variant={withdrawal.status === 'completed' ? 'default' : 'secondary'}>
-                          {withdrawal.status}
-                        </Badge>
-                      </div>
-                      {withdrawal.reference && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Ref: {withdrawal.reference}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                {/* Replace with async data loading */}
+                <p className="text-muted-foreground text-center py-8">
+                  Chargez l'historique des retraits en utilisant getWithdrawalHistory()
+                </p>
               </div>
             </CardContent>
           </Card>
