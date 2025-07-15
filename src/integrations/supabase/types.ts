@@ -14,6 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
+      holiday_notifications: {
+        Row: {
+          created_at: string
+          holiday_id: string | null
+          id: string
+          message: string
+          notification_type: string
+          sent_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          holiday_id?: string | null
+          id?: string
+          message: string
+          notification_type: string
+          sent_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          holiday_id?: string | null
+          id?: string
+          message?: string
+          notification_type?: string
+          sent_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "holiday_notifications_holiday_id_fkey"
+            columns: ["holiday_id"]
+            isOneToOne: false
+            referencedRelation: "holidays"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      holidays: {
+        Row: {
+          celebration_duration: number | null
+          countries: string[] | null
+          created_at: string
+          date_formula: string | null
+          description: string | null
+          id: string
+          is_lunar: boolean | null
+          name: string
+          religions: string[] | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          celebration_duration?: number | null
+          countries?: string[] | null
+          created_at?: string
+          date_formula?: string | null
+          description?: string | null
+          id?: string
+          is_lunar?: boolean | null
+          name: string
+          religions?: string[] | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          celebration_duration?: number | null
+          countries?: string[] | null
+          created_at?: string
+          date_formula?: string | null
+          description?: string | null
+          id?: string
+          is_lunar?: boolean | null
+          name?: string
+          religions?: string[] | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       like_credits: {
         Row: {
           balance: number
@@ -283,6 +366,63 @@ export type Database = {
           last_updated?: string
           pending_balance?: number | null
           total_balance?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_notification_preferences: {
+        Row: {
+          birthday: string | null
+          country_code: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          language_code: string
+          notification_time: string | null
+          receive_birthday: boolean | null
+          receive_cultural: boolean | null
+          receive_international: boolean | null
+          receive_national: boolean | null
+          receive_religious: boolean | null
+          religion: string | null
+          timezone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birthday?: string | null
+          country_code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          language_code?: string
+          notification_time?: string | null
+          receive_birthday?: boolean | null
+          receive_cultural?: boolean | null
+          receive_international?: boolean | null
+          receive_national?: boolean | null
+          receive_religious?: boolean | null
+          religion?: string | null
+          timezone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birthday?: string | null
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          language_code?: string
+          notification_time?: string | null
+          receive_birthday?: boolean | null
+          receive_cultural?: boolean | null
+          receive_international?: boolean | null
+          receive_national?: boolean | null
+          receive_religious?: boolean | null
+          religion?: string | null
+          timezone?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
