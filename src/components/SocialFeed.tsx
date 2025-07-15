@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { TikTokLikeButton } from '@/components/ui/tiktok-like-button';
 import { Heart, MessageCircle, Share, MoreHorizontal, Play, Music, Crown, Users, Gem } from 'lucide-react';
 import { Language } from '@/types/language';
 
@@ -364,20 +365,12 @@ const SocialFeed: React.FC<SocialFeedProps> = ({ language }) => {
               <div className="p-4">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-4">
-                    {/* Bouton Like avec animation */}
-                    <button
-                      onClick={() => toggleLike(post.id)}
-                      className="flex items-center space-x-1 hover:text-red-500 transition-all transform hover:scale-110"
-                    >
-                      <Heart 
-                        className={`w-5 h-5 transition-all ${
-                          likedPosts.includes(post.id) 
-                            ? 'fill-red-500 text-red-500 scale-110' 
-                            : ''
-                        }`} 
-                      />
-                      <span className="text-sm">{post.stats.likes}</span>
-                    </button>
+                    {/* Bouton Like TikTok Style */}
+                    <TikTokLikeButton
+                      isLiked={likedPosts.includes(post.id)}
+                      likesCount={post.stats.likes + (likedPosts.includes(post.id) ? 1 : 0)}
+                      onLike={() => toggleLike(post.id)}
+                    />
 
                     {/* Bouton Gemme */}
                     <button
