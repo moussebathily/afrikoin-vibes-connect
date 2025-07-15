@@ -19,4 +19,12 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      external: [
+        '@awesome-cordova-plugins/core',
+        '@awesome-cordova-plugins/in-app-purchase-2'
+      ]
+    }
+  }
 }));

@@ -22,13 +22,19 @@ const isNative = typeof window !== 'undefined' &&
 
 // Conditional import for Cordova plugins (only on native platforms)
 let InAppPurchase2: any;
-if (isNative && typeof window !== 'undefined') {
-  try {
-    InAppPurchase2 = require('@awesome-cordova-plugins/in-app-purchase-2').InAppPurchase2;
-  } catch (error) {
-    console.warn('In-app purchase plugin not available:', error);
+const loadInAppPurchase = async () => {
+  if (isNative && typeof window !== 'undefined') {
+    try {
+      const module = await import('@awesome-cordova-plugins/in-app-purchase-2');
+      InAppPurchase2 = module.InAppPurchase2;
+      return true;
+    } catch (error) {
+      console.warn('In-app purchase plugin not available:', error);
+      return false;
+    }
   }
-}
+  return false;
+};
 
 interface LikePack {
   id: string;
@@ -76,8 +82,11 @@ export const useInAppPurchase = () => {
     try {
       console.log('Initializing in-app purchase store...');
       
-      // Skip initialization on web
-      if (!isNative || !InAppPurchase2) {
+      // Try to load the plugin dynamically
+      const pluginLoaded = await loadInAppPurchase();
+      
+      // Skip initialization on web or if plugin failed to load
+      if (!isNative || !pluginLoaded || !InAppPurchase2) {
         console.log('In-app purchases not available on web platform');
         setIsInitialized(false);
         return;
