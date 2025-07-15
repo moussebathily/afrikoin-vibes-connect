@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { TikTokLikeButton } from '@/components/ui/tiktok-like-button';
 import { Play, Music, Film, Mic, Star, Heart } from 'lucide-react';
 import { Language } from '@/types/language';
 
@@ -10,6 +11,7 @@ interface DailyEntertainmentProps {
 }
 
 const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => {
+  const [likedContent, setLikedContent] = useState<number[]>([]);
   const text = {
     fr: {
       title: 'Divertissement quotidien',
@@ -137,32 +139,35 @@ const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => 
 
   const entertainmentContent = [
     {
+      id: 1,
       type: 'music',
       title: 'Amapiano Fusion',
       artist: 'DJ Kenzo',
       description: 'Nouveau mix afrobeat qui fait sensation',
       duration: '45min',
-      likes: '12K',
+      likes: 12000,
       trending: true,
       image: '/placeholder.svg'
     },
     {
+      id: 2,
       type: 'movie',
       title: 'Lagos Dreams',
       artist: 'Nollywood Productions',
       description: 'Drame familial touchant sur l\'immigration',
       duration: '2h 15min',
-      likes: '8.5K',
+      likes: 8500,
       trending: false,
       image: '/placeholder.svg'
     },
     {
+      id: 3,
       type: 'show',
       title: 'African Voices',
       artist: 'Continental TV',
       description: 'Talk-show avec des personnalités influentes',
       duration: '1h',
-      likes: '15K',
+      likes: 15000,
       trending: true,
       image: '/placeholder.svg'
     }
@@ -179,6 +184,14 @@ const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => 
 
   const getActionText = (type: string) => {
     return type === 'music' ? currentText.listenNow : currentText.watchNow;
+  };
+
+  const toggleLike = (contentId: number) => {
+    setLikedContent(prev => 
+      prev.includes(contentId) 
+        ? prev.filter(id => id !== contentId)
+        : [...prev, contentId]
+    );
   };
 
   return (
@@ -237,10 +250,11 @@ const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => 
                 <p className="text-sm mb-4 line-clamp-2">{content.description}</p>
                 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2 text-muted-foreground text-sm">
-                    <Heart className="w-4 h-4" />
-                    <span>{content.likes}</span>
-                  </div>
+                  <TikTokLikeButton
+                    isLiked={likedContent.includes(content.id)}
+                    likesCount={content.likes + (likedContent.includes(content.id) ? 1 : 0)}
+                    onLike={() => toggleLike(content.id)}
+                  />
                   <Button size="sm" className="bg-afrikoin-gradient hover:opacity-90">
                     <Play className="w-4 h-4 mr-2" />
                     {getActionText(content.type)}

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { TikTokLikeButton } from '@/components/ui/tiktok-like-button';
 import { Users, Heart, MessageCircle, Share, Play, Camera, Settings, Crown, Gem } from 'lucide-react';
 import { Language } from '@/types/language';
 
@@ -12,6 +13,7 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState<'posts' | 'videos' | 'about'>('posts');
+  const [likedContent, setLikedContent] = useState<number[]>([]);
 
   const text = {
     fr: {
@@ -242,6 +244,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
     }
   ];
 
+  const toggleLike = (contentId: number) => {
+    setLikedContent(prev => 
+      prev.includes(contentId) 
+        ? prev.filter(id => id !== contentId)
+        : [...prev, contentId]
+    );
+  };
+
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -362,10 +372,12 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <div className="text-white text-center">
                         <div className="flex items-center justify-center space-x-4 mb-2">
-                          <div className="flex items-center">
-                            <Heart className="w-4 h-4 mr-1" />
-                            {content.likes}
-                          </div>
+                          <TikTokLikeButton
+                            isLiked={likedContent.includes(content.id)}
+                            likesCount={content.likes + (likedContent.includes(content.id) ? 1 : 0)}
+                            onLike={() => toggleLike(content.id)}
+                            className="text-white hover:text-red-300"
+                          />
                           <div className="flex items-center">
                             <Gem className="w-4 h-4 mr-1" />
                             {content.gems}

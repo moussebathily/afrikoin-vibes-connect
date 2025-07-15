@@ -29,7 +29,9 @@ interface TikTokLikeButtonProps {
   className?: string;
 }
 
-const PARTICLES = ['💥', '❤️', '⭐', '✨', '💖', '🔥', '💫', '🌟'];
+const PARTICLES = ['💥', '❤️', '⭐', '✨', '💖', '🔥', '💫', '🌟', '💍', '🎆', '⚡', '🌈', '💎', '🦋'];
+
+const HEART_EMOJIS = ['❤️', '💖', '💕', '💘', '💗', '💓', '💞', '💝'];
 
 export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
   isLiked,
@@ -69,34 +71,34 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
   // Créer des particules qui explosent
   const createParticles = useCallback((x: number, y: number) => {
     const newParticles: Particle[] = [];
-    for (let i = 0; i < 8; i++) {
-      const angle = (i / 8) * Math.PI * 2;
-      const velocity = 2 + Math.random() * 3;
+    for (let i = 0; i < 12; i++) {
+      const angle = (i / 12) * Math.PI * 2;
+      const velocity = 3 + Math.random() * 4;
       newParticles.push({
         id: Date.now() + i,
         emoji: PARTICLES[Math.floor(Math.random() * PARTICLES.length)],
         x,
         y,
         vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity,
+        vy: Math.sin(angle) * velocity - 2, // initial upward velocity
         opacity: 1,
-        scale: 0.8 + Math.random() * 0.4,
+        scale: 0.6 + Math.random() * 0.8,
         rotation: 0,
-        rotationSpeed: (Math.random() - 0.5) * 10,
+        rotationSpeed: (Math.random() - 0.5) * 15,
       });
     }
     setParticles(prev => [...prev, ...newParticles]);
   }, []);
 
-  // Créer des cœurs qui montent
+  // Créer des cœurs qui montent comme TikTok LIVE
   const createFloatingHearts = useCallback(() => {
     const newHearts: FloatingHeart[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 8; i++) {
       newHearts.push({
-        id: Date.now() + i,
-        x: -20 + Math.random() * 40,
+        id: Date.now() + i + 1000,
+        x: -30 + Math.random() * 60,
         y: 0,
-        delay: i * 200,
+        delay: i * 150,
       });
     }
     setFloatingHearts(prev => [...prev, ...newHearts]);
@@ -109,17 +111,19 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
         ...particle,
         x: particle.x + particle.vx,
         y: particle.y + particle.vy,
-        vy: particle.vy + 0.2, // gravité
-        opacity: particle.opacity - 0.02,
+        vx: particle.vx * 0.98, // friction
+        vy: particle.vy + 0.3, // gravité plus réaliste
+        opacity: particle.opacity - 0.015,
         rotation: particle.rotation + particle.rotationSpeed,
+        scale: particle.scale * 0.995, // rétrécissement graduel
       })).filter(particle => particle.opacity > 0);
     });
 
     setFloatingHearts(prev => {
       return prev.map(heart => ({
         ...heart,
-        y: heart.y - 2,
-      })).filter(heart => heart.y > -100);
+        y: heart.y - 3, // vitesse de montée plus rapide
+      })).filter(heart => heart.y > -150);
     });
 
     if (particles.length > 0 || floatingHearts.length > 0) {
@@ -205,20 +209,22 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
         ))}
       </div>
 
-      {/* Container pour les cœurs flottants */}
+      {/* Container pour les cœurs flottants TikTok LIVE style */}
       <div className="absolute inset-0 pointer-events-none overflow-visible">
-        {floatingHearts.map((heart) => (
+        {floatingHearts.map((heart, index) => (
           <div
             key={heart.id}
-            className="absolute text-red-500 animate-pulse"
+            className="absolute text-lg animate-pulse"
             style={{
               left: `calc(50% + ${heart.x}px)`,
               bottom: heart.y,
               animationDelay: `${heart.delay}ms`,
-              opacity: Math.max(0, 1 - (Math.abs(heart.y) / 100)),
+              opacity: Math.max(0, 1 - (Math.abs(heart.y) / 150)),
+              transform: `scale(${1 + (Math.abs(heart.y) / 200)})`,
+              filter: `hue-rotate(${index * 45}deg)`,
             }}
           >
-            ❤️
+            {HEART_EMOJIS[index % HEART_EMOJIS.length]}
           </div>
         ))}
       </div>

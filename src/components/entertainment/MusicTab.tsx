@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { TikTokLikeButton } from '@/components/ui/tiktok-like-button';
 import { Play, Heart, Share } from 'lucide-react';
 import { Language } from '@/types/language';
 
@@ -11,6 +12,7 @@ interface MusicTabProps {
 }
 
 const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
+  const [likedTracks, setLikedTracks] = useState<number[]>([]);
   const text = {
     fr: {
       trending: 'Tendances',
@@ -34,7 +36,7 @@ const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
       cover: '/placeholder.svg',
       genre: 'Amapiano',
       country: '🇿🇦',
-      listens: '2.5M',
+      listens: 2500000,
       featured: true
     },
     {
@@ -46,7 +48,7 @@ const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
       cover: '/placeholder.svg',
       genre: 'Afrobeats',
       country: '🇳🇬',
-      listens: '8.9M',
+      listens: 8900000,
       featured: true
     },
     {
@@ -58,7 +60,7 @@ const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
       cover: '/placeholder.svg',
       genre: 'Coupé-Décalé',
       country: '🇨🇮',
-      listens: '1.8M',
+      listens: 1800000,
       featured: false
     },
     {
@@ -70,10 +72,28 @@ const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
       cover: '/placeholder.svg',
       genre: 'Gqom',
       country: '🇿🇦',
-      listens: '3.2M',
+      listens: 3200000,
       featured: false
     }
   ];
+
+  const toggleLike = (trackId: number) => {
+    setLikedTracks(prev => 
+      prev.includes(trackId) 
+        ? prev.filter(id => id !== trackId)
+        : [...prev, trackId]
+    );
+  };
+
+  const formatListens = (listens: number) => {
+    if (listens >= 1000000) {
+      return `${(listens / 1000000).toFixed(1)}M`;
+    }
+    if (listens >= 1000) {
+      return `${(listens / 1000).toFixed(1)}K`;
+    }
+    return listens.toString();
+  };
 
   return (
     <div className="space-y-8">
@@ -112,15 +132,17 @@ const MusicTab: React.FC<MusicTabProps> = ({ language }) => {
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-muted-foreground">{track.duration}</p>
-                      <p className="text-sm font-medium">{track.listens} {currentText.listens}</p>
+                      <p className="text-sm font-medium">{formatListens(track.listens)} {currentText.listens}</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon">
-                    <Heart className="w-4 h-4" />
-                  </Button>
+                <div className="flex gap-2 items-center">
+                  <TikTokLikeButton
+                    isLiked={likedTracks.includes(track.id)}
+                    likesCount={Math.floor(track.listens / 1000)} // Approximation des likes basée sur les écoutes
+                    onLike={() => toggleLike(track.id)}
+                  />
                   <Button variant="ghost" size="icon">
                     <Share className="w-4 h-4" />
                   </Button>
