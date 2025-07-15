@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLikeCredits } from '@/hooks/useLikeCredits';
 
 interface Particle {
   id: number;
@@ -27,6 +28,8 @@ interface TikTokLikeButtonProps {
   likesCount: number;
   onLike: () => void;
   className?: string;
+  postId?: string;
+  useCredits?: boolean;
 }
 
 const PARTICLES = ['💥', '❤️', '⭐', '✨', '💖', '🔥', '💫', '🌟', '💍', '🎆', '⚡', '🌈', '💎', '🦋'];
@@ -38,12 +41,15 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
   likesCount,
   onLike,
   className,
+  postId,
+  useCredits = false,
 }) => {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const animationRef = useRef<number>();
+  const { useLike, canUseLikes, credits } = useLikeCredits();
 
   // Son de "pop"
   const playPopSound = useCallback(() => {
@@ -142,41 +148,57 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
     };
   }, [animateParticles, particles.length, floatingHearts.length]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
     if (!buttonRef.current) return;
+
+    // Vérifier les crédits si nécessaire
+    if (useCredits && !isLiked && !canUseLikes(1)) {
+      return; // Le hook affichera déjà l'erreur
+    }
 
     const rect = buttonRef.current.getBoundingClientRect();
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    // Trigger animations
+    // Déclencher les animations
     setIsAnimating(true);
     setTimeout(() => setIsAnimating(false), 600);
 
-    // Play sound
+    // Son
     playPopSound();
 
-    // Create particles
+    // Particules
     createParticles(centerX, centerY);
 
-    // Create floating hearts si c'est un like
+    // Cœurs flottants si c'est un like
     if (!isLiked) {
       createFloatingHearts();
+      
+      // Utiliser un crédit si activé
+      if (useCredits && postId) {
+        await useLike({
+          targetPostId: postId,
+          usageType: 'manual',
+          likesCount: 1
+        });
+      }
     }
 
-    // Call parent handler
+    // Appeler le handler parent
     onLike();
-  }, [isLiked, playPopSound, createParticles, createFloatingHearts, onLike]);
+  }, [isLiked, playPopSound, createParticles, createFloatingHearts, onLike, useCredits, canUseLikes, postId, useLike]);
 
   return (
     <div className="relative">
       <button
         ref={buttonRef}
         onClick={handleClick}
+        disabled={useCredits && !isLiked && !canUseLikes(1)}
         className={cn(
           "flex items-center space-x-1 hover:text-red-500 transition-all transform hover:scale-110 relative overflow-visible",
           isLiked && "text-red-500",
           isAnimating && "animate-pulse",
+          useCredits && !isLiked && !canUseLikes(1) && "opacity-50 cursor-not-allowed",
           className
         )}
       >
@@ -188,6 +210,11 @@ export const TikTokLikeButton: React.FC<TikTokLikeButtonProps> = ({
           )} 
         />
         <span className="text-sm font-medium">{likesCount}</span>
+        {useCredits && !isLiked && (
+          <span className="text-xs text-muted-foreground ml-1">
+            (💎 {credits?.balance || 0})
+          </span>
+        )}
       </button>
 
       {/* Container pour les particules */}

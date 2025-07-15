@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import LikeCreditsWidget from '@/components/LikeCreditsWidget';
 import { Mic, Video, Upload, MapPin, Shield, CreditCard, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -168,6 +169,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
 
           {/* User Actions */}
           <div className="flex items-center space-x-2">
+            {user && <LikeCreditsWidget language={language} compact />}
             {user && (
               <div className="flex items-center space-x-2">
                 <Button

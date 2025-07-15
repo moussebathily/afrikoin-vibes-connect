@@ -14,6 +14,111 @@ export type Database = {
   }
   public: {
     Tables: {
+      like_credits: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          total_purchased: number
+          total_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_purchased?: number
+          total_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          total_purchased?: number
+          total_used?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      like_purchases: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          likes_amount: number
+          pack_name: string
+          price_amount: number
+          product_id: string
+          purchase_token: string
+          status: string
+          store_type: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          likes_amount: number
+          pack_name: string
+          price_amount: number
+          product_id: string
+          purchase_token: string
+          status?: string
+          store_type?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          likes_amount?: number
+          pack_name?: string
+          price_amount?: number
+          product_id?: string
+          purchase_token?: string
+          status?: string
+          store_type?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      like_usage: {
+        Row: {
+          created_at: string
+          id: string
+          likes_used: number
+          target_post_id: string | null
+          target_user_id: string | null
+          usage_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          likes_used?: number
+          target_post_id?: string | null
+          target_user_id?: string | null
+          usage_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          likes_used?: number
+          target_post_id?: string | null
+          target_user_id?: string | null
+          usage_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_methods: {
         Row: {
           account_name: string

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TikTokLikeButton } from '@/components/ui/tiktok-like-button';
+import LikeCreditsWidget from '@/components/LikeCreditsWidget';
 import { Users, Heart, MessageCircle, Share, Play, Camera, Settings, Crown, Gem } from 'lucide-react';
 import { Language } from '@/types/language';
 
@@ -326,6 +327,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ language }) => {
               </div>
             </div>
           </Card>
+
+          {/* Widget de crédits de likes */}
+          <LikeCreditsWidget language={language} />
 
           {/* Onglets de contenu */}
           <div className="flex justify-center mb-8">
