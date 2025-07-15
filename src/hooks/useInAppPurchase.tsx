@@ -1,7 +1,34 @@
 import { useState, useEffect } from 'react';
-import { InAppPurchase2, IAPProduct } from '@awesome-cordova-plugins/in-app-purchase-2';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+
+// Types for IAP products
+interface IAPProduct {
+  id: string;
+  title?: string;
+  description?: string;
+  price?: string;
+  canPurchase?: boolean;
+  transaction?: {
+    id: string;
+  };
+  finish?: () => void;
+  verify?: () => void;
+}
+
+// Platform detection
+const isNative = typeof window !== 'undefined' && 
+  (window as any).Capacitor?.isNativePlatform?.() || false;
+
+// Conditional import for Cordova plugins (only on native platforms)
+let InAppPurchase2: any;
+if (isNative && typeof window !== 'undefined') {
+  try {
+    InAppPurchase2 = require('@awesome-cordova-plugins/in-app-purchase-2').InAppPurchase2;
+  } catch (error) {
+    console.warn('In-app purchase plugin not available:', error);
+  }
+}
 
 interface LikePack {
   id: string;
@@ -48,6 +75,13 @@ export const useInAppPurchase = () => {
   const initializeStore = async () => {
     try {
       console.log('Initializing in-app purchase store...');
+      
+      // Skip initialization on web
+      if (!isNative || !InAppPurchase2) {
+        console.log('In-app purchases not available on web platform');
+        setIsInitialized(false);
+        return;
+      }
       
       // Configuration du store
       InAppPurchase2.verbosity = InAppPurchase2.DEBUG;
@@ -147,6 +181,15 @@ export const useInAppPurchase = () => {
 
   const purchasePack = async (packId: string) => {
     try {
+      if (!isNative || !InAppPurchase2) {
+        toast({
+          title: "Non disponible sur web",
+          description: "Les achats in-app ne sont disponibles que sur mobile.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       if (!isInitialized) {
         throw new Error('Store not initialized');
       }
@@ -178,6 +221,15 @@ export const useInAppPurchase = () => {
 
   const restorePurchases = async () => {
     try {
+      if (!isNative || !InAppPurchase2) {
+        toast({
+          title: "Non disponible sur web",
+          description: "La restauration d'achats n'est disponible que sur mobile.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       console.log('Restoring purchases...');
       InAppPurchase2.refresh();
       toast({
