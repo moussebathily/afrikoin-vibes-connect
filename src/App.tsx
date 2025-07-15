@@ -17,6 +17,7 @@ import Subscription from "./pages/Subscription";
 import Services from "./pages/Services";
 import CreatorEconomy from "./pages/CreatorEconomy";
 import Analytics from "./pages/Analytics";
+import { Greetings } from "./pages/Greetings";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
           <Route path="/services" element={<ProtectedRoute><Services language="fr" /></ProtectedRoute>} />
           <Route path="/creators" element={<ProtectedRoute><CreatorEconomy language="fr" /></ProtectedRoute>} />
           <Route path="/analytics" element={<ProtectedRoute><Analytics language="fr" /></ProtectedRoute>} />
+          <Route path="/greetings" element={<ProtectedRoute><Greetings /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
