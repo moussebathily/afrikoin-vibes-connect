@@ -7,6 +7,7 @@ import { Mic, Video, Upload, MapPin, Shield, CreditCard, LogOut, User } from 'lu
 import { useAuth } from '@/hooks/useAuth';
 import LanguageSelector from '@/components/LanguageSelector';
 import { Language } from '@/types/language';
+import { useSafeArea } from '@/hooks/useSafeArea';
 
 interface HeaderProps {
   language: Language;
@@ -16,6 +17,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { safeAreaClasses, isEdgeToEdge } = useSafeArea();
 
   const handleSignOut = async () => {
     await signOut();
@@ -125,7 +127,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
   };
 
   return (
-    <header className="bg-afrikoin-gradient shadow-lg sticky top-0 z-50">
+    <header className={`bg-afrikoin-gradient shadow-lg sticky top-0 z-50 ${isEdgeToEdge ? safeAreaClasses : ''}`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo et titre */}

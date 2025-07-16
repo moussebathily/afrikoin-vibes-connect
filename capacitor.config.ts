@@ -13,7 +13,10 @@ const config: CapacitorConfig = {
     buildOptions: {
       keystorePath: process.env.ANDROID_KEYSTORE_FILE,
       keystoreAlias: process.env.ANDROID_KEY_ALIAS,
-    }
+    },
+    allowMixedContent: true,
+    captureInput: true,
+    webContentsDebuggingEnabled: true
   },
   plugins: {
     SplashScreen: {
