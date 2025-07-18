@@ -202,6 +202,59 @@ export type Database = {
         }
         Relationships: []
       }
+      media_files: {
+        Row: {
+          created_at: string
+          duration: number | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          height: number | null
+          id: string
+          mime_type: string
+          post_id: string
+          storage_bucket: string
+          thumbnail_path: string | null
+          width: number | null
+        }
+        Insert: {
+          created_at?: string
+          duration?: number | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          height?: number | null
+          id?: string
+          mime_type: string
+          post_id: string
+          storage_bucket?: string
+          thumbnail_path?: string | null
+          width?: number | null
+        }
+        Update: {
+          created_at?: string
+          duration?: number | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          height?: number | null
+          id?: string
+          mime_type?: string
+          post_id?: string
+          storage_bucket?: string
+          thumbnail_path?: string | null
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_files_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_methods: {
         Row: {
           account_name: string
@@ -238,6 +291,54 @@ export type Database = {
           provider?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          content_type: string
+          created_at: string
+          description: string | null
+          id: string
+          is_monetized: boolean
+          like_count: number
+          location: string | null
+          price: number | null
+          status: string
+          title: string | null
+          updated_at: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_monetized?: boolean
+          like_count?: number
+          location?: string | null
+          price?: number | null
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_monetized?: boolean
+          like_count?: number
+          location?: string | null
+          price?: number | null
+          status?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          view_count?: number
         }
         Relationships: []
       }

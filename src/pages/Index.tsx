@@ -6,6 +6,7 @@ import CategoriesGrid from '@/components/CategoriesGrid';
 import ContentCreation from '@/components/ContentCreation';
 import SocialFeed from '@/components/SocialFeed';
 import UserProfile from '@/components/UserProfile';
+import PostsFeed from '@/components/PostsFeed';
 import LiveStreaming from '@/components/LiveStreaming';
 import PaymentOptions from '@/components/PaymentOptions';
 import DailyNews from '@/components/DailyNews';
@@ -148,6 +149,22 @@ const Index = () => {
         <HeroSection language={language} />
         <CategoriesGrid language={language} />
         <ContentCreation language={language} />
+        
+        {/* Feed des publications */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                Publications de la communauté
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Découvrez le contenu partagé par nos utilisateurs
+              </p>
+            </div>
+            <PostsFeed />
+          </div>
+        </section>
+        
         <DailyNews language={language} />
         <DailyEntertainment language={language} />
         <SocialFeed language={language} />
