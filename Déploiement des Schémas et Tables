@@ -1,0 +1,59 @@
+-- Création des schémas
+CREATE SCHEMA IF NOT EXISTS privacy;
+CREATE SCHEMA IF NOT EXISTS security;
+
+-- Activation des extensions nécessaires
+CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
+
+-- Tables de politique de confidentialité
+CREATE TABLE privacy.policy_versions (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    version TEXT NOT NULL UNIQUE,
+    content JSONB NOT NULL,
+    published_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE privacy.policy_acceptances (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id UUID REFERENCES auth.users(id),
+    policy_version TEXT NOT NULL,
+    accepted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    ip_address INET,
+    user_agent TEXT
+);
+
+-- Tables de sécurité
+CREATE TABLE security.audit_log (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    event_type TEXT NOT NULL,
+    user_id UUID,
+    event_timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    ip_address INET,
+    user_agent TEXT,
+    details JSONB
+);
+
+-- Activation RLS
+ALTER TABLE privacy.policy_versions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE privacy.policy_acceptances ENABLE ROW LEVEL SECURITY;
+ALTER TABLE security.audit_log ENABLE ROW LEVEL SECURITY;
+
+-- Politiques de sécurité
+CREATE POLICY "View policy versions" 
+ON privacy.policy_versions 
+FOR SELECT 
+USING (true);
+
+CREATE POLICY "Users can only see their own acceptances" 
+ON privacy.policy_acceptances 
+FOR ALL 
+USING (user_id = auth.uid());
+
+CREATE POLICY "Admins can view audit logs" 
+ON security.audit_log 
+FOR SELECT 
+USING (
+    (SELECT role FROM auth.users WHERE id = auth.uid()) = 'service_role'
+);
