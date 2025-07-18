@@ -1,0 +1,97 @@
+import { createClient } from 'jsr:@supabase/supabase-js@^2';
+
+// Types de consentement standardisés
+const CONSENT_TYPES = {
+  DATA_PROCESSING: 'data_processing',
+  MARKETING: 'marketing',
+  ANALYTICS: 'analytics',
+  THIRD_PARTY_SHARING: 'third_party_sharing'
+};
+
+Deno.serve(async (req) => {
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  );
+
+  try {
+    const { method } = req;
+    const authHeader = req.headers.get('Authorization');
+    
+    if (!authHeader) {
+      return new Response(JSON.stringify({ 
+        error: 'Authentification requise' 
+      }), { status: 401 });
+    }
+
+    const { data: { user } } = await supabase.auth.getUser(authHeader);
+    
+    if (!user) {
+      return new Response(JSON.stringify({ 
+        error: 'Utilisateur non authentifié' 
+      }), { status: 403 });
+    }
+
+    switch (method) {
+      case 'POST':
+        const { consentType, isConsented } = await req.json();
+        
+        if (!Object.values(CONSENT_TYPES).includes(consentType)) {
+          return new Response(JSON.stringify({ 
+            error: 'Type de consentement invalide' 
+          }), { status: 400 });
+        }
+
+        const { data, error } = await supabase
+          .from('privacy.user_consents')
+          .upsert({
+            user_id: user.id,
+            consent_type: consentType,
+            is_active: isConsented,
+            metadata: { 
+              timestamp: new Date().toISOString(),
+              source: req.headers.get('Origin') || 'Unknown'
+            }
+          })
+          .select();
+
+        if (error) throw error;
+
+        // Journalisation de l'événement
+        await supabase.rpc('security.log_event', {
+          p_event_type: 'user_consent_update',
+          p_user_id: user.id,
+          p_details: { 
+            consent_type: consentType, 
+            is_consented: isConsented 
+          }
+        });
+
+        return new Response(JSON.stringify(data), { 
+          status: 201,
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+      case 'GET':
+        const { data: consents, error: fetchError } = await supabase
+          .from('privacy.user_consents')
+          .select('consent_type, is_active')
+          .eq('user_id', user.id);
+
+        if (fetchError) throw fetchError;
+
+        return new Response(JSON.stringify(consents), { 
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+      default:
+        return new Response(JSON.stringify({ 
+          error: 'Méthode non autorisée' 
+        }), { status: 405 });
+    }
+  } catch (err) {
+    return new Response(JSON.stringify({ 
+      error: err.message 
+    }), { status: 500 });
+  }
+});
