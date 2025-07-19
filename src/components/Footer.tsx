@@ -190,8 +190,12 @@ const Footer: React.FC<FooterProps> = ({ language }) => {
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     <a 
-                      href="#" 
+                      href={section.title === currentText.legal && linkIndex === 1 ? "/privacy-policy.html" : 
+                            section.title === currentText.legal && linkIndex === 0 ? "/terms-of-service.html" : 
+                            "#"} 
                       className="text-muted-foreground hover:text-primary transition-colors text-sm"
+                      target={section.title === currentText.legal && (linkIndex === 0 || linkIndex === 1) ? "_blank" : undefined}
+                      rel={section.title === currentText.legal && (linkIndex === 0 || linkIndex === 1) ? "noopener noreferrer" : undefined}
                     >
                       {link}
                     </a>
