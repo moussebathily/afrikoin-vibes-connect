@@ -9,7 +9,7 @@ export interface SEOConfig {
 }
 
 export const seoConfig: SEOConfig = {
-  baseUrl: 'https://afrikoin.com',
+  baseUrl: 'https://afrikoin.online',
   siteName: 'AfriKoin',
   defaultTitle: 'AfriKoin - Marketplace Panafricain | Commerce, Culture et FinTech en Afrique',
   defaultDescription: 'Marketplace panafricain n°1 pour acheter, vendre et se connecter. 50K+ utilisateurs actifs, 25 pays africains, paiements mobiles sécurisés (Orange Money, Wave), live streaming et assistant vocal intelligent.',
@@ -26,7 +26,9 @@ export const generateSitemap = () => {
     { url: '/entertainment', priority: '0.8', changefreq: 'weekly', keywords: 'culture africaine, musique afrique, streaming live' },
     { url: '/services', priority: '0.7', changefreq: 'weekly', keywords: 'services afrique, prestataires afrique' },
     { url: '/profile', priority: '0.6', changefreq: 'monthly', keywords: 'profil utilisateur, compte afrikoin' },
-    { url: '/auth', priority: '0.5', changefreq: 'monthly', keywords: 'inscription afrikoin, connexion' }
+    { url: '/auth', priority: '0.5', changefreq: 'monthly', keywords: 'inscription afrikoin, connexion' },
+    { url: '/privacy-policy.html', priority: '0.4', changefreq: 'monthly', keywords: 'politique confidentialité afrikoin' },
+    { url: '/terms-of-service.html', priority: '0.4', changefreq: 'monthly', keywords: 'conditions utilisation afrikoin' }
   ];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>

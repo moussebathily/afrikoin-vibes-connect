@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://afrikoin.com/sitemap.xml
+Sitemap: https://afrikoin.online/sitemap.xml
 
 # Optimisations pour les moteurs de recherche
 User-agent: Googlebot
