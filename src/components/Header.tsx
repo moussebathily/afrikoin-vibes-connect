@@ -147,6 +147,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
               variant="outline"
               size="sm"
               className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              aria-label={text[language].publish}
             >
               <Upload className="w-4 h-4 mr-2" />
               {text[language].publish}
@@ -155,6 +156,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
               variant="outline"
               size="sm"
               className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              aria-label={text[language].live}
             >
               <Video className="w-4 h-4 mr-2" />
               {text[language].live}
@@ -163,6 +165,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
               variant="outline"
               size="sm"
               className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+              aria-label={text[language].voice}
             >
               <Mic className="w-4 h-4 mr-2" />
               {text[language].voice}
@@ -187,6 +190,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange }) => {
                   size="sm"
                   onClick={handleSignOut}
                   className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  aria-label="Se déconnecter"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>

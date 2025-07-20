@@ -37,7 +37,7 @@ const PackageTrackingIcon: React.FC<PackageTrackingIconProps> = ({
       size="icon"
       onClick={() => setShowPackageTracking(true)}
       className={`relative ${className}`}
-      title={currentText.tooltip}
+      aria-label={`${currentText.tooltip} - 2 nouveaux colis`}
     >
       <Package className="w-4 h-4" />
       {/* Badge de notification optionnel */}

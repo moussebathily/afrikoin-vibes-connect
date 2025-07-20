@@ -41,6 +41,8 @@ const NavigationMenu = () => {
                 className={`w-full flex flex-col items-center gap-1 h-auto py-2 ${
                   isActive ? 'text-primary' : 'text-muted-foreground'
                 }`}
+                aria-label={`Naviguer vers ${item.label}`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <Icon className="w-5 h-5" />
                 <span className="text-xs">{item.label}</span>

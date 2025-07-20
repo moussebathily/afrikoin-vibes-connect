@@ -209,15 +209,15 @@ const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => 
 
         {/* Categories */}
         <div className="flex justify-center space-x-6 mb-12">
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2" aria-label={`Filtrer par ${currentText.music}`}>
             <Music className="w-4 h-4" />
             <span>{currentText.music}</span>
           </Button>
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2" aria-label={`Filtrer par ${currentText.movies}`}>
             <Film className="w-4 h-4" />
             <span>{currentText.movies}</span>
           </Button>
-          <Button variant="outline" className="flex items-center space-x-2">
+          <Button variant="outline" className="flex items-center space-x-2" aria-label={`Filtrer par ${currentText.shows}`}>
             <Mic className="w-4 h-4" />
             <span>{currentText.shows}</span>
           </Button>
@@ -255,7 +255,7 @@ const DailyEntertainment: React.FC<DailyEntertainmentProps> = ({ language }) => 
                     likesCount={content.likes + (likedContent.includes(content.id) ? 1 : 0)}
                     onLike={() => toggleLike(content.id)}
                   />
-                  <Button size="sm" className="bg-afrikoin-gradient hover:opacity-90">
+                  <Button size="sm" className="bg-afrikoin-gradient hover:opacity-90" aria-label={`${getActionText(content.type)} ${content.title}`}>
                     <Play className="w-4 h-4 mr-2" />
                     {getActionText(content.type)}
                   </Button>
