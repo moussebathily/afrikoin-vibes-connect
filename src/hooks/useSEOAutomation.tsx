@@ -5,7 +5,8 @@ import {
   seoConfig, 
   initializeGoogleServices, 
   updateStructuredData, 
-  generateSitemap 
+  generateSitemap,
+  optimizePerformance 
 } from '@/utils/seoAutomation';
 import { Language } from '@/types/language';
 
@@ -15,6 +16,9 @@ export const useSEOAutomation = (language: Language) => {
   useEffect(() => {
     // Initialiser les services Google une seule fois
     initializeGoogleServices();
+
+    // Optimiser les performances
+    optimizePerformance();
 
     // Générer et soumettre automatiquement le sitemap
     const sitemap = generateSitemap();
@@ -118,7 +122,7 @@ export const useSEOAutomation = (language: Language) => {
     // Mettre à jour les structured data
     updateStructuredData(currentPage);
 
-    // Mettre à jour les meta tags
+    // Mettre à jour les meta tags avec optimisation cache
     const updateMetaTag = (name: string, content: string) => {
       let meta = document.querySelector(`meta[name="${name}"]`) || 
                  document.querySelector(`meta[property="${name}"]`);
@@ -158,7 +162,8 @@ export const useSEOAutomation = (language: Language) => {
     if ((window as any).gtag) {
       (window as any).gtag('config', seoConfig.googleAnalyticsId, {
         page_title: currentPage.title,
-        page_location: currentPage.url
+        page_location: currentPage.url,
+        custom_map: {'custom_parameter_1': 'page_performance'}
       });
     }
 

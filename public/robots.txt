@@ -36,3 +36,8 @@ Allow: *.jpg
 Allow: *.jpeg
 Allow: *.gif
 Allow: *.svg
+
+# Cache et performance
+User-agent: *
+Crawl-delay: 1
+Request-rate: 1/1

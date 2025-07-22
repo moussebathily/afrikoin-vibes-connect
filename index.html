@@ -8,8 +8,8 @@
     <meta name="description" content="AfriKoin - La plateforme n°1 pour acheter, vendre et participer à la vie culturelle partout en Afrique. Petites annonces géolocalisées, live streaming, assistant vocal et paiements locaux (Orange Money, Wave). Plus de 50K utilisateurs dans 25 pays africains." />
     <meta name="keywords" content="AfriKoin, marketplace Afrique, petites annonces Afrique, vente en ligne Afrique, achat Afrique, Orange Money, Wave, commerce africain, streaming live Afrique, assistant vocal, géolocalisation Afrique" />
     <meta name="author" content="AfriKoin Team" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://afrikoin.com" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://afrikoin.online" />
 
     <!-- Structured Data / JSON-LD -->
     <script type="application/ld+json">
@@ -18,7 +18,7 @@
       "@type": "WebApplication",
       "name": "AfriKoin",
       "description": "Marketplace panafricain pour acheter, vendre et se connecter à travers l'Afrique",
-      "url": "https://afrikoin.com",
+      "url": "https://afrikoin.online",
       "applicationCategory": "MarketplaceApplication",
       "operatingSystem": "Web, iOS, Android",
       "offers": {
@@ -29,7 +29,7 @@
       "creator": {
         "@type": "Organization",
         "name": "AfriKoin",
-        "url": "https://afrikoin.com"
+        "url": "https://afrikoin.online"
       },
       "featureList": [
         "Petites annonces géolocalisées",
@@ -51,19 +51,19 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://afrikoin.com" />
+    <meta property="og:url" content="https://afrikoin.online" />
     <meta property="og:title" content="AfriKoin - Marketplace Panafricain | Commerce et Culture en Afrique" />
     <meta property="og:description" content="Achetez, vendez et connectez-vous partout en Afrique avec AfriKoin. Plus de 50K utilisateurs dans 25 pays. Paiements locaux, live streaming et assistant vocal." />
-    <meta property="og:image" content="https://afrikoin.com/og-image.png" />
+    <meta property="og:image" content="https://afrikoin.online/og-image.png" />
     <meta property="og:site_name" content="AfriKoin" />
     <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://afrikoin.com" />
+    <meta name="twitter:url" content="https://afrikoin.online" />
     <meta name="twitter:title" content="AfriKoin - Marketplace Panafricain" />
     <meta name="twitter:description" content="La plateforme n°1 pour le commerce et la culture en Afrique. 50K+ utilisateurs, 25 pays, paiements locaux." />
-    <meta name="twitter:image" content="https://afrikoin.com/twitter-image.png" />
+    <meta name="twitter:image" content="https://afrikoin.online/twitter-image.png" />
     <meta name="twitter:site" content="@afrikoin" />
     <meta name="twitter:creator" content="@afrikoin" />
 
@@ -90,19 +90,25 @@
 
     <!-- Sitemap -->
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+    <!-- Cache Control -->
+    <meta http-equiv="Cache-Control" content="public, max-age=31536000, immutable" />
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Google Analytics (à configurer avec votre ID) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <!-- Google Analytics (remplacer par votre vrai ID) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-AFRIKOIN2024"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'GA_MEASUREMENT_ID');
+      gtag('config', 'G-AFRIKOIN2024', {
+        page_title: document.title,
+        page_location: window.location.href
+      });
     </script>
   </body>
 </html>

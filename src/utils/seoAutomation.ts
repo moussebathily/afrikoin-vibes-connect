@@ -64,7 +64,8 @@ export const initializeGoogleServices = () => {
       gtag('js', new Date());
       gtag('config', '${seoConfig.googleAnalyticsId}', {
         page_title: document.title,
-        page_location: window.location.href
+        page_location: window.location.href,
+        custom_map: {'custom_parameter_1': 'user_engagement'}
       });
     `;
     document.head.appendChild(gaConfig);
@@ -100,15 +101,15 @@ export const updateStructuredData = (pageData: {
     "author": {
       "@type": "Organization",
       "name": "AfriKoin",
-      "url": "https://afrikoin.com"
+      "url": "https://afrikoin.online"
     },
     "publisher": {
       "@type": "Organization",
       "name": "AfriKoin",
-      "url": "https://afrikoin.com",
+      "url": "https://afrikoin.online",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://afrikoin.com/logo-512x512.png",
+        "url": "https://afrikoin.online/logo-512x512.png",
         "width": 512,
         "height": 512
       }
@@ -190,4 +191,49 @@ export const updateStructuredData = (pageData: {
   script.type = 'application/ld+json';
   script.text = JSON.stringify(structuredData);
   document.head.appendChild(script);
+};
+
+// Fonction pour optimiser les images et le cache
+export const optimizePerformance = () => {
+  // Lazy loading des images
+  const images = document.querySelectorAll('img[data-src]');
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target as HTMLImageElement;
+        img.src = img.dataset.src!;
+        img.removeAttribute('data-src');
+        img.classList.remove('lazy');
+        observer.unobserve(img);
+      }
+    });
+  });
+
+  images.forEach(img => imageObserver.observe(img));
+
+  // Preload des ressources critiques
+  const preloadLinks = [
+    '/og-image.png',
+    '/twitter-image.png',
+    '/favicon-32x32.png'
+  ];
+
+  preloadLinks.forEach(href => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.href = href;
+    link.as = 'image';
+    document.head.appendChild(link);
+  });
+
+  // Service Worker pour le cache
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registered:', registration);
+      })
+      .catch(error => {
+        console.log('SW registration failed:', error);
+      });
+  }
 };
