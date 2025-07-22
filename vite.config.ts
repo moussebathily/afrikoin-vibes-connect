@@ -43,13 +43,7 @@ export default defineConfig(({ mode }) => ({
     },
     // Optimisation des assets
     assetsInlineLimit: 4096, // Inline les petits assets < 4kb
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production'
-      }
-    },
+    minify: mode === 'production' ? 'esbuild' : false,
     // Configuration du cache pour les assets statiques
     assetsDir: 'assets',
     sourcemap: mode === 'development'
