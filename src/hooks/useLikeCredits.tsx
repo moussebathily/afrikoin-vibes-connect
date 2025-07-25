@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface LikeCredits {
   id: string;
@@ -20,19 +21,21 @@ export const useLikeCredits = () => {
   const [credits, setCredits] = useState<LikeCredits | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isUsing, setIsUsing] = useState(false);
+  const [loadingUser, setLoadingUser] = useState<string | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    loadCredits();
-  }, []);
+  // Debounce loading to prevent multiple requests
+  const debouncedLoadingUser = useDebounce(loadingUser, 500);
 
-  const loadCredits = async () => {
+  const loadCredits = useCallback(async () => {
     try {
       setIsLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       
-      if (!user) return;
+      if (!user || debouncedLoadingUser === user.id) return;
+      setLoadingUser(user.id);
 
+      // Check if credits already exist
       const { data, error } = await supabase
         .from('like_credits')
         .select('*')
@@ -65,8 +68,13 @@ export const useLikeCredits = () => {
       console.error('Failed to load credits:', error);
     } finally {
       setIsLoading(false);
+      setLoadingUser(null);
     }
-  };
+  }, [debouncedLoadingUser]);
+
+  useEffect(() => {
+    loadCredits();
+  }, [loadCredits]);
 
   const useLike = async (params: UseLikeParams = {}) => {
     try {

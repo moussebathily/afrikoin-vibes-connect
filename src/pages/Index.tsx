@@ -1,19 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import CategoriesGrid from '@/components/CategoriesGrid';
-import ContentCreation from '@/components/ContentCreation';
-import SocialFeed from '@/components/SocialFeed';
-import UserProfile from '@/components/UserProfile';
-import PostsFeed from '@/components/PostsFeed';
-import LiveStreaming from '@/components/LiveStreaming';
-import PaymentOptions from '@/components/PaymentOptions';
-import DailyNews from '@/components/DailyNews';
-import DailyEntertainment from '@/components/DailyEntertainment';
-import MessagingCenter from '@/components/MessagingCenter';
-import Footer from '@/components/Footer';
-import NavigationMenu from '@/components/NavigationMenu';
 import SEOHead from '@/components/SEOHead';
 import Loading from '@/components/ui/loading';
 import { AuthInitializer } from '@/components/AuthInitializer';
@@ -26,6 +15,19 @@ import { useCache } from '@/hooks/useCache';
 import { analytics } from '@/services/analyticsService';
 import { advancedAnalytics } from '@/services/advancedAnalytics';
 
+// Lazy load heavy components
+const ContentCreation = lazy(() => import('@/components/ContentCreation'));
+const SocialFeed = lazy(() => import('@/components/SocialFeed'));
+const UserProfile = lazy(() => import('@/components/UserProfile'));
+const PostsFeed = lazy(() => import('@/components/PostsFeed'));
+const LiveStreaming = lazy(() => import('@/components/LiveStreaming'));
+const PaymentOptions = lazy(() => import('@/components/PaymentOptions'));
+const DailyNews = lazy(() => import('@/components/DailyNews'));
+const DailyEntertainment = lazy(() => import('@/components/DailyEntertainment'));
+const MessagingCenter = lazy(() => import('@/components/MessagingCenter'));
+const Footer = lazy(() => import('@/components/Footer'));
+const NavigationMenu = lazy(() => import('@/components/NavigationMenu'));
+
 const Index = () => {
   const [language, setLanguage] = useState<Language>('fr');
   const [isLoading, setIsLoading] = useState(true);
@@ -35,73 +37,75 @@ const Index = () => {
   const { metrics, measureAsync } = usePerformance('Index');
   const cache = useCache({ ttl: 10 * 60 * 1000 }); // 10 minutes cache
 
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // Initialize analytics with performance tracking
-        await measureAsync('analytics_init', async () => {
-          analytics.initialize();
-          analytics.trackPageView('/', user?.id);
-        });
+  // Memoized initialization to prevent re-runs
+  const initializeApp = useCallback(async () => {
+    try {
+      // Initialize analytics with performance tracking
+      await measureAsync('analytics_init', async () => {
+        analytics.initialize();
+        analytics.trackPageView('/', user?.id);
+      });
 
-        // Setup advanced tracking
-        const cleanup = advancedAnalytics.setupRealTimeTracking();
-        advancedAnalytics.trackUserJourney('app_loaded');
+      // Setup advanced tracking
+      const cleanup = advancedAnalytics.setupRealTimeTracking();
+      advancedAnalytics.trackUserJourney('app_loaded');
 
-        // Configuration pour les applications mobiles Capacitor
-        if (isCapacitor) {
-          console.log('AfriKoin running in Capacitor mobile app');
-          
-          // Gestion du status bar
-          if ((window as any).StatusBar) {
-            (window as any).StatusBar.setBackgroundColor('#22c55e');
-            (window as any).StatusBar.setStyle('light');
-          }
-          
-          // Gestion du splash screen
-          if ((window as any).SplashScreen) {
-            setTimeout(() => {
-              (window as any).SplashScreen.hide();
-            }, 3000);
-          }
+      // Configuration pour les applications mobiles Capacitor
+      if (isCapacitor) {
+        console.log('AfriKoin running in Capacitor mobile app');
+        
+        // Gestion du status bar
+        if ((window as any).StatusBar) {
+          (window as any).StatusBar.setBackgroundColor('#22c55e');
+          (window as any).StatusBar.setStyle('light');
         }
-
-        // Optimized SEO submission with caching
-        const cacheKey = `seo_submitted_${language}`;
-        if (!cache.has(cacheKey)) {
-          const timer = setTimeout(async () => {
-            await measureAsync('seo_submit', async () => {
-              await submitToGoogle();
-              cache.set(cacheKey, true);
-            });
-          }, 5000);
-
-          return () => {
-            clearTimeout(timer);
-            cleanup?.();
-          };
+        
+        // Gestion du splash screen
+        if ((window as any).SplashScreen) {
+          setTimeout(() => {
+            (window as any).SplashScreen.hide();
+          }, 3000);
         }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error('App initialization error:', error);
-        analytics.trackError('app_init_error', error instanceof Error ? error.message : 'Unknown error', user?.id);
-        setIsLoading(false);
       }
-    };
 
-    initializeApp();
+      // Optimized SEO submission with caching
+      const cacheKey = `seo_submitted_${language}`;
+      if (!cache.has(cacheKey)) {
+        const timer = setTimeout(async () => {
+          await measureAsync('seo_submit', async () => {
+            await submitToGoogle();
+            cache.set(cacheKey, true);
+          });
+        }, 5000);
+
+        return () => {
+          clearTimeout(timer);
+          cleanup?.();
+        };
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error('App initialization error:', error);
+      analytics.trackError('app_init_error', error instanceof Error ? error.message : 'Unknown error', user?.id);
+      setIsLoading(false);
+    }
   }, [isCapacitor, submitToGoogle, user?.id, language, measureAsync, cache]);
 
-  // Track language changes with performance
   useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
+
+  // Memoized language change handler
+  const handleLanguageChange = useCallback((newLanguage: Language) => {
+    setLanguage(newLanguage);
     measureAsync('language_change', async () => {
-      analytics.track('language_changed', { language }, user?.id);
+      analytics.track('language_changed', { language: newLanguage }, user?.id);
       advancedAnalytics.trackUserEngagement('language_selector', 'change');
     });
-  }, [language, user?.id, measureAsync]);
+  }, [user?.id, measureAsync]);
 
-  // Track performance metrics
+  // Memoized performance tracking
   useEffect(() => {
     const interval = setInterval(() => {
       const behavior = advancedAnalytics.getUserBehavior();
@@ -112,10 +116,22 @@ const Index = () => {
         ...insights,
         renderMetrics: metrics
       });
-    }, 30000); // Every 30 seconds
+    }, 60000); // Reduced to every 60 seconds
 
     return () => clearInterval(interval);
   }, [metrics]);
+
+  // Memoized mobile spacing class
+  const mobileSpacing = useMemo(() => 
+    isMobile ? 'mobile-spacing pb-20' : '', 
+    [isMobile]
+  );
+
+  // Memoized safe area class
+  const safeAreaClass = useMemo(() => 
+    isCapacitor ? 'safe-area-top safe-area-bottom' : '', 
+    [isCapacitor]
+  );
 
   if (isLoading) {
     return (
@@ -130,7 +146,7 @@ const Index = () => {
   }
 
   return (
-    <div className={`min-h-screen bg-background ${isCapacitor ? 'safe-area-top safe-area-bottom' : ''}`}>
+    <div className={`min-h-screen bg-background ${safeAreaClass}`}>
       <AuthInitializer />
       <SEOHead 
         language={language}
@@ -142,41 +158,45 @@ const Index = () => {
       
       <Header 
         language={language} 
-        onLanguageChange={setLanguage} 
+        onLanguageChange={handleLanguageChange} 
       />
       
-      <main className={`${isMobile ? 'mobile-spacing pb-20' : ''}`}>
+      <main className={mobileSpacing}>
         <HeroSection language={language} />
         <CategoriesGrid language={language} />
-        <ContentCreation language={language} />
         
-        {/* Feed des publications */}
-        <section className="py-16">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
-                Publications de la communauté
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Découvrez le contenu partagé par nos utilisateurs
-              </p>
+        <Suspense fallback={<Loading size="md" variant="spinner" />}>
+          <ContentCreation language={language} />
+          
+          {/* Feed des publications */}
+          <section className="py-16">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+                  Publications de la communauté
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Découvrez le contenu partagé par nos utilisateurs
+                </p>
+              </div>
+              <PostsFeed />
             </div>
-            <PostsFeed />
-          </div>
-        </section>
-        
-        <DailyNews language={language} />
-        <DailyEntertainment language={language} />
-        <SocialFeed language={language} />
-        <MessagingCenter language={language} />
-        <UserProfile language={language} />
-        <LiveStreaming language={language} />
-        <PaymentOptions language={language} />
+          </section>
+          
+          <DailyNews language={language} />
+          <DailyEntertainment language={language} />
+          <SocialFeed language={language} />
+          <MessagingCenter language={language} />
+          <UserProfile language={language} />
+          <LiveStreaming language={language} />
+          <PaymentOptions language={language} />
+        </Suspense>
       </main>
       
-      <Footer language={language} />
-      
-      {isMobile && <NavigationMenu />}
+      <Suspense fallback={null}>
+        <Footer language={language} />
+        {isMobile && <NavigationMenu />}
+      </Suspense>
     </div>
   );
 };

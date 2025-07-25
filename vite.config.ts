@@ -27,13 +27,29 @@ export default defineConfig(({ mode }) => ({
         '@awesome-cordova-plugins/in-app-purchase-2'
       ],
       output: {
-        // Code splitting pour optimiser le cache
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@radix-ui/react-avatar', '@radix-ui/react-dialog', '@radix-ui/react-popover'],
-          supabase: ['@supabase/supabase-js'],
-          utils: ['date-fns', 'clsx', 'class-variance-authority']
+        // Optimized code splitting
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'ui-vendor';
+            }
+            if (id.includes('@supabase')) {
+              return 'supabase-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'icons-vendor';
+            }
+            return 'vendor';
+          }
+          if (id.includes('src/pages/')) {
+            return 'pages';
+          }
+          if (id.includes('src/components/')) {
+            return 'components';
+          }
         },
         // Noms de fichiers avec hash pour le cache
         entryFileNames: 'assets/[name]-[hash].js',
@@ -42,11 +58,14 @@ export default defineConfig(({ mode }) => ({
       }
     },
     // Optimisation des assets
-    assetsInlineLimit: 4096, // Inline les petits assets < 4kb
+    assetsInlineLimit: 2048, // Reduce inline limit
     minify: mode === 'production' ? 'esbuild' : false,
+    target: 'esnext', // Modern browsers for better performance
     // Configuration du cache pour les assets statiques
     assetsDir: 'assets',
-    sourcemap: mode === 'development'
+    sourcemap: mode === 'development',
+    // Compress output
+    reportCompressedSize: false
   },
   // Configuration du cache pour le développement
   optimizeDeps: {
