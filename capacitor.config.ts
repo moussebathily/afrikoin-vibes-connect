@@ -16,18 +16,29 @@ const config: CapacitorConfig = {
     },
     allowMixedContent: true,
     captureInput: true,
-    webContentsDebuggingEnabled: true
+    webContentsDebuggingEnabled: true,
+    // Enhanced edge-to-edge configuration for Android 14+
+    appendUserAgent: 'AfriKoin/1.0',
+    overrideUserAgent: undefined,
+    backgroundColor: '#22c55e'
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 3000,
+      launchShowDuration: 2000,
       launchAutoHide: true,
       backgroundColor: "#22c55e",
       androidSplashResourceName: "splash",
       androidScaleType: "CENTER_CROP",
       showSpinner: false,
-      splashFullScreen: true,
-      splashImmersive: true,
+      splashFullScreen: false, // Updated for edge-to-edge compatibility
+      splashImmersive: false, // Updated for modern Android versions
+      androidSpinnerStyle: "small",
+      iosSpinnerStyle: "small"
+    },
+    StatusBar: {
+      style: 'dark',
+      backgroundColor: '#22c55e',
+      overlaysWebView: true, // Enable for edge-to-edge
     },
   },
 };
