@@ -162,26 +162,145 @@
   background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--accent)) 100%);
 }
 
-/* Optimisations tactiles mobiles */
-@media (max-width: 768px) {
-  .touch-optimized {
-    min-height: 44px;
-    min-width: 44px;
+/* Compatibilité universelle des appareils */
+
+/* Classes conditionnelles par type d'appareil */
+.device-small {
+  font-size: 14px;
+}
+
+.device-large {
+  font-size: 18px;
+}
+
+.device-tablet {
+  padding: 2rem;
+}
+
+.device-notch {
+  padding-top: env(safe-area-inset-top);
+}
+
+.device-touch .touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+.device-hover .hover-target:hover {
+  transform: scale(1.02);
+}
+
+.device-low-end * {
+  transition: none !important;
+  animation: none !important;
+}
+
+.device-retina {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Plateformes spécifiques */
+.platform-ios {
+  -webkit-overflow-scrolling: touch;
+}
+
+.platform-android {
+  scroll-behavior: smooth;
+}
+
+/* Optimisations responsives avancées */
+@media (max-width: 320px) {
+  /* Très petits écrans (iPhone SE 1ère gen) */
+  .responsive-text {
+    font-size: 0.875rem;
+    line-height: 1.25;
   }
   
-  /* Amélioration de la lisibilité sur mobile */
-  h1 {
-    font-size: 1.75rem;
-    line-height: 1.2;
+  .responsive-spacing {
+    padding: 0.5rem;
+    gap: 0.5rem;
   }
-  
-  h2 {
-    font-size: 1.5rem;
+}
+
+@media (min-width: 321px) and (max-width: 375px) {
+  /* Petits écrans (iPhone 12/13 mini) */
+  .responsive-text {
+    font-size: 0.9rem;
     line-height: 1.3;
   }
   
-  /* Espacement optimisé pour le tactile */
-  .mobile-spacing > * + * {
-    margin-top: 1rem;
+  .responsive-spacing {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 376px) and (max-width: 414px) {
+  /* Écrans moyens (iPhone 12/13) */
+  .responsive-text {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .responsive-spacing {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 415px) {
+  /* Grands écrans (iPhone Pro Max, tablettes) */
+  .responsive-text {
+    font-size: 1.125rem;
+    line-height: 1.5;
+  }
+  
+  .responsive-spacing {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+}
+
+/* Optimisations pour orientation */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-compact {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Gestion des densités de pixels */
+@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
+  .high-dpi-optimized {
+    border-width: 0.5px;
+  }
+}
+
+/* Touch et interaction universelle */
+.universal-touch {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.universal-touch:active {
+  transform: scale(0.98);
+}
+
+/* Scroll universel */
+.universal-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+
+/* Support des appareils pliables */
+@media (max-width: 280px) {
+  .foldable-compact {
+    font-size: 0.75rem;
+    padding: 0.25rem;
   }
 }

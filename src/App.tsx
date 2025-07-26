@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { useSafeArea } from "./hooks/useSafeArea";
 import { useAuth } from "./hooks/useAuth";
+import { useDeviceCompatibility } from "./hooks/useDeviceCompatibility";
 import { ErrorBoundary } from "./components/ui/error-boundary";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -80,12 +81,13 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 
 const App = () => {
   const { safeAreaClasses, isEdgeToEdge } = useSafeArea();
+  const { compatibilityClasses } = useDeviceCompatibility();
   
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <div className={`min-h-screen ${isEdgeToEdge ? safeAreaClasses : ''}`}>
+          <div className={`min-h-screen ${isEdgeToEdge ? safeAreaClasses : ''} ${compatibilityClasses}`}>
             <Toaster />
             <Sonner />
             <BrowserRouter>
