@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AfriKoin Brand Colors (HSL converted to RGB) -->
+    <!-- Primary: hsl(142, 76%, 36%) = #16a34a -->
+    <color name="afrikoin_primary">#22c55e</color>
+    <color name="afrikoin_on_primary">#ffffff</color>
+    <color name="afrikoin_primary_container">#dcfce7</color>
+    <color name="afrikoin_on_primary_container">#052e16</color>
+
+    <!-- Secondary: Based on primary with adjusted hue -->
+    <color name="afrikoin_secondary">#059669</color>
+    <color name="afrikoin_on_secondary">#ffffff</color>
+    <color name="afrikoin_secondary_container">#d1fae5</color>
+    <color name="afrikoin_on_secondary_container">#064e3b</color>
+
+    <!-- Background & Surface -->
+    <color name="afrikoin_background">#fefefe</color>
+    <color name="afrikoin_on_background">#1a1a1a</color>
+    <color name="afrikoin_surface">#ffffff</color>
+    <color name="afrikoin_on_surface">#1a1a1a</color>
+    <color name="afrikoin_surface_variant">#f1f5f9</color>
+    <color name="afrikoin_on_surface_variant">#475569</color>
+
+    <!-- Error Colors -->
+    <color name="afrikoin_error">#dc2626</color>
+    <color name="afrikoin_on_error">#ffffff</color>
+    <color name="afrikoin_error_container">#fecaca</color>
+    <color name="afrikoin_on_error_container">#7f1d1d</color>
+
+    <!-- Outline -->
+    <color name="afrikoin_outline">#e2e8f0</color>
+    <color name="afrikoin_outline_variant">#f1f5f9</color>
+
+    <!-- Special FinTech Colors -->
+    <color name="afrikoin_success">#10b981</color>
+    <color name="afrikoin_warning">#f59e0b</color>
+    <color name="afrikoin_info">#3b82f6</color>
+
+    <!-- Legacy colors for compatibility -->
+    <color name="colorPrimary">@color/afrikoin_primary</color>
+    <color name="colorPrimaryDark">#15803d</color>
+    <color name="colorAccent">@color/afrikoin_secondary</color>
+</resources>

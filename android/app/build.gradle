@@ -1,21 +1,38 @@
 
 apply plugin: 'com.android.application'
 
+// Architecture Detection Plugins for Android Studio
+apply plugin: 'kotlin-android'
+
 android {
     namespace "app.lovable.afrikoin"
     compileSdk rootProject.ext.compileSdkVersion
+    
     defaultConfig {
-        applicationId "app.lovable.627c2a1590254f3b8d084e5bbf9c4f69"
+        applicationId "app.lovable.afrikoin"  // Updated to match AndroidManifest.xml
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Architecture Metadata for Android Studio Detection
+        manifestPlaceholders = [
+            ARCHITECTURE_FRAMEWORK: "React-Capacitor",
+            ARCHITECTURE_TYPE: "Progressive-Web-App",
+            DESIGN_SYSTEM: "Material-Design-3",
+            APP_CATEGORY: "FinTech-Social"
+        ]
+        
         aaptOptions {
-             // Files and dirs to omit from the packaged APK/AAB
-             // ref: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
+        
+        // Vector drawable support for better performance
+        vectorDrawables.useSupportLibrary = true
+        
+        // Multi-dex support for React apps
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -34,6 +51,10 @@ android {
             applicationIdSuffix ".debug"
             debuggable true
             minifyEnabled false
+            // Architecture build config for debugging
+            buildConfigField "String", "ARCHITECTURE", '"React-Capacitor-Debug"'
+            buildConfigField "String", "DESIGN_SYSTEM", '"Material-Design-3"'
+            buildConfigField "String", "APP_CATEGORY", '"FinTech-Social"'
         }
         release {
             minifyEnabled false
@@ -41,6 +62,10 @@ android {
             if (signingConfigs.release.storeFile) {
                 signingConfig signingConfigs.release
             }
+            // Architecture build config for release
+            buildConfigField "String", "ARCHITECTURE", '"React-Capacitor-Release"'
+            buildConfigField "String", "DESIGN_SYSTEM", '"Material-Design-3"'
+            buildConfigField "String", "APP_CATEGORY", '"FinTech-Social"'
         }
     }
 
@@ -70,16 +95,35 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    
+    // Core Android dependencies
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    
+    // Material Design 3 for AfriKoin theme
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    
+    // Capacitor core and plugins
     implementation project(':capacitor-android')
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-keyboard')
     implementation project(':capacitor-status-bar')
+    
+    // Multi-dex support for React apps
+    implementation 'androidx.multidex:multidex:2.0.1'
+    
+    // Architecture Components for better Android Studio detection
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0'
+    
+    // Testing dependencies
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    
+    // Capacitor Cordova plugins
     implementation project(':capacitor-cordova-android-plugins')
 }
 

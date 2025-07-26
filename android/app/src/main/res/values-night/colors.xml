@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AfriKoin Dark Theme Colors -->
+    <color name="afrikoin_primary">#22c55e</color>
+    <color name="afrikoin_on_primary">#052e16</color>
+    <color name="afrikoin_primary_container">#15803d</color>
+    <color name="afrikoin_on_primary_container">#dcfce7</color>
+
+    <color name="afrikoin_secondary">#6ee7b7</color>
+    <color name="afrikoin_on_secondary">#064e3b</color>
+    <color name="afrikoin_secondary_container">#047857</color>
+    <color name="afrikoin_on_secondary_container">#d1fae5</color>
+
+    <!-- Dark Background & Surface -->
+    <color name="afrikoin_background">#0f0f0f</color>
+    <color name="afrikoin_on_background">#e7e7e7</color>
+    <color name="afrikoin_surface">#1a1a1a</color>
+    <color name="afrikoin_on_surface">#e7e7e7</color>
+    <color name="afrikoin_surface_variant">#334155</color>
+    <color name="afrikoin_on_surface_variant">#cbd5e1</color>
+
+    <!-- Dark Error Colors -->
+    <color name="afrikoin_error">#f87171</color>
+    <color name="afrikoin_on_error">#7f1d1d</color>
+    <color name="afrikoin_error_container">#dc2626</color>
+    <color name="afrikoin_on_error_container">#fecaca</color>
+
+    <!-- Dark Outline -->
+    <color name="afrikoin_outline">#475569</color>
+    <color name="afrikoin_outline_variant">#334155</color>
+</resources>

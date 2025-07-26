@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base AfriKoin Theme -->
+    <style name="AppTheme.AfriKoin" parent="Theme.Material3.DayNight">
+        <!-- Primary Colors -->
+        <item name="colorPrimary">@color/afrikoin_primary</item>
+        <item name="colorOnPrimary">@color/afrikoin_on_primary</item>
+        <item name="colorPrimaryContainer">@color/afrikoin_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/afrikoin_on_primary_container</item>
+
+        <!-- Secondary Colors -->
+        <item name="colorSecondary">@color/afrikoin_secondary</item>
+        <item name="colorOnSecondary">@color/afrikoin_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/afrikoin_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/afrikoin_on_secondary_container</item>
+
+        <!-- Background -->
+        <item name="android:colorBackground">@color/afrikoin_background</item>
+        <item name="colorSurface">@color/afrikoin_surface</item>
+        <item name="colorOnSurface">@color/afrikoin_on_surface</item>
+
+        <!-- Status Bar -->
+        <item name="android:statusBarColor">@color/afrikoin_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Navigation Bar -->
+        <item name="android:navigationBarColor">@color/afrikoin_surface</item>
+        <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Window Flags -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <!-- Launcher Theme -->
+    <style name="AppTheme.AfriKoin.Launcher" parent="AppTheme.AfriKoin">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowDisablePreview">false</item>
+    </style>
+
+    <!-- FinTech Specific Styles -->
+    <style name="AfriKoin.Button" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/afrikoin_on_primary</item>
+        <item name="backgroundTint">@color/afrikoin_primary</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="AfriKoin.Card" parent="Widget.Material3.CardView">
+        <item name="cardBackgroundColor">@color/afrikoin_surface</item>
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!-- Text Styles -->
+    <style name="AfriKoin.Text.Headline" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:textColor">@color/afrikoin_on_surface</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AfriKoin.Text.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/afrikoin_on_surface</item>
+    </style>
+</resources>
