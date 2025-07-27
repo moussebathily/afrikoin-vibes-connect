@@ -28,15 +28,17 @@ export const useSafeArea = () => {
           const platform = Capacitor.getPlatform();
           
           // Detect edge-to-edge capability based on Android version
-          const isAndroidEdgeToEdge = platform === 'android' && 
-            deviceInfo.androidSDKVersion && 
-            parseInt(deviceInfo.androidSDKVersion.toString()) >= 34; // Android 14+ (API 34+)
+          // Android 15 (SDK 35) has edge-to-edge by default, Android 14+ supports it
+          const androidVersion = deviceInfo.androidSDKVersion ? 
+            parseInt(deviceInfo.androidSDKVersion.toString()) : 0;
+          const isAndroidEdgeToEdge = platform === 'android' && androidVersion >= 34;
           
           setIsEdgeToEdge(isAndroidEdgeToEdge);
 
           if (isAndroidEdgeToEdge) {
-            // For Android 14+, let CSS env() variables handle safe areas
-            // Only set minimal fallback values
+            // For Android 14+ and 15+, use CSS env() variables for proper inset handling
+            // SDK 35 requires explicit inset management
+            console.log(`Edge-to-edge detected for Android ${androidVersion}`);
             setSafeAreaInsets({
               top: 0, // CSS env(safe-area-inset-top) will handle this
               bottom: 0, // CSS env(safe-area-inset-bottom) will handle this

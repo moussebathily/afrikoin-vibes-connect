@@ -57,7 +57,9 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'dark',
       backgroundColor: '#22c55e',
-      overlay: false
+      overlay: false,
+      // Android 15+ edge-to-edge configuration
+      androidForceStatusBarTranslucent: true
     },
     Keyboard: {
       resize: 'body',

@@ -121,6 +121,22 @@
       padding-left: max(var(--safe-area-left), 0px);
       padding-right: max(var(--safe-area-right), 0px);
     }
+    
+    /* SDK 35 specific classes for Android 15+ */
+    .sdk-35-container {
+      padding-top: env(safe-area-inset-top, 48px);
+      padding-bottom: env(safe-area-inset-bottom, 24px);
+    }
+    
+    .sdk-35-header {
+      margin-top: env(safe-area-inset-top, 0px);
+      padding-top: 16px;
+    }
+    
+    .sdk-35-footer {
+      margin-bottom: env(safe-area-inset-bottom, 0px);
+      padding-bottom: 16px;
+    }
   }
 }
 

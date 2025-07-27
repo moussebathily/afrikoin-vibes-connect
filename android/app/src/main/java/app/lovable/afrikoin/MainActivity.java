@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.util.Log;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 
 import com.getcapacitor.BridgeActivity;
@@ -57,8 +58,13 @@ public class MainActivity extends BridgeActivity {
     }
     
     private void configureEdgeToEdge() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            // Android 14+ edge-to-edge implementation
+        // Enable edge-to-edge for SDK 35 (Android 15) and ensure backwards compatibility
+        if (Build.VERSION.SDK_INT >= 35) {
+            // Android 15+ (API 35) - Edge-to-edge is default, ensure proper handling
+            EdgeToEdge.enable(this);
+            Log.i(TAG, "Android 15+ edge-to-edge enabled with EdgeToEdge.enable()");
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // Android 14 (API 34) - Manual edge-to-edge implementation
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
             
             WindowInsetsControllerCompat windowInsetsController = 
@@ -69,6 +75,10 @@ public class MainActivity extends BridgeActivity {
                     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 );
             }
+            Log.i(TAG, "Android 14 edge-to-edge configured manually");
+        } else {
+            // Android 13 and below - Standard behavior
+            Log.i(TAG, "Standard display mode for Android " + Build.VERSION.SDK_INT);
         }
     }
     
