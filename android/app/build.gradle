@@ -1,4 +1,7 @@
 
+// AfriKoin Android App Build Configuration
+// React + Capacitor mobile application targeting Android 15+ (SDK 35)
+// This project uses edge-to-edge display and Material Design 3
 apply plugin: 'com.android.application'
 
 // Architecture Detection Plugins for Android Studio
