@@ -1,5 +1,0 @@
--- Index pour optimiser les performances RLS
-CREATE INDEX idx_policy_versions_active ON privacy.policy_versions(is_active);
-CREATE INDEX idx_policy_acceptances_user ON privacy.policy_acceptances(user_id);
-CREATE INDEX idx_audit_log_user ON security.audit_log(user_id);
-CREATE INDEX idx_audit_log_event_type ON security.audit_log(event_type);

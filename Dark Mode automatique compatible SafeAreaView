@@ -1,6 +1,0 @@
-git checkout -b feature/dark-mode-safearea
-# Modifie App.tsx avec le code dark mode + SafeAreaView (comme discuté)
-
-git add App.tsx
-git commit -m "feat: ajout du dark mode automatique compatible SafeAreaView pour Android 15+"
-git push origin feature/dark-mode-safearea
