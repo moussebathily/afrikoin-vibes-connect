@@ -81,8 +81,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     bundle {
@@ -118,9 +118,11 @@ dependencies {
     
     // Capacitor core and plugins
     implementation project(':capacitor-android')
+    implementation project(':capacitor-app')
     implementation project(':capacitor-haptics')
     implementation project(':capacitor-keyboard')
     implementation project(':capacitor-status-bar')
+    implementation project(':capacitor-device')
     
     // Multi-dex support for React apps
     implementation 'androidx.multidex:multidex:2.0.1'
