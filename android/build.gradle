@@ -1,24 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext {
-        compileSdkVersion = 35
-        targetSdkVersion = 35
-        minSdkVersion = 22
-        androidxActivityVersion = '1.8.0'
-        androidxAppCompatVersion = '1.6.1'
-        androidxCoordinatorLayoutVersion = '1.2.0'
-        androidxCoreVersion = '1.13.0'
-        androidxFragmentVersion = '1.6.2'
-        coreSplashScreenVersion = '1.0.1'
-        androidxWebkitVersion = '1.8.0'
-        junitVersion = '4.13.2'
-        androidxJunitVersion = '1.1.5'
-        androidxEspressoCoreVersion = '3.5.1'
-        cordovaAndroidVersion = '10.1.1'
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10"
         classpath 'com.google.gms:google-services:4.3.15'
 
         // NOTE: Do not place your application dependencies here; they belong
