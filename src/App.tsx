@@ -1,3 +1,4 @@
+import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -52,6 +53,13 @@ function App() {
             }>
               <Route index element={<HomePage />} />
               <Route path="wallet" element={<WalletPage />} />
+              <Route path="ai-studio" element={
+                <div className="p-4">
+                  {React.createElement(
+                    React.lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
+                  )}
+                </div>
+              } />
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
               <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
               <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
