@@ -3,9 +3,12 @@ import { PostCard } from '@/components/posts/PostCard'
 import { StoryCarousel } from '@/components/stories/StoryCarousel'
 import { WelcomeCard } from '@/components/home/WelcomeCard'
 import { FestivalBanner } from '@/components/holidays/FestivalBanner'
+import { IndependenceBanner } from '@/components/holidays/IndependenceBanner'
+import { EntertainmentSection } from '@/components/entertainment/EntertainmentSection'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
+
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
@@ -43,11 +46,18 @@ export function HomePage() {
     if (!user) return
 
     try {
-      // Here we would implement the like system with credits
-      // For now, just update the UI optimistically
+      const { data, error } = await supabase.functions.invoke('like-post', {
+        body: { postId }
+      })
+
+      if (error || !data?.success) {
+        console.error('Error liking post:', error || data)
+        return
+      }
+
       setPosts(prev => prev.map(post => 
         post.id === postId 
-          ? { ...post, like_count: post.like_count + 1 }
+          ? { ...post, like_count: data.like_count }
           : post
       ))
     } catch (error) {
@@ -72,11 +82,17 @@ export function HomePage() {
       {/* Welcome Card for new users */}
       <WelcomeCard />
       
+      {/* Independence Day Banner (shows only on your country's Independence Day) */}
+      <IndependenceBanner />
+      
       {/* Festival Banner */}
       <FestivalBanner />
       
       {/* Stories Carousel */}
       <StoryCarousel />
+      
+      {/* Cultural & Entertainment */}
+      <EntertainmentSection />
       
       {/* Posts Feed */}
       <div className="space-y-6">
