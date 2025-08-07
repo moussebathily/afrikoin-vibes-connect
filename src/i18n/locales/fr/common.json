@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Acheter & vendre en confiance partout en Afrique"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "signup": "Créer un compte",
+    "logout": "Se déconnecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom complet",
+    "welcome": "Bienvenue sur AfriKoin",
+    "createAccount": "Créez votre compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "noAccount": "Vous n'avez pas de compte ?"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "likes": "Likes",
+    "holidays": "Fêtes",
+    "wallet": "Wallet",
+    "profile": "Profil",
+    "search": "Rechercher",
+    "notifications": "Notifications",
+    "create": "Créer"
+  },
+  "market": {
+    "post": "Publier une annonce",
+    "search": "Rechercher",
+    "price": "Prix",
+    "noResults": "Aucun résultat trouvé",
+    "categories": "Catégories"
+  },
+  "wallet": {
+    "balance": "Solde",
+    "addFunds": "Ajouter des fonds",
+    "withdraw": "Retirer",
+    "transactions": "Transactions",
+    "send": "Envoyer",
+    "receive": "Recevoir"
+  },
+  "likes": {
+    "buyCredits": "Acheter des crédits de likes",
+    "remaining": "Crédits restants : {{count}}",
+    "noCredits": "Plus de crédits"
+  },
+  "posts": {
+    "noPostsYet": "Aucun post pour le moment",
+    "beFirst": "Soyez le premier à partager du contenu !",
+    "likes": "likes",
+    "comments": "commentaires",
+    "share": "Partager"
+  },
+  "holidays": {
+    "discover": "Découvrir",
+    "upcoming": "Fêtes à venir",
+    "today": "Aujourd'hui"
+  },
+  "welcome": {
+    "title": "Bienvenue sur AfriKoin !",
+    "subtitle": "Connectez-vous, échangez et célébrez à travers l'Afrique",
+    "freeLikes": "10 likes gratuits",
+    "premiumContent": "Contenu premium",
+    "community": "Communauté",
+    "createFirstPost": "Créer mon premier post"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "save": "Sauvegarder",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "language": "Langue"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

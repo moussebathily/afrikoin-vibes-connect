@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Siya da sayarwa a ko'ina cikin Afrika da amana"
+  },
+  "auth": {
+    "login": "Shiga",
+    "signup": "Yi rajista",
+    "logout": "Fita",
+    "email": "Imel",
+    "password": "Kalmar sirri",
+    "name": "Cikakken suna",
+    "welcome": "Barka da zuwa AfriKoin",
+    "createAccount": "Kirkiro asusun ku",
+    "alreadyHaveAccount": "Kuna da asusu tuni?",
+    "noAccount": "Ba ku da asusu?"
+  },
+  "navigation": {
+    "home": "Gida",
+    "likes": "Son",
+    "holidays": "Bukukuwa",
+    "wallet": "Walat",
+    "profile": "Bayani",
+    "search": "Nema",
+    "notifications": "Sanarwa",
+    "create": "Kirkira"
+  },
+  "market": {
+    "post": "Buga sanarwa",
+    "search": "Nema",
+    "price": "Farashi",
+    "noResults": "Babu sakamako",
+    "categories": "Nau'o'i"
+  },
+  "wallet": {
+    "balance": "Ma'auni",
+    "addFunds": "Kara kudi",
+    "withdraw": "Cire kudi",
+    "transactions": "Mu'amala",
+    "send": "Aika",
+    "receive": "Karba"
+  },
+  "likes": {
+    "buyCredits": "Sayi kredit na son",
+    "remaining": "Kredit da suka rage: {{count}}",
+    "noCredits": "Babu kredit"
+  },
+  "posts": {
+    "noPostsYet": "Babu posts tukuna",
+    "beFirst": "Ku zama na farko don raba abun ciki!",
+    "likes": "son",
+    "comments": "ra'ayi",
+    "share": "Raba"
+  },
+  "holidays": {
+    "discover": "Gano",
+    "upcoming": "Bukukuwa masu zuwa",
+    "today": "Yau"
+  },
+  "welcome": {
+    "title": "Barka da zuwa AfriKoin!",
+    "subtitle": "Haɗa, kasuwanci, da yin murna a duk Afrika",
+    "freeLikes": "Son 10 kyauta",
+    "premiumContent": "Babban abun ciki",
+    "community": "Al'umma",
+    "createFirstPost": "Kirkiro post na na farko"
+  },
+  "common": {
+    "loading": "Ana lodawa...",
+    "error": "Kuskure",
+    "success": "Nasara",
+    "cancel": "Soke",
+    "save": "Ajiye",
+    "delete": "Share",
+    "edit": "Gyara",
+    "close": "Rufe",
+    "back": "Koma",
+    "next": "Na gaba",
+    "previous": "Na baya",
+    "language": "Harshe"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

@@ -3,9 +3,11 @@ import { Calendar, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/integrations/supabase/client'
 import { formatDate } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 
 export function FestivalBanner() {
   const [currentHoliday, setCurrentHoliday] = useState<any>(null)
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchUpcomingHoliday()
@@ -53,7 +55,7 @@ export function FestivalBanner() {
           className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0"
         >
           <Star className="h-4 w-4 mr-1" />
-          Découvrir
+          {t('holidays.discover')}
         </Button>
       </div>
     </div>

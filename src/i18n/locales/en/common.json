@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Buy & sell across Africa with trust"
+  },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "welcome": "Welcome to AfriKoin",
+    "createAccount": "Create your account",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?"
+  },
+  "navigation": {
+    "home": "Home",
+    "likes": "Likes",
+    "holidays": "Holidays",
+    "wallet": "Wallet",
+    "profile": "Profile",
+    "search": "Search",
+    "notifications": "Notifications",
+    "create": "Create"
+  },
+  "market": {
+    "post": "Post listing",
+    "search": "Search",
+    "price": "Price",
+    "noResults": "No results found",
+    "categories": "Categories"
+  },
+  "wallet": {
+    "balance": "Balance",
+    "addFunds": "Add funds",
+    "withdraw": "Withdraw",
+    "transactions": "Transactions",
+    "send": "Send",
+    "receive": "Receive"
+  },
+  "likes": {
+    "buyCredits": "Buy like credits",
+    "remaining": "Remaining credits: {{count}}",
+    "noCredits": "No credits remaining"
+  },
+  "posts": {
+    "noPostsYet": "No posts yet",
+    "beFirst": "Be the first to share content!",
+    "likes": "likes",
+    "comments": "comments",
+    "share": "Share"
+  },
+  "holidays": {
+    "discover": "Discover",
+    "upcoming": "Upcoming holidays",
+    "today": "Today"
+  },
+  "welcome": {
+    "title": "Welcome to AfriKoin!",
+    "subtitle": "Connect, trade, and celebrate across Africa",
+    "freeLikes": "10 free likes",
+    "premiumContent": "Premium content",
+    "community": "Community",
+    "createFirstPost": "Create my first post"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "language": "Language"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

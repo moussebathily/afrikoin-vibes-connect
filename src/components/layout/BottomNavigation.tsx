@@ -1,19 +1,21 @@
 import React from 'react'
 import { Home, Heart, Wallet, User, Calendar } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
-
-const navigationItems = [
-  { icon: Home, label: 'Accueil', path: '/' },
-  { icon: Heart, label: 'Likes', path: '/likes' },
-  { icon: Calendar, label: 'Fêtes', path: '/holidays' },
-  { icon: Wallet, label: 'Wallet', path: '/wallet' },
-  { icon: User, label: 'Profil', path: '/profile' },
-]
 
 export function BottomNavigation() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { t } = useTranslation()
+
+  const navigationItems = [
+    { icon: Home, label: t('navigation.home'), path: '/' },
+    { icon: Heart, label: t('navigation.likes'), path: '/likes' },
+    { icon: Calendar, label: t('navigation.holidays'), path: '/holidays' },
+    { icon: Wallet, label: t('navigation.wallet'), path: '/wallet' },
+    { icon: User, label: t('navigation.profile'), path: '/profile' },
+  ]
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t">

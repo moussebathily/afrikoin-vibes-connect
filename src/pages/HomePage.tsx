@@ -5,11 +5,13 @@ import { WelcomeCard } from '@/components/home/WelcomeCard'
 import { FestivalBanner } from '@/components/holidays/FestivalBanner'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTranslation } from 'react-i18next'
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   useEffect(() => {
     fetchPosts()
@@ -90,10 +92,10 @@ export function HomePage() {
       {posts.length === 0 && (
         <div className="text-center py-12">
           <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-            Aucun post pour le moment
+            {t('posts.noPostsYet')}
           </h3>
           <p className="text-muted-foreground">
-            Soyez le premier à partager du contenu !
+            {t('posts.beFirst')}
           </p>
         </div>
       )}

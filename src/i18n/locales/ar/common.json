@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "اشتر وبع في جميع أنحاء أفريقيا بثقة"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم الكامل",
+    "welcome": "مرحباً بك في AfriKoin",
+    "createAccount": "إنشاء حسابك",
+    "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+    "noAccount": "ليس لديك حساب؟"
+  },
+  "navigation": {
+    "home": "الرئيسية",
+    "likes": "الإعجابات",
+    "holidays": "الأعياد",
+    "wallet": "المحفظة",
+    "profile": "الملف الشخصي",
+    "search": "البحث",
+    "notifications": "الإشعارات",
+    "create": "إنشاء"
+  },
+  "market": {
+    "post": "أنشر إعلانًا",
+    "search": "ابحث",
+    "price": "السعر",
+    "noResults": "لا توجد نتائج",
+    "categories": "الفئات"
+  },
+  "wallet": {
+    "balance": "الرصيد",
+    "addFunds": "إضافة أموال",
+    "withdraw": "سحب",
+    "transactions": "المعاملات",
+    "send": "إرسال",
+    "receive": "استقبال"
+  },
+  "likes": {
+    "buyCredits": "شراء اعتمادات الإعجابات",
+    "remaining": "الأرصدة المتبقية: {{count}}",
+    "noCredits": "لا توجد أرصدة"
+  },
+  "posts": {
+    "noPostsYet": "لا توجد منشورات بعد",
+    "beFirst": "كن أول من يشارك المحتوى!",
+    "likes": "إعجابات",
+    "comments": "تعليقات",
+    "share": "مشاركة"
+  },
+  "holidays": {
+    "discover": "اكتشف",
+    "upcoming": "الأعياد القادمة",
+    "today": "اليوم"
+  },
+  "welcome": {
+    "title": "مرحباً بك في AfriKoin!",
+    "subtitle": "تواصل، تاجر، واحتفل في جميع أنحاء أفريقيا",
+    "freeLikes": "10 إعجابات مجانية",
+    "premiumContent": "محتوى مميز",
+    "community": "المجتمع",
+    "createFirstPost": "إنشاء منشوري الأول"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تحرير",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "language": "اللغة"
+  },
+  "_meta": {
+    "rtl": true
+  }
+}

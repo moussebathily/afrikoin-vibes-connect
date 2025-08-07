@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Compre e venda em toda África com confiança"
+  },
+  "auth": {
+    "login": "Entrar",
+    "signup": "Criar conta",
+    "logout": "Sair",
+    "email": "Email",
+    "password": "Senha",
+    "name": "Nome completo",
+    "welcome": "Bem-vindo ao AfriKoin",
+    "createAccount": "Crie sua conta",
+    "alreadyHaveAccount": "Já tem uma conta?",
+    "noAccount": "Não tem uma conta?"
+  },
+  "navigation": {
+    "home": "Início",
+    "likes": "Curtidas",
+    "holidays": "Feriados",
+    "wallet": "Carteira",
+    "profile": "Perfil",
+    "search": "Pesquisar",
+    "notifications": "Notificações",
+    "create": "Criar"
+  },
+  "market": {
+    "post": "Publicar anúncio",
+    "search": "Pesquisar",
+    "price": "Preço",
+    "noResults": "Nenhum resultado encontrado",
+    "categories": "Categorias"
+  },
+  "wallet": {
+    "balance": "Saldo",
+    "addFunds": "Adicionar fundos",
+    "withdraw": "Retirar",
+    "transactions": "Transações",
+    "send": "Enviar",
+    "receive": "Receber"
+  },
+  "likes": {
+    "buyCredits": "Comprar créditos de curtidas",
+    "remaining": "Créditos restantes: {{count}}",
+    "noCredits": "Sem créditos"
+  },
+  "posts": {
+    "noPostsYet": "Ainda não há publicações",
+    "beFirst": "Seja o primeiro a compartilhar conteúdo!",
+    "likes": "curtidas",
+    "comments": "comentários",
+    "share": "Compartilhar"
+  },
+  "holidays": {
+    "discover": "Descobrir",
+    "upcoming": "Feriados próximos",
+    "today": "Hoje"
+  },
+  "welcome": {
+    "title": "Bem-vindo ao AfriKoin!",
+    "subtitle": "Conecte-se, negocie e celebre em toda a África",
+    "freeLikes": "10 curtidas grátis",
+    "premiumContent": "Conteúdo premium",
+    "community": "Comunidade",
+    "createFirstPost": "Criar minha primeira publicação"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "close": "Fechar",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "language": "Idioma"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

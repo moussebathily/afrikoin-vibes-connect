@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Ra ati ta kaka Afrika pẹlu igbẹkẹle"
+  },
+  "auth": {
+    "login": "Wọle",
+    "signup": "Forukọsilẹ",
+    "logout": "Jade",
+    "email": "Imeeli",
+    "password": "Ọrọ igbaniwọle",
+    "name": "Orukọ kikun",
+    "welcome": "Kaabo si AfriKoin",
+    "createAccount": "Ṣẹda akanti rẹ",
+    "alreadyHaveAccount": "Ṣe o ni akanti tẹlẹ?",
+    "noAccount": "Ko ni akanti?"
+  },
+  "navigation": {
+    "home": "Ile",
+    "likes": "Awọn fẹran",
+    "holidays": "Awọn ojo isinmi",
+    "wallet": "Apo owo",
+    "profile": "Profaili",
+    "search": "Wa",
+    "notifications": "Awọn iwifunni",
+    "create": "Ṣẹda"
+  },
+  "market": {
+    "post": "Fi ikede ranṣẹ",
+    "search": "Wa",
+    "price": "Idiyele",
+    "noResults": "Ko si abajade",
+    "categories": "Awọn ẹka"
+  },
+  "wallet": {
+    "balance": "Iwọntunwọnsi",
+    "addFunds": "Fi owo kun",
+    "withdraw": "Yo owo",
+    "transactions": "Awọn iṣowo",
+    "send": "Fi ranṣẹ",
+    "receive": "Gba"
+  },
+  "likes": {
+    "buyCredits": "Ra awọn kirẹditi fẹran",
+    "remaining": "Awọn kirẹditi to ku: {{count}}",
+    "noCredits": "Ko si kirẹditi"
+  },
+  "posts": {
+    "noPostsYet": "Ko si ifiranṣẹ sibẹsibẹ",
+    "beFirst": "Jẹ ẹni akọkọ lati pin akoonu!",
+    "likes": "awọn fẹran",
+    "comments": "awọn asọye",
+    "share": "Pin"
+  },
+  "holidays": {
+    "discover": "Ṣawari",
+    "upcoming": "Awọn ojo isinmi to nbọ",
+    "today": "Loni"
+  },
+  "welcome": {
+    "title": "Kaabo si AfriKoin!",
+    "subtitle": "Darapọ, ṣowo, ati ṣe ayẹyẹ kaka Afrika",
+    "freeLikes": "Awọn fẹran 10 ọfẹ",
+    "premiumContent": "Akoonu pataki",
+    "community": "Agbegbe",
+    "createFirstPost": "Ṣẹda ifiranṣẹ akọkọ mi"
+  },
+  "common": {
+    "loading": "N ṣagbekalẹ...",
+    "error": "Aṣiṣe",
+    "success": "Aṣeyọri",
+    "cancel": "Fagilee",
+    "save": "Fi pamọ",
+    "delete": "Paarẹ",
+    "edit": "Ṣatunkọ",
+    "close": "Ti",
+    "back": "Pada",
+    "next": "Itẹle",
+    "previous": "Iṣaaju",
+    "language": "Ede"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

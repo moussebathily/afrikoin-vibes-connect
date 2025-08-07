@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Nunua na uuze kote Afrika kwa uaminifu"
+  },
+  "auth": {
+    "login": "Ingia",
+    "signup": "Jisajili",
+    "logout": "Ondoka",
+    "email": "Barua pepe",
+    "password": "Nenosiri",
+    "name": "Jina kamili",
+    "welcome": "Karibu AfriKoin",
+    "createAccount": "Unda akaunti yako",
+    "alreadyHaveAccount": "Una akaunti tayari?",
+    "noAccount": "Huna akaunti?"
+  },
+  "navigation": {
+    "home": "Nyumbani",
+    "likes": "Likes",
+    "holidays": "Sikukuu",
+    "wallet": "Pochi",
+    "profile": "Wasifu",
+    "search": "Tafuta",
+    "notifications": "Arifa",
+    "create": "Unda"
+  },
+  "market": {
+    "post": "Tangaza bidhaa",
+    "search": "Tafuta",
+    "price": "Bei",
+    "noResults": "Hakuna matokeo",
+    "categories": "Aina"
+  },
+  "wallet": {
+    "balance": "Salio",
+    "addFunds": "Ongeza pesa",
+    "withdraw": "Toa pesa",
+    "transactions": "Miamala",
+    "send": "Tuma",
+    "receive": "Pokea"
+  },
+  "likes": {
+    "buyCredits": "Nunua krediti za likes",
+    "remaining": "Krediti zilizobaki: {{count}}",
+    "noCredits": "Hakuna krediti"
+  },
+  "posts": {
+    "noPostsYet": "Hakuna chapisho bado",
+    "beFirst": "Kuwa wa kwanza kushiriki maudhui!",
+    "likes": "likes",
+    "comments": "maoni",
+    "share": "Shiriki"
+  },
+  "holidays": {
+    "discover": "Gundua",
+    "upcoming": "Sikukuu zinazokuja",
+    "today": "Leo"
+  },
+  "welcome": {
+    "title": "Karibu AfriKoin!",
+    "subtitle": "Unganisha, biashara, na sherehe kote Afrika",
+    "freeLikes": "Likes 10 za bure",
+    "premiumContent": "Maudhui ya kipekee",
+    "community": "Jumuiya",
+    "createFirstPost": "Unda chapisho langu la kwanza"
+  },
+  "common": {
+    "loading": "Inapakia...",
+    "error": "Hitilafu",
+    "success": "Mafanikio",
+    "cancel": "Ghairi",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "close": "Funga",
+    "back": "Rudi",
+    "next": "Ifuatayo",
+    "previous": "Iliyotangulia",
+    "language": "Lugha"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}
