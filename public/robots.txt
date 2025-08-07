@@ -1,4 +1,42 @@
+# Robots.txt pour AfriKoin
+# Optimisé pour un bon référencement Google
+
 User-agent: *
 Allow: /
 
-Sitemap: https://627c2a15-9025-4f3b-8d08-4e5bbf9c4f69.lovableproject.com/sitemap.xml
+# Pages spécifiques autorisées
+Allow: /dashboard
+Allow: /trading
+Allow: /wallet
+Allow: /markets
+Allow: /about
+Allow: /contact
+Allow: /help
+Allow: /security
+Allow: /api-docs
+
+# Fichiers statiques autorisés
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.ico$
+
+# Répertoires à exclure
+Disallow: /api/private/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /dist/
+Disallow: /android/
+Disallow: /.github/
+
+# Sitemap
+Sitemap: https://afrikoin.com/sitemap.xml
+
+# Délai entre les requêtes (en secondes)
+Crawl-delay: 1
