@@ -1,120 +1,73 @@
-# AfriKoin v1.2.2
+# Welcome to your Lovable project
 
-Application mobile AfriKoin développée avec Capacitor, React et TypeScript.
+## Project info
 
-## 🚀 Fonctionnalités
+**URL**: https://lovable.dev/projects/627c2a15-9025-4f3b-8d08-4e5bbf9c4f69
 
-- Interface utilisateur moderne et responsive
-- Support Android avec génération AAB automatique
-- Détection automatique par Android Studio
-- Déploiement continu avec GitHub Actions
-- Architecture basée sur Capacitor pour les fonctionnalités natives
+## How can I edit this code?
 
-## 📱 Développement Mobile
+There are several ways of editing your application.
 
-### Prérequis
-- Node.js 18+
-- Android Studio (pour le développement Android)
-- Java JDK 17
+**Use Lovable**
 
-### Installation
+Simply visit the [Lovable Project](https://lovable.dev/projects/627c2a15-9025-4f3b-8d08-4e5bbf9c4f69) and start prompting.
 
-```bash
-# Installation des dépendances
-npm install
+Changes made via Lovable will be committed automatically to this repo.
 
-# Construction de l'application web
-npm run build
+**Use your preferred IDE**
 
-# Ajout de la plateforme Android (première fois uniquement)
-npx cap add android
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-# Synchronisation avec les plateformes natives
-npx cap sync
-```
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-### Développement
+Follow these steps:
 
-```bash
-# Serveur de développement
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
-
-# Build de développement
-npm run build:dev
-
-# Build de production
-npm run build
 ```
 
-### Android Studio
+**Edit a file directly in GitHub**
 
-```bash
-# Ouvrir dans Android Studio
-npx cap open android
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-# Lancer sur émulateur/appareil
-npx cap run android
-```
+**Use GitHub Codespaces**
 
-## 🔧 Configuration CI/CD
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-### GitHub Actions
+## What technologies are used for this project?
 
-Le projet inclut deux workflows automatiques :
+This project is built with:
 
-1. **Android CI** (`android-ci.yml`) - Tests et vérifications sur chaque push
-2. **Build AAB** (`build-android-aab.yml`) - Génération AAB pour la production
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-### Secrets GitHub requis
+## How can I deploy this project?
 
-Pour la signature AAB en production, configurez ces secrets :
+Simply open [Lovable](https://lovable.dev/projects/627c2a15-9025-4f3b-8d08-4e5bbf9c4f69) and click on Share -> Publish.
 
-```
-ANDROID_KEYSTORE          # Keystore encodé en base64
-ANDROID_KEYSTORE_PASSWORD # Mot de passe du keystore
-ANDROID_KEY_ALIAS         # Alias de la clé
-ANDROID_KEY_PASSWORD      # Mot de passe de la clé
-```
+## Can I connect a custom domain to my Lovable project?
 
-## 📦 Génération AAB
+Yes, you can!
 
-### Automatique (via GitHub Actions)
-- Push sur `main` → AAB de release
-- Tag `v*` → Release GitHub avec AAB
-- Pull Request → AAB de debug pour tests
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-### Manuel
-```bash
-cd android
-./gradlew bundleRelease  # Pour la production
-./gradlew bundleDebug    # Pour les tests
-```
-
-## 🛠️ Structure du Projet
-
-```
-afrikoin/
-├── src/                 # Code source React
-├── android/             # Projet Android natif
-│   ├── app/build.gradle # Configuration Android
-│   └── variables.gradle # Variables partagées
-├── .github/workflows/   # Actions GitHub
-└── capacitor.config.ts  # Configuration Capacitor
-```
-
-## 📋 Version
-
-- **Version App**: 1.2.2
-- **Version Code**: 122
-- **Target SDK**: 34 (Android 14)
-- **Min SDK**: 22 (Android 5.1)
-
-## 🔗 Liens Utiles
-
-- [Documentation Capacitor](https://capacitorjs.com/docs)
-- [Guide Android Studio](https://developer.android.com/studio)
-- [Distribution Google Play](https://play.google.com/console)
-
----
-
-Développé avec ❤️ pour AfriKoin
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
