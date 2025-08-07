@@ -89,6 +89,74 @@
     "previous": "Précédent",
     "language": "Langue"
   },
+  "marketing": {
+    "hero": {
+      "title": "Une communauté vidéo mondiale",
+      "subtitle": "Nous te facilitons l'usage de l'application, afin que tu puisses regarder de superbes vidéos et également créer tes propres vidéos amusantes et mémorables à partager avec le monde entier. Pimente tes vidéos avec nos filtres d'effets spéciaux, des autocollants amusants, et bien plus encore.",
+      "tagline": "Là où de vraies personnes alimentent votre curiosité."
+    },
+    "features": {
+      "watch": {
+        "title": "Regarde des millions de vidéos",
+        "desc": "Une expérience adaptée spécifiquement selon tes préférences en fonction du contenu que tu regardes, aimes et partages ! Afrikoin s'adapte à tes goûts pour te proposer les vidéos les plus pertinentes, intéressantes, amusantes, décalées et captivantes que tu ne te lasseras jamais de regarder !"
+      },
+      "community": {
+        "title": "Se divertir et s'inspirer d'une communauté mondiale de créateurs",
+        "desc": "Des millions de créateurs sont sur Afrikoin pour présenter leurs talents incroyables, leurs moments précieux et leurs connaissances."
+      },
+      "music": {
+        "title": "Ajoute tes musiques et sons préférés",
+        "desc": "Édite facilement tes vidéos avec des millions de clips musicaux et de sons gratuits ! Playlists pour les morceaux les plus populaires et tous genres."
+      },
+      "stickers": {
+        "title": "Autocollants et filtres visage",
+        "desc": "Plus de 100 autocollants émoticônes pour améliorer tes vidéos. Débloque des filtres faciaux amusants et des effets beauté."
+      },
+      "editing": {
+        "title": "Outils d'édition simples",
+        "desc": "Coupe, fusionne et duplique facilement des clips vidéo."
+      },
+      "livefilters": {
+        "title": "Filtres Live streaming",
+        "desc": "Des designs frais et créatifs, mis à jour en continu."
+      },
+      "variety": {
+        "title": "Variété de contenus",
+        "desc": "Danse, comédie, vlog, sport, DIY, animaux — tout prêt à être consommé."
+      }
+    },
+    "explore": {
+      "title": "Explorez et développez vos centres d’intérêt",
+      "items": [
+        "Demandez à l’IA de rechercher des sujets qui comptent pour vous, et obtenez instantanément des résultats interactifs",
+        "Parcourez Marketplace à la recherche de bonnes affaires et de perles rares",
+        "Personnalisez votre Fil pour voir plus de contenu que vous aimez",
+        "Regardez des reels et d’autres vidéos courtes pour apprendre ou vous divertir rapidement"
+      ]
+    },
+    "connect": {
+      "title": "Communiquez avec des personnes et des communautés",
+      "items": [
+        "Rejoignez des groupes pour obtenir des conseils de vraies personnes",
+        "Activez le partage pour gagner du temps",
+        "Envoyez à votre BFF des publications que vous seuls comprenez"
+      ]
+    },
+    "share": {
+      "title": "Partagez votre univers",
+      "items": [
+        "Utilisez l’IA générative pour créer des images personnalisées ou rédiger des publications",
+        "Personnalisez votre profil et contrôlez avec qui vous partagez",
+        "Créez facilement des reels à partir de modèles populaires",
+        "Capturez et partagez l’instant présent dans des stories"
+      ]
+    },
+    "cta": {
+      "create": "Créer un reel",
+      "aiStudio": "Créer avec l’IA",
+      "getStarted": "Découvrir Afrikoin"
+    }
+  },
   "_meta": {
     "rtl": false
   }

@@ -8,7 +8,8 @@ import { EntertainmentSection } from '@/components/entertainment/EntertainmentSe
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
-
+import { Link } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
@@ -81,6 +82,19 @@ export function HomePage() {
     <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
       {/* Welcome Card for new users */}
       <WelcomeCard />
+
+      {/* Discover AfriKoin CTA */}
+      <section aria-label={t('marketing.cta.getStarted')} className="rounded-lg border bg-card text-card-foreground p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-base font-semibold">{t('marketing.hero.title')}</h2>
+            <p className="text-sm text-muted-foreground">{t('marketing.hero.tagline') || t('app.tagline')}</p>
+          </div>
+          <Button asChild variant="secondary">
+            <Link to="/about">{t('marketing.cta.getStarted')}</Link>
+          </Button>
+        </div>
+      </section>
       
       {/* Independence Day Banner (shows only on your country's Independence Day) */}
       <IndependenceBanner />

@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
 import { WalletPage } from '@/pages/WalletPage'
+import { AboutPage } from '@/pages/AboutPage'
 import { setupI18n } from '@/i18n/config'
 import { useEffect, useState } from 'react'
 import './index.css'
@@ -63,6 +64,7 @@ function App() {
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
               <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
               <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
+              <Route path="about" element={<AboutPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
