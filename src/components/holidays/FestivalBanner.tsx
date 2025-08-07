@@ -5,6 +5,59 @@ import { supabase } from '@/integrations/supabase/client'
 import { formatDate } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 
+// Independence dates for West African countries
+const INDEPENDENCE_HOLIDAYS = [
+  {
+    id: 'niger',
+    country: 'Niger',
+    countryCode: 'NE',
+    date: { month: 8, day: 3 }, // August 3, 1960
+    nameKey: 'holidays.independence.niger',
+    descriptionKey: 'holidays.independence.nigerDesc'
+  },
+  {
+    id: 'burkina',
+    country: 'Burkina Faso', 
+    countryCode: 'BF',
+    date: { month: 8, day: 5 }, // August 5, 1960
+    nameKey: 'holidays.independence.burkina',
+    descriptionKey: 'holidays.independence.burkinaDesc'
+  },
+  {
+    id: 'mali',
+    country: 'Mali',
+    countryCode: 'ML', 
+    date: { month: 9, day: 22 }, // September 22, 1960
+    nameKey: 'holidays.independence.mali',
+    descriptionKey: 'holidays.independence.maliDesc'
+  }
+]
+
+const getNextIndependenceDay = () => {
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  
+  const upcomingHolidays = INDEPENDENCE_HOLIDAYS.map(holiday => {
+    let holidayDate = new Date(currentYear, holiday.date.month - 1, holiday.date.day)
+    
+    // If the holiday has passed this year, use next year's date
+    if (holidayDate < now) {
+      holidayDate = new Date(currentYear + 1, holiday.date.month - 1, holiday.date.day)
+    }
+    
+    return {
+      ...holiday,
+      actualDate: holidayDate,
+      daysUntil: Math.ceil((holidayDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    }
+  })
+  
+  // Sort by closest date
+  upcomingHolidays.sort((a, b) => a.daysUntil - b.daysUntil)
+  
+  return upcomingHolidays[0]
+}
+
 export function FestivalBanner() {
   const [currentHoliday, setCurrentHoliday] = useState<any>(null)
   const { t } = useTranslation()
@@ -15,18 +68,20 @@ export function FestivalBanner() {
 
   const fetchUpcomingHoliday = async () => {
     try {
-      // This would need to be implemented with proper holiday calculation
-      // For now, showing a mock upcoming holiday
-      const mockHoliday = {
-        id: '1',
-        name: 'Fête de l\'Indépendance du Sénégal',
-        description: 'Célébration de l\'indépendance du Sénégal',
-        date: '2024-04-04',
+      const nextHoliday = getNextIndependenceDay()
+      
+      const holiday = {
+        id: nextHoliday.id,
+        name: t(nextHoliday.nameKey),
+        description: t(nextHoliday.descriptionKey),
+        date: nextHoliday.actualDate.toISOString().split('T')[0],
         type: 'national',
-        countries: ['SN']
+        country: nextHoliday.country,
+        countryCode: nextHoliday.countryCode,
+        daysUntil: nextHoliday.daysUntil
       }
       
-      setCurrentHoliday(mockHoliday)
+      setCurrentHoliday(holiday)
     } catch (error) {
       console.error('Error fetching holidays:', error)
     }
@@ -44,7 +99,12 @@ export function FestivalBanner() {
           <div>
             <h3 className="font-semibold text-sm">{currentHoliday.name}</h3>
             <p className="text-xs text-accent-foreground/80">
-              {formatDate(currentHoliday.date)}
+              {currentHoliday.daysUntil === 0 
+                ? t('holidays.today')
+                : currentHoliday.daysUntil === 1
+                ? t('holidays.tomorrow') 
+                : `${currentHoliday.daysUntil} ${t('holidays.daysLeft')}`
+              }
             </p>
           </div>
         </div>

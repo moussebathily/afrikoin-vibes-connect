@@ -54,8 +54,18 @@
   },
   "holidays": {
     "discover": "Discover",
-    "upcoming": "Upcoming holidays",
-    "today": "Today"
+    "upcoming": "Upcoming holidays", 
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "daysLeft": "days left",
+    "independence": {
+      "mali": "Mali Independence Day",
+      "maliDesc": "Celebrating Mali's independence",
+      "burkina": "Burkina Faso Independence Day", 
+      "burkinaDesc": "Celebrating Burkina Faso's independence",
+      "niger": "Niger Independence Day",
+      "nigerDesc": "Celebrating Niger's independence"
+    }
   },
   "welcome": {
     "title": "Welcome to AfriKoin!",
