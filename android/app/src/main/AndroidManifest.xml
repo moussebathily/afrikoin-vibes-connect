@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme.NoActionBarLaunch"
         android:usesCleartextTraffic="true"
         android:hardwareAccelerated="true"
-        android:exported="true">
+        >
 
         <activity
             android:exported="true"
