@@ -4,13 +4,17 @@ import { Button } from '@/components/ui/button'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 export function WalletPage() {
   const [balance, setBalance] = useState<any>(null)
   const [likeCredits, setLikeCredits] = useState<any>(null)
   const [transactions, setTransactions] = useState([])
   const [loading, setLoading] = useState(true)
+  const [purchaseLoading, setPurchaseLoading] = useState(false)
   const { user } = useAuth()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (user) {
@@ -51,6 +55,29 @@ export function WalletPage() {
       console.error('Error fetching wallet data:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleBuyLikes = async () => {
+    if (!user) return
+    
+    setPurchaseLoading(true)
+    try {
+      const { data, error } = await supabase.functions.invoke("create-like-checkout", {
+        body: { pack_id: "likes_1000" }
+      })
+
+      if (error) throw error
+
+      if (data.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank')
+      }
+    } catch (error) {
+      console.error("Error creating checkout:", error)
+      toast.error("Erreur lors de la création du paiement")
+    } finally {
+      setPurchaseLoading(false)
     }
   }
 
@@ -112,9 +139,18 @@ export function WalletPage() {
             <span className="text-red-500 mr-2">❤️</span>
             Crédits de Likes
           </h3>
-          <Button variant="outline" size="sm">
-            <Plus className="h-4 w-4 mr-1" />
-            Acheter
+          <Button 
+            onClick={handleBuyLikes}
+            disabled={purchaseLoading}
+            variant="gradient"
+            size="sm"
+          >
+            {purchaseLoading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1"></div>
+            ) : (
+              <Plus className="h-4 w-4 mr-1" />
+            )}
+            {t("likes.purchase.button_buy", { likes: "1000", price: "2,99 €" })}
           </Button>
         </div>
         

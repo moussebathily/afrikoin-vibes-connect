@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
@@ -51,8 +52,24 @@ export function HomePage() {
         body: { postId }
       })
 
-      if (error || !data?.success) {
-        console.error('Error liking post:', error || data)
+      if (error) {
+        console.error('Error liking post:', error)
+        
+        // Check for insufficient credits
+        if (error.message?.includes('INSUFFICIENT_CREDITS')) {
+          toast.error("Crédits insuffisants", {
+            description: "Vous n'avez plus de crédits likes",
+            action: {
+              label: "Acheter des likes",
+              onClick: () => window.location.href = "/wallet"
+            }
+          })
+        }
+        return
+      }
+      
+      if (!data?.success) {
+        console.error('Error liking post:', data)
         return
       }
 

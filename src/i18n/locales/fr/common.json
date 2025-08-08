@@ -157,6 +157,25 @@
       "getStarted": "Découvrir Afrikoin"
     }
   },
+  "likes": {
+    "purchase": {
+      "title": "Acheter des Likes",
+      "pack_1000": "Pack 1000 Likes",
+      "price_1000": "2,99 €",
+      "button_buy": "Acheter {{likes}} likes ({{price}})",
+      "insufficient_credits": "Crédits insuffisants",
+      "get_more_likes": "Obtenir plus de likes"
+    },
+    "payment": {
+      "success_title": "Achat réussi !",
+      "success_message": "Votre achat de {{likes}} likes a été traité avec succès.",
+      "new_balance": "Nouveau solde : {{balance}} likes",
+      "error_title": "Erreur de paiement",
+      "error_message": "Une erreur s'est produite lors du traitement de votre paiement.",
+      "loading": "Vérification du paiement...",
+      "return_wallet": "Retour au portefeuille"
+    }
+  },
   "_meta": {
     "rtl": false
   }
