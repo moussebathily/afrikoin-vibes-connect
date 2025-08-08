@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { Heart, MessageCircle, Share, MoreHorizontal, MapPin, Crown } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { formatRelativeTime } from '@/lib/utils'
-import { cn } from '@/lib/utils'
+import { formatRelativeTime, cn } from '@/lib/utils'
 
 interface PostCardProps {
   post: any
