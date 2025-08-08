@@ -21,7 +21,7 @@ export function formatDate(date: Date | string): string {
   }).format(new Date(date))
 }
 
-export function formatRelativeTime(date: Date | string): string {
+function formatRelativeTime(date: Date | string): string {
   const now = new Date()
   const targetDate = new Date(date)
   const diffInSeconds = Math.floor((now.getTime() - targetDate.getTime()) / 1000)
@@ -37,3 +37,5 @@ export function formatRelativeTime(date: Date | string): string {
 export function generateId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 }
+
+export { formatRelativeTime }
