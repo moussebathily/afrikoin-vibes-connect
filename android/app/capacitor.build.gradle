@@ -23,7 +23,7 @@ dependencies {
     implementation project(':capacitor-device')
 }
 
-apply from: 'capacitor.build.gradle'
+// Removed recursive include to avoid self-application
 
 try {
     def servicesJSON = file('google-services.json')
