@@ -20,6 +20,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Ensure Gradle wrapper exists
+      run: |
+        if [ ! -f android/gradle/wrapper/gradle-wrapper.jar ]; then
+          echo "⚠️ Gradle wrapper JAR missing, regenerating..."
+          cd android
+          ./gradlew wrapper --gradle-version=8.8
+        else
+          echo "✅ Gradle wrapper JAR found"
+        fi
+    
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
       
