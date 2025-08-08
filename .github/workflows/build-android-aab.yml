@@ -49,23 +49,30 @@ jobs:
     - name: Setup Android signing
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
       run: |
-        echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
-        echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        if [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
+          echo "✅ Setting up Android signing"
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+          echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        else
+          echo "⚠️ Android keystore not found, release will be unsigned"
+        fi
         
     - name: Build Android AAB (Debug)
       if: github.event_name == 'pull_request'
       run: |
+        echo "🔨 Building debug AAB..."
         cd android
-        ./gradlew bundleDebug
+        ./gradlew bundleDebug --stacktrace --info
         
     - name: Build Android AAB (Release)
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
       run: |
+        echo "🔨 Building release AAB..."
         cd android
-        ./gradlew bundleRelease
+        ./gradlew bundleRelease --stacktrace --info
         
     - name: Upload Debug AAB
       if: github.event_name == 'pull_request'
@@ -112,5 +119,7 @@ jobs:
     - name: Notify on failure
       if: failure()
       run: |
-        echo "❌ AAB build failed!"
-        echo "🔍 Check the logs above for details"
+        echo "❌ La construction AAB a échoué !"
+        echo "🔍 Consultez les journaux ci-dessus pour plus de détails"
+        echo "💡 Common issues: Missing keystore, dependency conflicts, or build configuration errors"
+        echo "📋 Check: 1) Gradle sync, 2) Dependencies, 3) Signing config, 4) Build environment"
