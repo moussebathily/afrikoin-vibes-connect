@@ -39,11 +39,10 @@ jobs:
     - name: Generate sitemap
       run: |
         echo "Sitemap generated and ready for Google indexing"
-        curl -X POST "https://www.google.com/ping?sitemap=https://afrikoin.com/sitemap.xml"
+        curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml"
         
     - name: Notify deployment
       if: success()
       run: |
-        echo "✅ Deployment successful!"
-        echo "🌐 Site available at: https://afrikoin.com"
-        echo "🗺️ Sitemap: https://afrikoin.com/sitemap.xml"
+        echo "🌐 Site available at: https://www.afrikoin.online"
+        echo "🗺️ Sitemap: https://www.afrikoin.online/sitemap.xml"

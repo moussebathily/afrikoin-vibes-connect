@@ -36,7 +36,7 @@ Disallow: /android/
 Disallow: /.github/
 
 # Sitemap
-Sitemap: https://afrikoin.com/sitemap.xml
+Sitemap: https://www.afrikoin.online/sitemap.xml
 
 # Délai entre les requêtes (en secondes)
 Crawl-delay: 1
