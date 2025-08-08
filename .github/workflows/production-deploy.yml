@@ -52,16 +52,22 @@ jobs:
       
     - name: Setup Android signing
       run: |
-        echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
-        echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
-        echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        if [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
+          echo "✅ Setting up Android signing"
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+          echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
+          echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        else
+          echo "⚠️ ANDROID_KEYSTORE secret not set. Release will be unsigned."
+        fi
         
     - name: Build Android AAB (Release)
       run: |
+        echo "🔨 Building release AAB..."
         cd android
-        ./gradlew bundleRelease
+        ./gradlew bundleRelease --stacktrace --info
         
     - name: Upload Release AAB
       uses: actions/upload-artifact@v4
