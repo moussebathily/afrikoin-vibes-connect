@@ -1,0 +1,176 @@
+name: Production Deploy - Android AAB & Web
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.2.2)'
+        required: true
+        default: 'v1.2.2'
+
+jobs:
+  # Job 1: Build Android AAB
+  build-android:
+    runs-on: ubuntu-latest
+    name: Build Android AAB
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Validate Gradle Wrapper
+      uses: gradle/wrapper-validation-action@v2
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build web app
+      run: npm run build
+      
+    - name: Add Android platform
+      run: npx cap add android
+      
+    - name: Sync Capacitor
+      run: npx cap sync android
+      
+    - name: Setup Android signing
+      run: |
+        echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+        echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        
+    - name: Build Android AAB (Release)
+      run: |
+        cd android
+        ./gradlew bundleRelease
+        
+    - name: Upload Release AAB
+      uses: actions/upload-artifact@v4
+      with:
+        name: afrikoin-v${{ github.ref_name || inputs.version }}.aab
+        path: android/app/build/outputs/bundle/release/app-release.aab
+        
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          android/app/build/outputs/bundle/release/app-release.aab
+        name: AfriKoin ${{ github.ref_name || inputs.version }}
+        body: |
+          ## AfriKoin ${{ github.ref_name || inputs.version }}
+          
+          ### 📱 Android AAB
+          - Version: ${{ github.ref_name || inputs.version }}
+          - Build: ${{ github.run_number }}
+          - Signed and ready for Google Play Store
+          
+          ### 🌐 Web Deployment
+          - Live at: https://www.afrikoin.online
+          - Deployed simultaneously with mobile build
+          
+          ### 🚀 Release Notes
+          - Production-ready Android AAB
+          - Web app updated with latest features
+          - SEO optimized with sitemap
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Job 2: Deploy Web to Production
+  deploy-web:
+    runs-on: ubuntu-latest
+    name: Deploy Web to afrikoin.online
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Deploy to Vercel Production
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        vercel-args: '--prod'
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        working-directory: ./
+        
+    - name: Generate and submit sitemap
+      run: |
+        echo "📍 Generating sitemap for SEO optimization"
+        curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml"
+        
+    - name: Notify successful deployment
+      run: |
+        echo "🌐 AfriKoin deployed successfully!"
+        echo "🔗 Live at: https://www.afrikoin.online"
+        echo "🗺️ Sitemap: https://www.afrikoin.online/sitemap.xml"
+        echo "📱 Mobile AAB ready for Google Play Store"
+
+  # Job 3: Post-deployment validation
+  validate-deployment:
+    runs-on: ubuntu-latest
+    name: Validate Production Deployment
+    needs: [build-android, deploy-web]
+    
+    steps:
+    - name: Check website availability
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online)
+        if [ $response -eq 200 ]; then
+          echo "✅ Website is accessible (HTTP $response)"
+        else
+          echo "❌ Website check failed (HTTP $response)"
+          exit 1
+        fi
+        
+    - name: Validate sitemap
+      run: |
+        response=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online/sitemap.xml)
+        if [ $response -eq 200 ]; then
+          echo "✅ Sitemap is accessible (HTTP $response)"
+        else
+          echo "❌ Sitemap check failed (HTTP $response)"
+          exit 1
+        fi
+        
+    - name: Deployment summary
+      run: |
+        echo "🎉 Production deployment completed successfully!"
+        echo "📊 Deployment Summary:"
+        echo "   - Android AAB: Built and released"
+        echo "   - Web App: Deployed to afrikoin.online"
+        echo "   - SEO: Sitemap submitted to Google"
+        echo "   - Status: All systems operational"
