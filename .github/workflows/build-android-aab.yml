@@ -20,8 +20,7 @@ jobs:
       run: |
         if [ ! -f android/gradle/wrapper/gradle-wrapper.jar ]; then
           echo "⚠️ Gradle wrapper JAR missing, regenerating..."
-          cd android
-          ./gradlew wrapper --gradle-version=8.8
+          ./gradlew wrapper --gradle-version=8.8 -p android
         else
           echo "✅ Gradle wrapper JAR found"
         fi
@@ -79,15 +78,13 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         echo "🔨 Building debug AAB..."
-        cd android
-        ./gradlew bundleDebug --stacktrace --info
+        ./gradlew -p android bundleDebug --stacktrace --info
         
     - name: Build Android AAB (Release)
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
       run: |
         echo "🔨 Building release AAB..."
-        cd android
-        ./gradlew bundleRelease --stacktrace --info
+        ./gradlew -p android bundleRelease --stacktrace --info
         
     - name: Upload Debug AAB
       if: github.event_name == 'pull_request'
