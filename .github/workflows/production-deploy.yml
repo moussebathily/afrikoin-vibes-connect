@@ -20,16 +20,9 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Ensure Gradle wrapper exists
-      run: |
-        if [ ! -f android/gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "⚠️ Gradle wrapper JAR missing, regenerating..."
-          cd android
-          ./gradlew wrapper --gradle-version=8.8
-        else
-          echo "✅ Gradle wrapper JAR found"
-        fi
-    
+    - name: Make Gradle wrapper executable
+      run: chmod +x android/gradlew
+      
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
       
@@ -79,9 +72,9 @@ jobs:
         fi
         
     - name: Build Android AAB (Release)
+      working-directory: android
       run: |
         echo "🔨 Building release AAB..."
-        cd android
         ./gradlew bundleRelease --stacktrace --info
         
     - name: Upload Release AAB

@@ -17,17 +17,8 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Make Gradle wrapper executable
-      run: chmod +x ./gradlew
+      run: chmod +x android/gradlew
       
-    - name: Ensure Gradle wrapper exists
-      run: |
-        if [ ! -f android/gradle/wrapper/gradle-wrapper.jar ]; then
-          echo "⚠️ Gradle wrapper JAR missing, regenerating..."
-          ./gradlew wrapper --gradle-version=8.8 -p android
-        else
-          echo "✅ Gradle wrapper JAR found"
-        fi
-    
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
       
@@ -79,15 +70,17 @@ jobs:
         
     - name: Build Android AAB (Debug)
       if: github.event_name == 'pull_request'
+      working-directory: android
       run: |
         echo "🔨 Building debug AAB..."
-        ./gradlew -p android bundleDebug --stacktrace --info
+        ./gradlew bundleDebug --stacktrace --info
         
     - name: Build Android AAB (Release)
       if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+      working-directory: android
       run: |
         echo "🔨 Building release AAB..."
-        ./gradlew -p android bundleRelease --stacktrace --info
+        ./gradlew bundleRelease --stacktrace --info
         
     - name: Upload Debug AAB
       if: github.event_name == 'pull_request'
