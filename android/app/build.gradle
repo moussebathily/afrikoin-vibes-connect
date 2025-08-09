@@ -15,7 +15,7 @@ android {
         versionCode computedVersionCode
         versionName computedVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        aaptOptions {
+        androidResources {
              // Files and dirs to omit from the packaged APK/AAB
              ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
         }
