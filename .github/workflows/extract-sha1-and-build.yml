@@ -50,19 +50,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
-            echo "⚠️ Le secret SIGNING_KEYSTORE_BASE64 est manquant — impossible d'extraire le SHA-1."
+          mkdir -p android/app
+
+          if [ -n "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
+            echo "✅ Using SIGNING_KEYSTORE_BASE64"
+            echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+            echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> android/gradle.properties
+          elif [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
+            echo "✅ Using ANDROID_KEYSTORE"
+            echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+            echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
+            echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+          else
+            echo "⚠️ Aucun secret de keystore trouvé (SIGNING_KEYSTORE_BASE64 ou ANDROID_KEYSTORE) — impossible d'extraire le SHA-1."
             exit 1
           fi
-
-          mkdir -p android/app
-          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
-
-          # Propager les informations de signature pour Gradle (compatible avec build existant)
-          echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.SIGNING_KEYSTORE_PASSWORD }}" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.SIGNING_KEY_ALIAS }}" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.SIGNING_KEY_PASSWORD }}" >> android/gradle.properties
 
       - name: Afficher l'empreinte SHA-1 du keystore
         id: sha
@@ -70,14 +77,26 @@ jobs:
         run: |
           set -euo pipefail
           echo "🔎 Calcul de l'empreinte SHA-1..."
-          RAW=$(keytool -list -v \
-            -alias "${{ secrets.SIGNING_KEY_ALIAS }}" \
-            -keystore android/app/release.keystore \
-            -storepass "${{ secrets.SIGNING_KEYSTORE_PASSWORD }}" \
-            -keypass "${{ secrets.SIGNING_KEY_PASSWORD }}" || true)
 
-          # Tenter SHA-1 et variantes SHA1
-          FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r')
+          # Déterminer alias et mots de passe selon les secrets présents
+          if [ -n "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" ]; then
+            ALIAS="${{ secrets.SIGNING_KEY_ALIAS }}"
+            STOREPASS="${{ secrets.SIGNING_KEYSTORE_PASSWORD }}"
+            KEYPASS="${{ secrets.SIGNING_KEY_PASSWORD }}"
+          else
+            ALIAS="${{ secrets.ANDROID_KEY_ALIAS }}"
+            STOREPASS="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+            KEYPASS="${{ secrets.ANDROID_KEY_PASSWORD }}"
+          fi
+
+          RAW=$(keytool -list -v \
+            -alias "$ALIAS" \
+            -keystore android/app/release.keystore \
+            -storepass "$STOREPASS" \
+            -keypass "$KEYPASS" || true)
+
+          # Tenter SHA-1 et variantes SHA1, normaliser (UPPERCASE, sans espaces/retours/:
+          FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
 
           if [ -z "$FP" ]; then
             echo "❌ Impossible d'extraire le SHA-1. Vérifiez alias / mots de passe."
@@ -88,8 +107,11 @@ jobs:
           echo "fingerprint=$FP" >> "$GITHUB_OUTPUT"
 
           EXP="${{ inputs.expected_sha1 }}"
+          if [ -z "$EXP" ]; then EXP="${{ secrets.EXPECTED_UPLOAD_SHA1 }}"; fi
+          if [ -z "$EXP" ]; then EXP="${{ secrets.PLAY_UPLOAD_SHA1 }}"; fi
+
           if [ -n "$EXP" ]; then
-            EXP_UP=$(echo "$EXP" | tr '[:lower:]' '[:upper:]' | tr -d ' \r')
+            EXP_UP=$(echo "$EXP" | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
             if [ "$FP" = "$EXP_UP" ]; then
               echo "✅ L'empreinte correspond à l'attendue."
             else
@@ -98,6 +120,8 @@ jobs:
               echo "Obtenu : $FP"
               exit 1
             fi
+          else
+            echo "ℹ️ Aucune valeur attendue fournie (input/secret). Vérification stricte ignorée."
           fi
 
       - name: Installer dépendances (only if building)

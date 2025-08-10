@@ -83,8 +83,9 @@ Définissez ces secrets pour les builds signés et la vérification automatique:
 - ANDROID_KEY_PASSWORD: mot de passe de la clé
 - EXPECTED_UPLOAD_SHA1: empreinte SHA-1 attendue (format avec ou sans deux-points)
 
-Alternatif (utilisé par le workflow "🔐 Extraire SHA-1 et build"):
-- SIGNING_KEYSTORE_BASE64, SIGNING_KEYSTORE_PASSWORD, SIGNING_KEY_ALIAS, SIGNING_KEY_PASSWORD
+- Alternatif (workflow "🔐 Extraire SHA-1 et build"):
+  - SIGNING_KEYSTORE_BASE64, SIGNING_KEYSTORE_PASSWORD, SIGNING_KEY_ALIAS, SIGNING_KEY_PASSWORD
+  - Remarque: ce workflow accepte aussi les secrets ANDROID_* listés ci-dessus.
 
 ## 🧪 Vérifier l'empreinte dans CI/CD
 
