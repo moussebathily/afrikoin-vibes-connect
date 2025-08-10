@@ -15,10 +15,22 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
+    - name: Setup SSH (optional)
+      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+    - name: Add known_hosts (GitHub)
+      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+
     - name: Make Gradle wrapper executable
       run: chmod +x android/gradlew
-      
+
     - name: Validate Gradle Wrapper
       uses: gradle/wrapper-validation-action@v2
       
