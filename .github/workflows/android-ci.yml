@@ -66,7 +66,32 @@ jobs:
       
     - name: Sync Capacitor
       run: npx cap sync android
-      
+    
+    - name: Extract keystore SHA-1 (optional)
+      if: ${{ secrets.ANDROID_KEYSTORE != '' || secrets.SIGNING_KEYSTORE_BASE64 != '' }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p android/app
+        if [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+          STOREPASS="${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+          KEYPASS="${{ secrets.ANDROID_KEY_PASSWORD }}"
+          ALIAS="${{ secrets.ANDROID_KEY_ALIAS }}"
+        else
+          echo "${{ secrets.SIGNING_KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+          STOREPASS="${{ secrets.SIGNING_KEYSTORE_PASSWORD }}"
+          KEYPASS="${{ secrets.SIGNING_KEY_PASSWORD }}"
+          ALIAS="${{ secrets.SIGNING_KEY_ALIAS }}"
+        fi
+        RAW=$(keytool -list -v -alias "$ALIAS" -keystore android/app/release.keystore -storepass "$STOREPASS" -keypass "$KEYPASS" || true)
+        FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
+        if [ -n "$FP" ]; then
+          echo "🔐 Keystore SHA-1: $FP"
+        else
+          echo "⚠️ Unable to compute SHA-1 (check alias/passwords)."
+        fi
+    
     - name: Check Android build
       working-directory: android
       run: ./gradlew assembleDebug --stacktrace

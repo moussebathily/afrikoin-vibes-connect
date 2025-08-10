@@ -1,3 +1,8 @@
+# AfriKoin – CI Android (SHA-1 & AAB)
+
+- Workflows CI vérifient la SHA-1 contre `EXPECTED_UPLOAD_SHA1` (fallback: `PLAY_UPLOAD_SHA1`).
+- Voir build-mobile.md pour configurer les secrets et extraire la SHA-1.
+
 # gradle-completion
 Bash and Zsh completion support for [Gradle](https://gradle.org).
 

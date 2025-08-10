@@ -86,17 +86,29 @@ jobs:
     - name: Show keystore SHA-1 (verify)
       if: secrets.ANDROID_KEYSTORE != ''
       run: |
+        set -euo pipefail
         echo "🔎 Computing SHA-1 of upload key..."
-        keytool -list -v -alias "${{ secrets.ANDROID_KEY_ALIAS }}" -keystore android/app/release.keystore -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" | grep -E "SHA1:|SHA-1:"
-        if [ -n "${{ secrets.PLAY_UPLOAD_SHA1 }}" ]; then
-          echo "🎯 Expected (Play Console): ${{ secrets.PLAY_UPLOAD_SHA1 }}"
-          actual=$(keytool -list -v -alias "${{ secrets.ANDROID_KEY_ALIAS }}" -keystore android/app/release.keystore -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" | sed -n 's/.*SHA1:\s*\(.*\)/\1/p' | tr '[:lower:]' '[:upper:]')
-          if [ "$actual" != "${{ secrets.PLAY_UPLOAD_SHA1 }}" ]; then
-            echo "❌ Keystore SHA-1 does not match expected Play Console upload key."
+        RAW=$(keytool -list -v -alias "${{ secrets.ANDROID_KEY_ALIAS }}" -keystore android/app/release.keystore -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" || true)
+        FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
+        if [ -z "$FP" ]; then
+          echo "❌ Unable to extract SHA-1. Check alias/passwords."
+          exit 1
+        fi
+        echo "SHA-1: $FP"
+
+        EXP="${{ secrets.EXPECTED_UPLOAD_SHA1 }}"
+        if [ -z "$EXP" ]; then EXP="${{ secrets.PLAY_UPLOAD_SHA1 }}"; fi
+        if [ -n "$EXP" ]; then
+          EXP_UP=$(echo "$EXP" | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
+          echo "🎯 Expected: $EXP_UP"
+          if [ "$FP" != "$EXP_UP" ]; then
+            echo "❌ Keystore SHA-1 does not match expected upload key."
             exit 1
           else
-            echo "✅ Keystore SHA-1 matches expected Play Console upload key."
+            echo "✅ Keystore SHA-1 matches expected upload key."
           fi
+        else
+          echo "ℹ️ No EXPECTED_UPLOAD_SHA1 provided. Skipping strict verification."
         fi
         
     - name: Build Android AAB (Release)
