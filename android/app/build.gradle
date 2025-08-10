@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def RESOLVED_STORE_FILE = project.hasProperty("MYAPP_UPLOAD_STORE_FILE") ? project.property("MYAPP_UPLOAD_STORE_FILE") : (System.getenv("ANDROID_KEYSTORE") ?: System.getenv("RELEASE_STORE_FILE"))
+def RESOLVED_STORE_PASSWORD = project.hasProperty("MYAPP_UPLOAD_STORE_PASSWORD") ? project.property("MYAPP_UPLOAD_STORE_PASSWORD") : (System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: System.getenv("RELEASE_STORE_PASSWORD"))
+def RESOLVED_KEY_ALIAS = project.hasProperty("MYAPP_UPLOAD_KEY_ALIAS") ? project.property("MYAPP_UPLOAD_KEY_ALIAS") : (System.getenv("ANDROID_KEY_ALIAS") ?: System.getenv("RELEASE_KEY_ALIAS"))
+def RESOLVED_KEY_PASSWORD = project.hasProperty("MYAPP_UPLOAD_KEY_PASSWORD") ? project.property("MYAPP_UPLOAD_KEY_PASSWORD") : (System.getenv("ANDROID_KEY_PASSWORD") ?: System.getenv("RELEASE_KEY_PASSWORD"))
+def HAS_RELEASE_SIGNING = RESOLVED_STORE_FILE != null && RESOLVED_STORE_FILE.toString().trim().length() > 0
+
 android {
     namespace "app.lovable.afrikoin"
     compileSdk 35
@@ -25,7 +31,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            if (project.hasProperty("MYAPP_UPLOAD_STORE_FILE")) {
+            if (HAS_RELEASE_SIGNING) {
                 signingConfig signingConfigs.release
             }
         }
@@ -37,11 +43,11 @@ android {
 
     signingConfigs {
         release {
-            if (project.hasProperty("MYAPP_UPLOAD_STORE_FILE")) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            if (HAS_RELEASE_SIGNING) {
+                storeFile file(RESOLVED_STORE_FILE)
+                storePassword RESOLVED_STORE_PASSWORD
+                keyAlias RESOLVED_KEY_ALIAS
+                keyPassword RESOLVED_KEY_PASSWORD
             }
         }
     }
@@ -97,4 +103,21 @@ try {
     }
 } catch(Exception e) {
     logger.info "google-services.json not found, google-services plugin not applied. Push Notifications won't work"
+}
+
+// Diagnostic task to print resolved signing configuration
+tasks.register("printSigningConfig") {
+    group = "help"
+    description = "Prints resolved Android release signing configuration (without secrets)."
+    doLast {
+        println "---- Android Release Signing (resolved) ----"
+        println "storeFile: ${RESOLVED_STORE_FILE ?: '(not set)'}"
+        println "storeFile exists: ${RESOLVED_STORE_FILE ? file(RESOLVED_STORE_FILE).exists() : false}"
+        println "keyAlias: ${RESOLVED_KEY_ALIAS ?: '(not set)'}"
+        println "using externalOverride (Android Studio injection): " + (project.hasProperty('android.injected.signing.store.file') ? 'true' : 'false')
+        if (project.hasProperty('android.injected.signing.store.file')) {
+            println "android.injected.signing.store.file=" + project.property('android.injected.signing.store.file')
+        }
+        println "-------------------------------------------"
+    }
 }
