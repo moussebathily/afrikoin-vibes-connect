@@ -55,6 +55,12 @@
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     --radius: 0.75rem;
+
+    /* Safe area insets */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
   }
 
   .dark {
@@ -151,4 +157,13 @@
   .transition-smooth {
     transition: var(--transition-smooth);
   }
+}
+
+@layer utilities {
+  .pt-safe-top { padding-top: var(--sat); }
+  .pb-safe-bottom { padding-bottom: var(--sab); }
+  .pl-safe-left { padding-left: var(--sal); }
+  .pr-safe-right { padding-right: var(--sar); }
+  /* Reserve space for bottom nav (h-16) plus device bottom inset */
+  .pb-safe-nav { padding-bottom: calc(4rem + var(--sab)); }
 }

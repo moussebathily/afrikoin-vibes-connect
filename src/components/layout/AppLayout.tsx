@@ -10,7 +10,7 @@ export function AppLayout() {
       <TopBar />
       
       {/* Main Content */}
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-safe-nav">
         <Outlet />
       </main>
       

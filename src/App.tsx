@@ -10,6 +10,8 @@ import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { setupI18n } from '@/i18n/config'
 import { useEffect, useState } from 'react'
 import './index.css'
+import { Capacitor } from '@capacitor/core'
+import { StatusBar, Style } from '@capacitor/status-bar'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -32,6 +34,27 @@ function App() {
     setupI18n().then(() => {
       setI18nReady(true)
     })
+  }, [])
+
+  // Capacitor status bar: overlay webview and set style based on theme
+  useEffect(() => {
+    if (Capacitor.getPlatform() !== 'web') {
+      try {
+        StatusBar.setOverlaysWebView({ overlay: true })
+        StatusBar.setBackgroundColor({ color: '#00000000' })
+
+        const applyStyle = () => {
+          const isDark = document.documentElement.classList.contains('dark')
+          StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark })
+        }
+        applyStyle()
+
+        const observer = new MutationObserver(applyStyle)
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+      } catch (e) {
+        // ignore
+      }
+    }
   }, [])
 
   if (!i18nReady) {
