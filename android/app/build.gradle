@@ -140,3 +140,38 @@ tasks.register("printSigningConfig") {
         println "-------------------------------------------"
     }
 }
+
+// Fail-fast check to prevent broken externalOverride from Android Studio
+tasks.register("doctorSigning") {
+    group = "verification"
+    description = "Detects Android Studio external signing override and validates the injected keystore path."
+    doLast {
+        def hasInjected = project.hasProperty('android.injected.signing.store.file')
+        if (hasInjected) {
+            def injectedPath = project.property('android.injected.signing.store.file')?.toString()
+            def f = injectedPath ? new File(injectedPath) : null
+            if (!f || !f.exists()) {
+                throw new GradleException(
+                    "Signature 'externalOverride' détectée via Android Studio mais le keystore est introuvable:\n" +
+                    "  android.injected.signing.store.file=${injectedPath}\n\n" +
+                    "Solutions:\n" +
+                    "  1) Utilisez la signature gérée par Gradle (recommandé):\n" +
+                    "     - Créez android/gradle-local.properties et remplissez MYAPP_UPLOAD_*.\n" +
+                    "     - Lancez: ./gradlew :app:printSigningConfig puis :app:bundleRelease\n" +
+                    "  2) Si vous tenez à l’assistant d’Android Studio, corrigez le chemin du keystore dans le wizard.\n"
+                )
+            } else {
+                logger.lifecycle("externalOverride actif: ${injectedPath}")
+            }
+        } else {
+            logger.lifecycle("Aucune injection externalOverride détectée — signature Gradle OK.")
+        }
+    }
+}
+
+// Ensure release-related tasks run the doctor first
+gradle.projectsEvaluated {
+    tasks.matching { it.name in ['validateSigningRelease','assembleRelease','bundleRelease'] }.configureEach {
+        dependsOn 'doctorSigning'
+    }
+}

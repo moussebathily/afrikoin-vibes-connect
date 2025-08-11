@@ -57,6 +57,17 @@ npx cap open android
 5. IMPORTANT: pour éviter l’injection de signature « externe » (externalOverride), laissez les champs de signature vides si Android Studio propose d’enregistrer une config; Gradle signera via `gradle-local.properties`.
 6. Sélectionnez le build type "release" et générez l’AAB
 
+## 🔧 Dépannage: externalOverride / validateSigningRelease
+- Symptôme: `Task :app:validateSigningRelease FAILED` avec `Keystore file ... not found for signing config 'externalOverride'`.
+- Cause: Android Studio a injecté une signature temporaire (externalOverride) pointant vers un keystore inexistant.
+- Correctifs:
+  1) Recommandé: signature via Gradle
+     - Configurez `android/gradle-local.properties` avec `MYAPP_UPLOAD_*`
+     - Vérifiez: `./gradlew :app:printSigningConfig` (externalOverride: false)
+     - Build: `./gradlew :app:bundleRelease`
+  2) Alternative: corriger le chemin du keystore dans l’assistant Android Studio (Generate Signed Bundle)
+- Vérification automatique: `./gradlew :app:doctorSigning` échouera tôt si externalOverride est cassé.
+
 ### 5. Upload sur Play Console
 1. Connectez-vous à Google Play Console
 2. Créez une nouvelle application
