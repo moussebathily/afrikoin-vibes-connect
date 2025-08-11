@@ -3,6 +3,18 @@
 - Workflows CI vérifient la SHA-1 contre `EXPECTED_UPLOAD_SHA1` (fallback: `PLAY_UPLOAD_SHA1`).
 - Voir build-mobile.md pour configurer les secrets et extraire la SHA-1.
 
+## Android – Générer un AAB localement (Windows/macOS/Linux)
+1) Placez votre keystore à un emplacement sûr (ex: android/app/release.keystore).
+2) Copiez `android/gradle-local.properties.example` vers `android/gradle-local.properties` et remplissez:
+   - `MYAPP_UPLOAD_STORE_FILE=app/release.keystore` (ou chemin absolu)
+   - `MYAPP_UPLOAD_STORE_PASSWORD=...`
+   - `MYAPP_UPLOAD_KEY_ALIAS=...`
+   - `MYAPP_UPLOAD_KEY_PASSWORD=...`
+3) Vérifiez la config: `./gradlew :app:printSigningConfig` (Windows: `gradlew.bat :app:printSigningConfig`). Assurez-vous que `HAS_RELEASE_SIGNING: true` et que `externalOverride` est `false`.
+4) Générez l’AAB: `./gradlew :app:bundleRelease`.
+5) Dans Android Studio: Build > Generate Signed Bundle/APK > Android App Bundle. Laissez les champs vides si Android Studio propose une signature externe pour éviter `externalOverride`; Gradle signera via vos propriétés.
+6) Téléversez le `.aab` dans Google Play Console.
+
 # gradle-completion
 Bash and Zsh completion support for [Gradle](https://gradle.org).
 

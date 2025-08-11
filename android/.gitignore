@@ -21,3 +21,7 @@ build/
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Local signing properties (do not commit)
+gradle-local.properties
+gradle.properties

@@ -1,5 +1,21 @@
 apply plugin: 'com.android.application'
 
+// Load optional local signing properties from android/gradle-local.properties (not committed)
+try {
+    def localPropsFile = rootProject.file('android/gradle-local.properties')
+    if (localPropsFile.exists()) {
+        def Properties props = new Properties()
+        localPropsFile.withInputStream { stream -> props.load(stream) }
+        props.each { k, v ->
+            if (!project.hasProperty(k.toString())) {
+                project.ext.set(k.toString(), v.toString())
+            }
+        }
+    }
+} catch(Exception e) {
+    logger.info "No android/gradle-local.properties found or failed to load: ${e.message}"
+}
+
 def RESOLVED_STORE_FILE = project.hasProperty("MYAPP_UPLOAD_STORE_FILE") ? project.property("MYAPP_UPLOAD_STORE_FILE") : (System.getenv("ANDROID_KEYSTORE") ?: System.getenv("RELEASE_STORE_FILE"))
 def RESOLVED_STORE_PASSWORD = project.hasProperty("MYAPP_UPLOAD_STORE_PASSWORD") ? project.property("MYAPP_UPLOAD_STORE_PASSWORD") : (System.getenv("ANDROID_KEYSTORE_PASSWORD") ?: System.getenv("RELEASE_STORE_PASSWORD"))
 def RESOLVED_KEY_ALIAS = project.hasProperty("MYAPP_UPLOAD_KEY_ALIAS") ? project.property("MYAPP_UPLOAD_KEY_ALIAS") : (System.getenv("ANDROID_KEY_ALIAS") ?: System.getenv("RELEASE_KEY_ALIAS"))
@@ -111,13 +127,16 @@ tasks.register("printSigningConfig") {
     description = "Prints resolved Android release signing configuration (without secrets)."
     doLast {
         println "---- Android Release Signing (resolved) ----"
+        println "HAS_RELEASE_SIGNING: ${HAS_RELEASE_SIGNING}"
         println "storeFile: ${RESOLVED_STORE_FILE ?: '(not set)'}"
         println "storeFile exists: ${RESOLVED_STORE_FILE ? file(RESOLVED_STORE_FILE).exists() : false}"
-        println "keyAlias: ${RESOLVED_KEY_ALIAS ?: '(not set)'}"
-        println "using externalOverride (Android Studio injection): " + (project.hasProperty('android.injected.signing.store.file') ? 'true' : 'false')
-        if (project.hasProperty('android.injected.signing.store.file')) {
+        println "keyAlias set: ${RESOLVED_KEY_ALIAS ? 'true' : 'false'}"
+        def extOverride = project.hasProperty('android.injected.signing.store.file')
+        println "Android Studio externalOverride: ${extOverride}"
+        if (extOverride) {
             println "android.injected.signing.store.file=" + project.property('android.injected.signing.store.file')
         }
+        println "Source preference: gradle-local.properties > gradle.properties > ENV"
         println "-------------------------------------------"
     }
 }
