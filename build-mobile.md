@@ -4,7 +4,7 @@
 ## Prérequis
 - Node.js 18+ installé
 - Android Studio installé
-- Java 11+ configuré
+- Java 17 configuré
 - Variables d'environnement Android SDK configurées
 
 ## Étapes pour générer l'AAB
@@ -40,15 +40,22 @@ npx cap sync android
 npx cap open android
 ```
 
-### 4. Dans Android Studio
+### 4. Signature locale via gradle-local.properties (recommandé)
+1) Copiez `android/gradle-local.properties.example` vers `android/gradle-local.properties` (ne pas commettre) et remplissez:
+   - `MYAPP_UPLOAD_STORE_FILE=app/release.keystore` (ou chemin absolu)
+   - `MYAPP_UPLOAD_STORE_PASSWORD=...`
+   - `MYAPP_UPLOAD_KEY_ALIAS=...`
+   - `MYAPP_UPLOAD_KEY_PASSWORD=...`
+2) Vérifiez la config: `./gradlew :app:printSigningConfig` (Windows: `gradlew.bat :app:printSigningConfig`). Assurez-vous que `HAS_RELEASE_SIGNING: true` et `Android Studio externalOverride: false`.
+3) Générez l’AAB en CLI: `./gradlew :app:bundleRelease`.
+
+### 5. Dans Android Studio (optionnel)
 1. Attendez l'indexation du projet
-2. Allez dans Build > Clean Project
-3. Puis Build > Rebuild Project
-4. Allez dans Build > Generate Signed Bundle / APK
-5. Sélectionnez "Android App Bundle"
-6. Créez ou sélectionnez votre keystore
-7. Choisissez "release" build
-8. Générez l'AAB
+2. Build > Clean Project
+3. Build > Rebuild Project
+4. Build > Generate Signed Bundle / APK > Android App Bundle
+5. IMPORTANT: pour éviter l’injection de signature « externe » (externalOverride), laissez les champs de signature vides si Android Studio propose d’enregistrer une config; Gradle signera via `gradle-local.properties`.
+6. Sélectionnez le build type "release" et générez l’AAB
 
 ### 5. Upload sur Play Console
 1. Connectez-vous à Google Play Console
