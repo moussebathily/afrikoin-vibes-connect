@@ -140,14 +140,45 @@ jobs:
       - name: Determine track and rollout
         id: track
         run: |
+          ROLLOUT_INPUT="${{ inputs.rollout }}"
+          validate_rollout() {
+            local r="$1"
+            [[ "$r" =~ ^(0(\.\d+)?|1(\.0+)?)$ ]]
+          }
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            # Tag build → Production staged rollout (default 0.2 if not provided)
+            rf="$ROLLOUT_INPUT"
+            if [[ -z "$rf" ]]; then rf="0.2"; fi
+            if ! validate_rollout "$rf"; then
+              echo "Invalid rollout '$rf' for tag build; defaulting to 0.2" >&2
+              rf="0.2"
+            fi
             echo "track=production" >> $GITHUB_OUTPUT
             echo "status=inProgress" >> $GITHUB_OUTPUT
-            echo "userFraction=${{ inputs.rollout || '0.2' }}" >> $GITHUB_OUTPUT
+            echo "userFraction=$rf" >> $GITHUB_OUTPUT
           elif [[ -n "${{ inputs.track }}" ]]; then
-            echo "track=${{ inputs.track }}" >> $GITHUB_OUTPUT
-            echo "status=completed" >> $GITHUB_OUTPUT
-            echo "userFraction=" >> $GITHUB_OUTPUT
+            sel="${{ inputs.track }}"
+            if [[ "$sel" == "production" ]]; then
+              rf="$ROLLOUT_INPUT"
+              if [[ -n "$rf" ]]; then
+                if validate_rollout "$rf"; then
+                  echo "track=production" >> $GITHUB_OUTPUT
+                  echo "status=inProgress" >> $GITHUB_OUTPUT
+                  echo "userFraction=$rf" >> $GITHUB_OUTPUT
+                else
+                  echo "Provided rollout '$rf' is invalid. Must be 0..1 (e.g., 0.05, 0.1, 0.2, 0.5)." >&2
+                  exit 1
+                fi
+              else
+                echo "track=production" >> $GITHUB_OUTPUT
+                echo "status=completed" >> $GITHUB_OUTPUT
+                echo "userFraction=" >> $GITHUB_OUTPUT
+              fi
+            else
+              echo "track=$sel" >> $GITHUB_OUTPUT
+              echo "status=completed" >> $GITHUB_OUTPUT
+              echo "userFraction=" >> $GITHUB_OUTPUT
+            fi
           else
             echo "track=internal" >> $GITHUB_OUTPUT
             echo "status=completed" >> $GITHUB_OUTPUT

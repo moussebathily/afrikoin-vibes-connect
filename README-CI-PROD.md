@@ -12,7 +12,7 @@ Secrets (GitHub → Settings → Secrets and variables → Actions):
 Triggers:
 - Push to main/master: uploads to Internal track
 - Tag vX.Y.Z: uploads to Production with staged rollout (default 20%)
-- Manual run: choose track and rollout
+- Manual run: choose track; for production you can set rollout (0-1). Empty = full rollout.
 
 Versioning:
 - Tags vX.Y.Z → versionCode = X*10000 + Y*100 + Z, versionName = X.Y.Z
