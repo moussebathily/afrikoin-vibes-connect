@@ -49,8 +49,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        continue-on-error: true
         with:
-          cache-read-only: true
+          cache-disabled: true
 
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
@@ -88,6 +89,14 @@ jobs:
       - name: Build AAB (release)
         working-directory: android
         run: ./gradlew :app:bundleRelease --stacktrace --no-daemon
+
+      - name: Diagnose build outputs
+        if: always()
+        run: |
+          echo "Listing android/app/build/outputs:"
+          ls -R android/app/build/outputs || true
+          echo "Finding files up to 3 levels deep:"
+          find android/app/build -maxdepth 3 -type f -print || true
 
       - name: Upload build artifacts (AAB and mapping)
         if: always()
