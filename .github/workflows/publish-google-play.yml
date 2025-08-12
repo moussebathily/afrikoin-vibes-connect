@@ -86,17 +86,30 @@ jobs:
         working-directory: android
         run: ./gradlew :app:printSigningConfig --no-daemon
 
+      - name: List Gradle tasks
+        working-directory: android
+        run: ./gradlew :app:tasks --all --no-daemon
+
       - name: Build AAB (release)
         working-directory: android
-        run: ./gradlew :app:bundleRelease --stacktrace --no-daemon
+        run: ./gradlew :app:clean :app:bundleRelease --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
+
+      - name: Upload Gradle build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log-${{ github.run_number }}
+          path: ${{ runner.temp }}/gradle-build.log
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Diagnose build outputs
         if: always()
         run: |
           echo "Listing android/app/build/outputs:"
           ls -R android/app/build/outputs || true
-          echo "Finding files up to 3 levels deep:"
-          find android/app/build -maxdepth 3 -type f -print || true
+          echo "Finding files up to 6 levels deep:"
+          find android/app/build -maxdepth 6 -type f -print || true
 
       - name: Upload build artifacts (AAB and mapping)
         if: always()
@@ -104,8 +117,8 @@ jobs:
         with:
           name: android-release-${{ github.run_number }}
           path: |
-            android/app/build/outputs/bundle/release/*.aab
-            android/app/build/outputs/mapping/release/mapping.txt
+            android/app/build/outputs/**/*.aab
+            android/app/build/outputs/**/mapping.txt
           if-no-files-found: warn
           retention-days: 7
 
@@ -131,8 +144,8 @@ jobs:
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: ${{ env.PACKAGE_NAME }}
-          releaseFiles: android/app/build/outputs/bundle/release/*.aab
-          mappingFile: android/app/build/outputs/mapping/release/mapping.txt
+          releaseFiles: android/app/build/outputs/**/*.aab
+          mappingFile: android/app/build/outputs/**/mapping.txt
           track: ${{ steps.track.outputs.track }}
           status: ${{ steps.track.outputs.status }}
           userFraction: ${{ steps.track.outputs.userFraction }}
