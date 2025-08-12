@@ -32,8 +32,12 @@ android {
         targetSdk 35
         def refName = System.getenv("GITHUB_REF_NAME") ?: System.getenv("REF_NAME") ?: ""
         def m = (refName =~ /^v(\d+)\.(\d+)\.(\d+)$/)
-        def computedVersionCode = m ? (m[0][1].toInteger() * 10000 + m[0][2].toInteger() * 100 + m[0][3].toInteger()) : 122
-        def computedVersionName = m ? "${m[0][1]}.${m[0][2]}.${m[0][3]}" : "1.2.2"
+        def runNum = 0
+        try {
+            runNum = (System.getenv("GITHUB_RUN_NUMBER") ?: "0") as Integer
+        } catch (ignored) { runNum = 0 }
+        def computedVersionCode = m ? (m[0][1].toInteger() * 10000 + m[0][2].toInteger() * 100 + m[0][3].toInteger()) : (20000000 + runNum)
+        def computedVersionName = m ? "${m[0][1]}.${m[0][2]}.${m[0][3]}" : "dev.${runNum}"
         versionCode computedVersionCode
         versionName computedVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
