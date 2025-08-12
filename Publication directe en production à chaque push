@@ -1,0 +1,142 @@
+# Create a "production-on-push" workflow + README and zip them for download
+import os, zipfile, textwrap
+
+os.makedirs(".github/workflows", exist_ok=True)
+
+workflow_yml = textwrap.dedent("""\
+name: Android • Build & Publish (Production on Push)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: "Release notes (optional)"
+        required: false
+        default: ""
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Decode keystore (upload key)
+        if: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > $HOME/release.keystore
+
+      - name: Create signing gradle.properties
+        run: |
+          mkdir -p $HOME/.gradle
+          {
+            echo "RELEASE_STORE_FILE=$HOME/release.keystore"
+            echo "RELEASE_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+            echo "RELEASE_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}"
+            echo "RELEASE_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}"
+          } >> $HOME/.gradle/gradle.properties
+
+      - name: Write Play service account JSON
+        run: |
+          echo "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" > $HOME/play-account.json
+
+      - name: Verify Gradle setup
+        run: ./gradlew --version && ./gradlew tasks
+
+      - name: Build AAB (release)
+        run: ./gradlew clean bundleRelease --stacktrace
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish to Google Play (production, completed)
+        env:
+          NOTES: ${{ github.event.inputs.release_notes }}
+        run: |
+          ARGS=(
+            "-Pplay.serviceAccountCredentials=$HOME/play-account.json"
+            "-Pplay.track=production"
+            "-Pplay.releaseStatus=completed"
+          )
+          if [ -n "$NOTES" ]; then
+            echo "$NOTES" > whatsnew-default.txt
+            ARGS+=("-Pplay.releaseNotes=en-US:whatsnew-default.txt")
+          fi
+          ./gradlew publishReleaseBundle "${ARGS[@]}" --stacktrace
+""")
+
+readme_md = textwrap.dedent("""\
+# Android • Build & Publish (Production on Push)
+
+Ce workflow publie **directement en production** sur Google Play **à chaque push sur `main`**.
+
+## Prérequis
+1. **Plugin Gradle Play Publisher** dans `app/` :
+   - Groovy
+     ```groovy
+     plugins {
+       id 'com.android.application'
+       id 'com.github.triplet.play' version '3.9.1'
+     }
+     ```
+   - Kotlin DSL
+     ```kotlin
+     plugins {
+       id("com.android.application")
+       id("com.github.triplet.play") version "3.9.1"
+     }
+     ```
+
+2. **Secrets GitHub (Settings → Secrets and variables → Actions)** :
+   - `PLAY_SERVICE_ACCOUNT_JSON` : contenu complet du JSON du compte de service
+   - `ANDROID_KEYSTORE_BASE64` : keystore `.jks` encodé en base64 (clé d’upload)
+   - `ANDROID_KEYSTORE_PASSWORD` : mot de passe du keystore
+   - `ANDROID_KEY_PASSWORD` : mot de passe de la clé
+   - `ANDROID_KEY_ALIAS` : alias de la clé (ex: `afrikoin`)
+
+3. **Donner l’accès au compte de service dans Play Console** :
+   - Play Console → Accès à l’API → *Donner accès* → App **Afrikoin** → rôle **Release Manager**
+
+## Lancer la publication
+- Pousse un commit sur `main` → build `.aab` + **publication en production** (status `completed`).
+- Optionnel : via **Run workflow**, tu peux fournir des **notes de version** (champ `release_notes`).
+
+## Notes
+- Le `.aab` est aussi stocké comme **artifact** du job.
+- Assure-toi que `applicationId` correspond exactement au package publié dans la Play Console.
+""")
+
+# Write files
+with open(".github/workflows/android-play-prod.yml", "w", encoding="utf-8") as f:
+    f.write(workflow_yml)
+
+with open("README-CI-PROD.md", "w", encoding="utf-8") as f:
+    f.write(readme_md)
+
+# Zip them
+zip_path = "/mnt/data/android-play-prod-on-push.zip"
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(".github/workflows/android-play-prod.yml")
+    z.write("README-CI-PROD.md")
+
+zip_path
