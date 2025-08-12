@@ -90,9 +90,23 @@ jobs:
         working-directory: android
         run: ./gradlew :app:tasks --all --no-daemon
 
+      - name: Determine Android variant (flavor-aware)
+        id: variant
+        working-directory: android
+        run: |
+          if ./gradlew :app:tasks --all | grep -q "bundleProdRelease"; then
+            echo "BUNDLE_TASK=:app:bundleProdRelease" >> $GITHUB_ENV
+            echo "VARIANT_DIR=prodRelease" >> $GITHUB_ENV
+            echo "Using flavored task: bundleProdRelease"
+          else
+            echo "BUNDLE_TASK=:app:bundleRelease" >> $GITHUB_ENV
+            echo "VARIANT_DIR=release" >> $GITHUB_ENV
+            echo "Using default task: bundleRelease"
+          fi
+
       - name: Build AAB (release)
         working-directory: android
-        run: ./gradlew :app:clean :app:bundleRelease --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
+        run: ./gradlew :app:clean $BUNDLE_TASK --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
 
       - name: Upload Gradle build log
         if: always()
