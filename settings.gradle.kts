@@ -21,4 +21,4 @@ include(":app")
 project(":app").projectDir = file("android/app")
 
 // Include Capacitor Android settings so plugins are detected when opening the repo root
-apply(from = "node_modules/@capacitor/android/capacitor.settings.gradle")
+apply(from = File("node_modules/@capacitor/android/capacitor.settings.gradle"))

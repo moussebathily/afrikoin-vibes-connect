@@ -18,9 +18,36 @@ on:
         default: '0.2'
 
 jobs:
+  quality:
+    name: Quality checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint check
+        run: npx eslint . --ext .ts,.tsx
+
+      - name: Build web app
+        run: npm run build
+
   build-and-publish:
     name: Build AAB and publish to Google Play
     runs-on: ubuntu-latest
+    needs: quality
+    environment: production
     env:
       PACKAGE_NAME: app.lovable.afrikoin
     steps:
@@ -105,9 +132,21 @@ jobs:
             echo "Using default task: bundleRelease"
           fi
 
-      - name: Build AAB (release)
+      - name: Build AAB (release) with retry
         working-directory: android
-        run: ./gradlew :app:clean $BUNDLE_TASK --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
+        run: |
+          for i in {1..3}; do
+            echo "Build attempt $i/3"
+            if ./gradlew :app:clean $BUNDLE_TASK --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"; then
+              break
+            fi
+            if [ $i -eq 3 ]; then
+              echo "❌ Build failed after 3 attempts"
+              exit 1
+            fi
+            echo "⚠️ Build failed, retrying in 10s..."
+            sleep 10
+          done
 
       - name: Upload Gradle build log
         if: always()
@@ -185,7 +224,53 @@ jobs:
             echo "userFraction=" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload to Google Play
+      - name: Validate AAB before upload
+        working-directory: android
+        run: |
+          AAB_FILE=$(find app/build/outputs -name "*.aab" | head -1)
+          if [ ! -f "$AAB_FILE" ]; then
+            echo "❌ AAB file not found"
+            exit 1
+          fi
+          echo "✅ AAB found: $AAB_FILE"
+          # Basic AAB validation
+          if [ $(stat -c%s "$AAB_FILE") -lt 1000000 ]; then
+            echo "⚠️ AAB seems too small (< 1MB), please verify"
+          fi
+
+      - name: Upload to Google Play with retry
+        run: |
+          for i in {1..3}; do
+            echo "Upload attempt $i/3"
+            if curl -X POST \
+              -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "serviceAccountJsonPlainText": "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}",
+                "packageName": "${{ env.PACKAGE_NAME }}",
+                "releaseFiles": "android/app/build/outputs/**/*.aab",
+                "mappingFile": "android/app/build/outputs/**/mapping.txt",
+                "track": "${{ steps.track.outputs.track }}",
+                "status": "${{ steps.track.outputs.status }}",
+                "userFraction": "${{ steps.track.outputs.userFraction }}",
+                "inAppUpdatePriority": 3,
+                "releaseNotes": "Automatic release from commit ${{ github.sha }}"
+              }' \
+              "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${{ env.PACKAGE_NAME }}/edits"; then
+              echo "✅ Upload successful"
+              break
+            fi
+            if [ $i -eq 3 ]; then
+              echo "❌ Upload failed after 3 attempts, falling back to r0adkll action"
+              # Fallback to original method
+              break
+            fi
+            echo "⚠️ Upload failed, retrying in 15s..."
+            sleep 15
+          done
+
+      - name: Upload to Google Play (fallback)
+        if: failure()
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
@@ -196,3 +281,4 @@ jobs:
           status: ${{ steps.track.outputs.status }}
           userFraction: ${{ steps.track.outputs.userFraction }}
           inAppUpdatePriority: 3
+          releaseNotes: "Automatic release from commit ${{ github.sha }}"

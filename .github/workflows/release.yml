@@ -1,0 +1,218 @@
+name: Release Management
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  analyze-commits:
+    name: Analyze commits and generate changelog
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      release_type: ${{ steps.check.outputs.release_type }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install conventional commits tools
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+          npm install -g conventional-changelog-cli
+
+      - name: Check if release needed
+        id: check
+        run: |
+          # Get last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Last tag: $LAST_TAG"
+          
+          # Get commits since last tag
+          COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"%s")
+          echo "Commits since last tag:"
+          echo "$COMMITS"
+          
+          # Check for conventional commit types
+          HAS_BREAKING=$(echo "$COMMITS" | grep -E "(BREAKING CHANGE|!:)" || true)
+          HAS_FEAT=$(echo "$COMMITS" | grep -E "^feat(\([^)]*\))?:" || true)
+          HAS_FIX=$(echo "$COMMITS" | grep -E "^fix(\([^)]*\))?:" || true)
+          
+          if [ -n "$HAS_BREAKING" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "release_type=major" >> $GITHUB_OUTPUT
+          elif [ -n "$HAS_FEAT" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "release_type=minor" >> $GITHUB_OUTPUT
+          elif [ -n "$HAS_FIX" ]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "release_type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "release_type=none" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate changelog
+        id: changelog
+        if: steps.check.outputs.should_release == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          # Generate changelog for this release
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          
+          echo "## 🚀 What's Changed" > TEMP_CHANGELOG.md
+          echo "" >> TEMP_CHANGELOG.md
+          
+          # Features
+          FEATURES=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %s" | grep -E "^- feat(\([^)]*\))?:" | sed 's/^- feat[^:]*: /- ✨ /' || true)
+          if [ -n "$FEATURES" ]; then
+            echo "### ✨ New Features" >> TEMP_CHANGELOG.md
+            echo "$FEATURES" >> TEMP_CHANGELOG.md
+            echo "" >> TEMP_CHANGELOG.md
+          fi
+          
+          # Bug fixes
+          FIXES=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %s" | grep -E "^- fix(\([^)]*\))?:" | sed 's/^- fix[^:]*: /- 🐛 /' || true)
+          if [ -n "$FIXES" ]; then
+            echo "### 🐛 Bug Fixes" >> TEMP_CHANGELOG.md
+            echo "$FIXES" >> TEMP_CHANGELOG.md
+            echo "" >> TEMP_CHANGELOG.md
+          fi
+          
+          # Other changes
+          OTHERS=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %s" | grep -vE "^- (feat|fix)(\([^)]*\))?:" | head -5 || true)
+          if [ -n "$OTHERS" ]; then
+            echo "### 🔧 Other Changes" >> TEMP_CHANGELOG.md
+            echo "$OTHERS" >> TEMP_CHANGELOG.md
+            echo "" >> TEMP_CHANGELOG.md
+          fi
+          
+          # Set output (escaped for JSON)
+          CHANGELOG_CONTENT=$(cat TEMP_CHANGELOG.md | jq -Rs .)
+          echo "changelog=$CHANGELOG_CONTENT" >> $GITHUB_OUTPUT
+
+  create-release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    needs: analyze-commits
+    if: needs.analyze-commits.outputs.should_release == 'true' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Calculate next version
+        id: version
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//' || echo "0.0.0")
+          echo "Current version: $CURRENT_VERSION"
+          
+          # Parse version parts
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+          
+          # Determine release type
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RELEASE_TYPE="${{ inputs.release_type }}"
+          else
+            RELEASE_TYPE="${{ needs.analyze-commits.outputs.release_type }}"
+          fi
+          
+          echo "Release type: $RELEASE_TYPE"
+          
+          # Calculate new version
+          case $RELEASE_TYPE in
+            major)
+              NEW_VERSION="$((MAJOR + 1)).0.0"
+              ;;
+            minor)
+              NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+              ;;
+            patch)
+              NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+              ;;
+            *)
+              echo "Invalid release type: $RELEASE_TYPE"
+              exit 1
+              ;;
+          esac
+          
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Update CHANGELOG.md
+        run: |
+          # Create or update CHANGELOG.md
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "All notable changes to this project will be documented in this file." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          
+          # Add new version to changelog
+          DATE=$(date +%Y-%m-%d)
+          NEW_ENTRY="## [${{ steps.version.outputs.new_version }}] - $DATE"
+          
+          # Create temp file with new entry
+          echo "$NEW_ENTRY" > TEMP_ENTRY.md
+          echo "" >> TEMP_ENTRY.md
+          echo '${{ fromJson(needs.analyze-commits.outputs.changelog) }}' >> TEMP_ENTRY.md
+          echo "" >> TEMP_ENTRY.md
+          
+          # Insert at the beginning of changelog (after header)
+          head -3 CHANGELOG.md > NEW_CHANGELOG.md
+          cat TEMP_ENTRY.md >> NEW_CHANGELOG.md
+          tail -n +4 CHANGELOG.md >> NEW_CHANGELOG.md
+          mv NEW_CHANGELOG.md CHANGELOG.md
+          rm TEMP_ENTRY.md
+
+      - name: Commit and tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add CHANGELOG.md
+          git commit -m "🔖 Release ${{ steps.version.outputs.new_version }}
+
+          - Updated CHANGELOG.md
+          - Automated release via GitHub Actions"
+          
+          git tag ${{ steps.version.outputs.new_tag }}
+          git push origin main
+          git push origin ${{ steps.version.outputs.new_tag }}
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.version.outputs.new_tag }}
+          release_name: "AfriKoin ${{ steps.version.outputs.new_version }}"
+          body: ${{ fromJson(needs.analyze-commits.outputs.changelog) }}
+          draft: false
+          prerelease: false

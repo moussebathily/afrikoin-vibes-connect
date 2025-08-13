@@ -1,0 +1,39 @@
+version: 2
+updates:
+  # NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    groups:
+      development-dependencies:
+        dependency-type: "development"
+      production-dependencies:
+        dependency-type: "production"
+    ignore:
+      # Ignore major version updates for React (manual review needed)
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+
+  # Gradle dependencies (Android)
+  - package-ecosystem: "gradle"
+    directory: "/android"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
