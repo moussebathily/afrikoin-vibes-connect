@@ -12,7 +12,10 @@ from datetime import datetime
 
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+# Load .env file if it exists (for local development)
+env_file = ROOT_DIR / '.env'
+if env_file.exists():
+    load_dotenv(env_file)
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
