@@ -43,4 +43,10 @@ module.exports = {
       return webpackConfig;
     },
   },
+  devServer: {
+    // Fix deprecated webpack dev server options
+    setupMiddlewares: (middlewares, devServer) => {
+      return middlewares;
+    },
+  },
 };
