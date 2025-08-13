@@ -23,4 +23,4 @@ include ':app'
 project(':app').projectDir = new File('app')
 
 // Inclure les sous-projets Capacitor (android, plugins)
-apply from: '../node_modules/@capacitor/android/capacitor.settings.gradle'
+apply from: File("../node_modules/@capacitor/android/capacitor.settings.gradle")

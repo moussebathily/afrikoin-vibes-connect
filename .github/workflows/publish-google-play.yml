@@ -15,14 +15,27 @@ on:
       rollout:
         description: 'Staged rollout fraction for production (0-1). Ignored unless production.'
         required: false
-        default: '0.2'
+        default: '0.1'
 
 jobs:
-  build-and-publish:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - name: Commitlint
+        uses: wagoid/commitlint-github-action@v5
+
+  publish:
     name: Build AAB and publish to Google Play
     runs-on: ubuntu-latest
-    env:
-      PACKAGE_NAME: app.lovable.afrikoin
+    needs: quality
+    environment: production
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -106,8 +119,11 @@ jobs:
           fi
 
       - name: Build AAB (release)
-        working-directory: android
-        run: ./gradlew :app:clean $BUNDLE_TASK --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          command: ./gradlew :app:clean $BUNDLE_TASK --no-daemon --stacktrace --info | tee "$RUNNER_TEMP/gradle-build.log"
+          working-directory: android
 
       - name: Upload Gradle build log
         if: always()
@@ -126,6 +142,11 @@ jobs:
           echo "Finding files up to 6 levels deep:"
           find android/app/build -maxdepth 6 -type f -print || true
 
+      - name: Validate bundle
+        run: |
+          curl -sL https://github.com/google/bundletool/releases/download/1.16.0/bundletool-all-1.16.0.jar -o bundletool.jar
+          java -jar bundletool.jar validate --bundle android/app/build/outputs/bundle/$VARIANT_DIR/app-$VARIANT_DIR.aab
+
       - name: Upload build artifacts (AAB and mapping)
         if: always()
         uses: actions/upload-artifact@v4
@@ -137,62 +158,24 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Determine track and rollout
-        id: track
+      - name: Prepare Play credentials
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
         run: |
-          ROLLOUT_INPUT="${{ inputs.rollout }}"
-          validate_rollout() {
-            local r="$1"
-            [[ "$r" =~ ^(0(\.\d+)?|1(\.0+)?)$ ]]
-          }
-          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            # Tag build → Production staged rollout (default 0.2 if not provided)
-            rf="$ROLLOUT_INPUT"
-            if [[ -z "$rf" ]]; then rf="0.2"; fi
-            if ! validate_rollout "$rf"; then
-              echo "Invalid rollout '$rf' for tag build; defaulting to 0.2" >&2
-              rf="0.2"
-            fi
-            echo "track=production" >> $GITHUB_OUTPUT
-            echo "status=inProgress" >> $GITHUB_OUTPUT
-            echo "userFraction=$rf" >> $GITHUB_OUTPUT
-          elif [[ -n "${{ inputs.track }}" ]]; then
-            sel="${{ inputs.track }}"
-            if [[ "$sel" == "production" ]]; then
-              rf="$ROLLOUT_INPUT"
-              if [[ -n "$rf" ]]; then
-                if validate_rollout "$rf"; then
-                  echo "track=production" >> $GITHUB_OUTPUT
-                  echo "status=inProgress" >> $GITHUB_OUTPUT
-                  echo "userFraction=$rf" >> $GITHUB_OUTPUT
-                else
-                  echo "Provided rollout '$rf' is invalid. Must be 0..1 (e.g., 0.05, 0.1, 0.2, 0.5)." >&2
-                  exit 1
-                fi
-              else
-                echo "track=production" >> $GITHUB_OUTPUT
-                echo "status=completed" >> $GITHUB_OUTPUT
-                echo "userFraction=" >> $GITHUB_OUTPUT
-              fi
-            else
-              echo "track=$sel" >> $GITHUB_OUTPUT
-              echo "status=completed" >> $GITHUB_OUTPUT
-              echo "userFraction=" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "track=internal" >> $GITHUB_OUTPUT
-            echo "status=completed" >> $GITHUB_OUTPUT
-            echo "userFraction=" >> $GITHUB_OUTPUT
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "Missing PLAY_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
           fi
+          echo "$PLAY_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/play-sa.json"
+          echo "PLAY_SERVICE_ACCOUNT_JSON_PATH=$RUNNER_TEMP/play-sa.json" >> $GITHUB_ENV
 
-      - name: Upload to Google Play
-        uses: r0adkll/upload-google-play@v1
+      - name: Prepare release notes
+        run: echo "RELEASE_NOTES=$(git log -1 --pretty=%s)" >> $GITHUB_ENV
+
+      - name: Publish to Google Play
+        uses: nick-fields/retry@v2
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: ${{ env.PACKAGE_NAME }}
-          releaseFiles: android/app/build/outputs/**/*.aab
-          mappingFile: android/app/build/outputs/**/mapping.txt
-          track: ${{ steps.track.outputs.track }}
-          status: ${{ steps.track.outputs.status }}
-          userFraction: ${{ steps.track.outputs.userFraction }}
-          inAppUpdatePriority: 3
+          max_attempts: 3
+          command: >
+            ./gradlew publishReleaseBundle -Pplay.serviceAccountJson=$PLAY_SERVICE_ACCOUNT_JSON_PATH -Pplay.track=${{ inputs.track || 'production' }} -Pplay.releaseStatus=inProgress -Pplay.releaseFraction=${{ inputs.rollout || '0.1' }} -Pplay.releaseNotes=en-US:"$RELEASE_NOTES" --no-daemon --stacktrace --info
+          working-directory: android

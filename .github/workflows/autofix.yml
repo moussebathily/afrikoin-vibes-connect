@@ -1,0 +1,34 @@
+name: Autofix
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'CHANGELOG.md'
+  workflow_dispatch:
+
+jobs:
+  autofix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Run Prettier
+        run: npx prettier . -w
+      - name: Run ESLint fix
+        run: npx eslint . --ext .js,.ts,.tsx --fix || true
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: autofix/${{ github.ref_name }}
+          commit-message: "chore: apply automated fixes"
+          title: "chore: apply automated fixes"
+          body: "This PR applies automated ESLint/Prettier fixes."
+          labels: autofix
