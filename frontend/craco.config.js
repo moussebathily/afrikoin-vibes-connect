@@ -7,11 +7,6 @@ const config = {
 };
 
 module.exports = {
-  babel: {
-    plugins: [
-      '@babel/plugin-proposal-private-property-in-object'
-    ]
-  },
   webpack: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -49,13 +44,9 @@ module.exports = {
     },
   },
   devServer: (devServerConfig, { env, paths, proxy, allowedHost }) => {
-    // Override deprecated options
-    if (devServerConfig.onBeforeSetupMiddleware) {
-      delete devServerConfig.onBeforeSetupMiddleware;
-    }
-    if (devServerConfig.onAfterSetupMiddleware) {
-      delete devServerConfig.onAfterSetupMiddleware;
-    }
+    // Remove deprecated options
+    delete devServerConfig.onBeforeSetupMiddleware;
+    delete devServerConfig.onAfterSetupMiddleware;
     
     // Use the new setupMiddlewares option
     devServerConfig.setupMiddlewares = (middlewares, devServer) => {
