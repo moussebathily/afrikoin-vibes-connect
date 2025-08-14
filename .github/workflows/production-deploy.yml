@@ -1,4 +1,4 @@
-name: Production Deploy - Android AAB & Web
+name: Production Deploy
 
 permissions:
   contents: write
@@ -8,7 +8,7 @@ permissions:
 
 on:
   push:
-    tags: [ 'v*' ]
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       version:
@@ -17,232 +17,234 @@ on:
         default: 'v1.2.2'
 
 jobs:
-  # Job 1: Build Android AAB
   build-android:
     runs-on: ubuntu-latest
     name: Build Android AAB
-    
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup SSH (optional)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Setup SSH (optional)
+        if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-    - name: Add known_hosts (GitHub)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+      - name: Add GitHub to known_hosts
+        if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
 
-    - name: Make Gradle wrapper executable
-      run: chmod +x android/gradlew
+      - name: Make Gradle wrapper executable
+        run: chmod +x android/gradlew
 
-    - name: Validate Gradle Wrapper
-      uses: gradle/wrapper-validation-action@v2
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-        
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps --ignore-optional
-      
-    - name: Build web app
-      run: npm run build
-      
-    - name: Add Android platform
-      run: |
-        if [ ! -d android/app ]; then
-          npx cap add android
-        else
-          echo "Android platform already added"
-        fi
-      
-    - name: Sync Capacitor
-      run: npx cap sync android
-      
-    - name: Setup Android signing
-      run: |
-        if [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
-          echo "✅ Setting up Android signing"
-          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
-          echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
-          echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
-        else
-          echo "⚠️ ANDROID_KEYSTORE secret not set. Release will be unsigned."
-        fi
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
 
-    - name: Show keystore SHA-1 (verify)
-      if: ${{ secrets.ANDROID_KEYSTORE != '' }}
-      run: |
-        set -euo pipefail
-        echo "🔎 Computing SHA-1 of upload key..."
-        RAW=$(keytool -list -v -alias "${{ secrets.ANDROID_KEY_ALIAS }}" -keystore android/app/release.keystore -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" || true)
-        FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
-        if [ -z "$FP" ]; then
-          echo "❌ Unable to extract SHA-1. Check alias/passwords."
-          exit 1
-        fi
-        echo "SHA-1: $FP"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-        EXP="${{ secrets.EXPECTED_UPLOAD_SHA1 }}"
-        if [ -z "$EXP" ]; then EXP="${{ secrets.PLAY_UPLOAD_SHA1 }}"; fi
-        if [ -n "$EXP" ]; then
-          EXP_UP=$(echo "$EXP" | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
-          echo "🎯 Expected: $EXP_UP"
-          if [ "$FP" != "$EXP_UP" ]; then
-            echo "❌ Keystore SHA-1 does not match expected upload key."
-            exit 1
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps --ignore-optional
+
+      - name: Build Web app
+        run: npm run build
+
+      - name: Add Android platform (Capacitor)
+        run: |
+          if [ ! -d android/app ]; then
+            npx cap add android
           else
-            echo "✅ Keystore SHA-1 matches expected upload key."
+            echo "Android platform already present"
           fi
-        else
-          echo "ℹ️ No EXPECTED_UPLOAD_SHA1 provided. Skipping strict verification."
-        fi
-        
-    - name: Build Android AAB (Release)
-      working-directory: android
-      run: |
-        echo "🔨 Building release AAB..."
-        ./gradlew bundleRelease --stacktrace --info
-        
-    - name: Upload Release AAB
-      uses: actions/upload-artifact@v4
-      with:
-        name: afrikoin-v${{ github.ref_name || inputs.version }}.aab
-        path: android/app/build/outputs/bundle/release/app-release.aab
-        
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          android/app/build/outputs/bundle/release/app-release.aab
-        name: AfriKoin ${{ github.ref_name || inputs.version }}
-        body: |
-          ## AfriKoin ${{ github.ref_name || inputs.version }}
-          
-          ### 📱 Android AAB
-          - Version: ${{ github.ref_name || inputs.version }}
-          - Build: ${{ github.run_number }}
-          - Signed and ready for Google Play Store
-          
-          ### 🌐 Web Deployment
-          - Live at: https://www.afrikoin.online
-          - Deployed simultaneously with mobile build
-          
-          ### 🚀 Release Notes
-          - Production-ready Android AAB
-          - Web app updated with latest features
-          - SEO optimized with sitemap
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Job 2: Deploy Web to Production
+      - name: Capacitor sync
+        run: npx cap sync android
+
+      - name: Configure Android signing
+        run: |
+          if [ -n "${{ secrets.ANDROID_KEYSTORE }}" ]; then
+            echo "✅ Android signing configured"
+            mkdir -p android/app
+            echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+            {
+              echo "MYAPP_UPLOAD_STORE_FILE=release.keystore"
+              echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}"
+              echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}"
+              echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}"
+            } >> android/gradle.properties
+          else
+            echo "⚠️ Secret ANDROID_KEYSTORE not set. Release will not be signed."
+          fi
+
+      - name: Print keystore SHA-1 (verify)
+        if: ${{ secrets.ANDROID_KEYSTORE != '' }}
+        run: |
+          set -euo pipefail
+          echo "🔎 Checking upload key SHA-1…"
+          RAW=$(keytool -list -v -alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
+                -keystore android/app/release.keystore \
+                -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+                -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" || true)
+          echo "$RAW"
+          FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r')
+          if [ -z "$FP" ]; then
+            echo "❌ Could not extract SHA-1. Check alias/passwords."
+            exit 1
+          fi
+          echo "SHA-1: $FP"
+          EXP="${{ secrets.EXPECTED_UPLOAD_SHA1 }}"
+          if [ -z "$EXP" ]; then EXP="${{ secrets.PLAY_UPLOAD_SHA1 }}"; fi
+          if [ -n "$EXP" ]; then
+            EXP_UP=$(echo "$EXP" | tr '[:lower:]' '[:upper:]' | tr -d ' \r:')
+            echo "🎯 Expected: $EXP_UP"
+            if [ "$FP" != "$EXP_UP" ]; then
+              echo "❌ Keystore SHA-1 does not match expected upload key."
+              exit 1
+            else
+              echo "✅ Keystore SHA-1 matches expected upload key."
+            fi
+          else
+            echo "ℹ️ No EXPECTED_UPLOAD_SHA1 provided. Skipping strict check."
+          fi
+
+      - name: Build Android AAB (Release)
+        working-directory: android
+        run: |
+          echo "🔨 Building AAB release…"
+          ./gradlew bundleRelease --stacktrace --info
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: afrikoin-${{ github.ref_name || inputs.version }}.aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            android/app/build/outputs/bundle/release/app-release.aab
+          name: AfriKoin ${{ github.ref_name || inputs.version }}
+          body: |
+            ## AfriKoin ${{ github.ref_name || inputs.version }}
+
+            ### 📱 Android AAB
+            - Version: ${{ github.ref_name || inputs.version }}
+            - Build: ${{ github.run_number }}
+            - Signed and ready for Google Play Store
+
+            ### 🌐 Web Deployment
+            - Live at: https://www.afrikoin.online
+
+            ### 🚀 Release notes
+            - Android AAB ready for production
+            - Web app updated with the latest features
+            - SEO optimized with sitemap
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   deploy-web:
     runs-on: ubuntu-latest
     name: Deploy Web to afrikoin.online
-    
+    needs: [build-android]
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup SSH (optional)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Setup SSH (optional)
+        if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-    - name: Add known_hosts (GitHub)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
+      - name: Add GitHub to known_hosts
+        if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm ci --legacy-peer-deps --ignore-optional
-      
-    - name: Build application
-      run: npm run build
-      
-    - name: Deploy to Vercel Production
-      uses: amondnet/vercel-action@v25
-      with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        vercel-args: '--prod'
-        vercel-org-id: ${{ secrets.ORG_ID }}
-        vercel-project-id: ${{ secrets.PROJECT_ID }}
-        working-directory: ./
-        
-    - name: Generate and submit sitemap
-      run: |
-        echo "📍 Generating sitemap for SEO optimization"
-        curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml"
-        
-    - name: Notify successful deployment
-      run: |
-        echo "🌐 AfriKoin deployed successfully!"
-        echo "🔗 Live at: https://www.afrikoin.online"
-        echo "🗺️ Sitemap: https://www.afrikoin.online/sitemap.xml"
-        echo "📱 Mobile AAB ready for Google Play Store"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-  # Job 3: Post-deployment validation
-  validate-deployment:
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps --ignore-optional
+
+      - name: Build Web app
+        run: npm run build
+
+      - name: Deploy to Vercel (Production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-args: '--prod'
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          working-directory: ./
+
+      - name: Ping Google with sitemap
+        run: |
+          echo "📍 Submitting sitemap to Google"
+          curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml"
+
+      - name: Notify success
+        run: |
+          echo "🌐 AfriKoin deployed!"
+          echo "🔗 Live: https://www.afrikoin.online"
+          echo "🗺️ Sitemap: https://www.afrikoin.online/sitemap.xml"
+          echo "📱 Mobile AAB ready for Google Play Store"
+
+  validate-deploy:
     runs-on: ubuntu-latest
     name: Validate Production Deployment
     needs: [build-android, deploy-web]
-    
+
     steps:
-    - name: Check website availability
-      run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online)
-        if [ $response -eq 200 ]; then
-          echo "✅ Website is accessible (HTTP $response)"
-        else
-          echo "❌ Website check failed (HTTP $response)"
-          exit 1
-        fi
-        
-    - name: Validate sitemap
-      run: |
-        response=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online/sitemap.xml)
-        if [ $response -eq 200 ]; then
-          echo "✅ Sitemap is accessible (HTTP $response)"
-        else
-          echo "❌ Sitemap check failed (HTTP $response)"
-          exit 1
-        fi
-        
-    - name: Deployment summary
-      run: |
-        echo "🎉 Production deployment completed successfully!"
-        echo "📊 Deployment Summary:"
-        echo "   - Android AAB: Built and released"
-        echo "   - Web App: Deployed to afrikoin.online"
-        echo "   - SEO: Sitemap submitted to Google"
-        echo "   - Status: All systems operational"
+      - name: Check website availability
+        run: |
+          set -e
+          code=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online)
+          if [ "$code" -eq 200 ]; then
+            echo "✅ Website is up (HTTP $code)"
+          else
+            echo "❌ Website check failed (HTTP $code)"
+            exit 1
+          fi
+
+      - name: Validate sitemap
+        run: |
+          set -e
+          code=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online/sitemap.xml)
+          if [ "$code" -eq 200 ]; then
+            echo "✅ Sitemap is accessible (HTTP $code)"
+          else
+            echo "❌ Sitemap check failed (HTTP $code)"
+            exit 1
+          fi
+
+      - name: Deployment summary
+        run: |
+          echo "🎉 Production deployment completed successfully!"
+          echo "📊 Summary:"
+          echo " - Android AAB: built and attached to the release"
+          echo " - Web: deployed on afrikoin.online"
+          echo " - SEO: sitemap submitted to Google"
