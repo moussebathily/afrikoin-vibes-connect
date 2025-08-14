@@ -1,5 +1,10 @@
 name: Auto-fix Code Quality
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
 on:
   push:
     branches: [main, master, develop]
@@ -10,7 +15,7 @@ jobs:
   autofix:
     name: Auto-fix and create PR
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref != 'refs/heads/main'
+    if: github.event_name == 'push'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,7 +38,7 @@ jobs:
           npx prettier --write "*.{ts,tsx,js,jsx,json,md}"
 
       - name: Run ESLint auto-fix
-        run: npx eslint . --ext .ts,.tsx --fix || true
+        run: npx eslint . --fix || true
 
       - name: Check for changes
         id: changes
@@ -108,7 +113,7 @@ jobs:
         run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
 
       - name: Lint check
-        run: npx eslint . --ext .ts,.tsx
+        run: npx eslint .
 
       - name: Type check
         run: npx tsc --noEmit

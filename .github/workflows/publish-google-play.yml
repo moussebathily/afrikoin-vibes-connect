@@ -1,5 +1,9 @@
 name: Publish Android to Google Play
 
+permissions:
+  contents: read
+  actions: write
+
 on:
   push:
     branches: [main, master]
@@ -38,7 +42,7 @@ jobs:
         run: npx tsc --noEmit
 
       - name: Lint check
-        run: npx eslint . --ext .ts,.tsx
+        run: npx eslint .
 
       - name: Build web app
         run: npm run build
