@@ -25,8 +25,6 @@ updates:
         dependency-type: "development"
       production-dependencies:
         dependency-type: "production"
-      security-updates:
-        update-types: ["security"]
     ignore:
       # Ignore major version updates for React (manual review needed)
       - dependency-name: "react"
