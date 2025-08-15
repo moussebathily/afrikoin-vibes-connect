@@ -101,7 +101,11 @@ jobs:
                 -storepass "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
                 -keypass "${{ secrets.ANDROID_KEY_PASSWORD }}" || true)
           echo "$RAW"
-          FP=$(printf "%s" "$RAW" | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' \r')
+          FP=$(printf "%s" "$RAW" \
+            | sed -n -e 's/.*SHA-1:\s*\(.*\)/\1/p' -e 's/.*SHA1:\s*\(.*\)/\1/p' \
+            | head -n1 \
+            | tr '[:lower:]' '[:upper:]' \
+            | tr -d ' \r')
           if [ -z "$FP" ]; then
             echo "❌ Could not extract SHA-1. Check alias/passwords."
             exit 1
