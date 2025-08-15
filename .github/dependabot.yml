@@ -8,11 +8,25 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "npm"
+      - "auto-update"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    reviewers:
+      - "afrikoin-team"
+    assignees:
+      - "afrikoin-maintainer"
     groups:
       development-dependencies:
         dependency-type: "development"
       production-dependencies:
         dependency-type: "production"
+      security-updates:
+        update-types: ["security"]
     ignore:
       # Ignore major version updates for React (manual review needed)
       - dependency-name: "react"
@@ -28,6 +42,17 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "auto-update"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    reviewers:
+      - "afrikoin-team"
+    assignees:
+      - "afrikoin-maintainer"
 
   # Gradle dependencies (Android)
   - package-ecosystem: "gradle"
@@ -37,3 +62,15 @@ updates:
       day: "monday"
       time: "09:00"
     open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "android"
+      - "gradle"
+      - "auto-update"
+    commit-message:
+      prefix: "deps(android)"
+      include: "scope"
+    reviewers:
+      - "afrikoin-team"
+    assignees:
+      - "afrikoin-maintainer"
