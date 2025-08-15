@@ -33,7 +33,7 @@ jobs:
           npx prettier --write "*.{ts,tsx,js,jsx,json,md}"
 
       - name: Run ESLint auto-fix
-        run: npx eslint . --ext .ts,.tsx --fix || true
+        run: npx eslint . --fix || true
 
       - name: Check for changes
         id: changes
@@ -107,7 +107,7 @@ jobs:
         run: npx prettier --check "src/**/*.{ts,tsx,js,jsx,json,css,md}"
 
       - name: Lint check
-        run: npx eslint . --ext .ts,.tsx
+        run: npx eslint .
 
       - name: Type check
         run: npx tsc --noEmit
