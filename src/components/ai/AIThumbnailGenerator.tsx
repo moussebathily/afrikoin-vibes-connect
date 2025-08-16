@@ -1,83 +1,111 @@
-import React, { useState } from 'react'
-import { Image, Download, Palette, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useAI } from '@/hooks/useAI'
-import { useToast } from '@/hooks/use-toast'
+import React, { useState } from "react";
+import { Image, Download, Palette, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAI } from "@/hooks/useAI";
+import { useToast } from "@/hooks/use-toast";
 
 interface AIThumbnailGeneratorProps {
-  productName: string
-  price: number | string
-  currency?: string
-  category?: string
-  onThumbnailGenerated?: (thumbnailUrl: string) => void
+  productName: string;
+  price: number | string;
+  currency?: string;
+  category?: string;
+  onThumbnailGenerated?: (thumbnailUrl: string) => void;
 }
 
-export function AIThumbnailGenerator({ 
+export function AIThumbnailGenerator({
   productName,
   price,
-  currency = 'XOF',
+  currency = "XOF",
   category,
-  onThumbnailGenerated 
+  onThumbnailGenerated,
 }: AIThumbnailGeneratorProps) {
-  const [style, setStyle] = useState('modern')
-  const [result, setResult] = useState<any>(null)
-  const { generateThumbnail, loading } = useAI()
-  const { toast } = useToast()
+  const [style, setStyle] = useState("modern");
+  const [result, setResult] = useState<any>(null);
+  const { generateThumbnail, loading } = useAI();
+  const { toast } = useToast();
 
   const styles = [
-    { value: 'modern', label: 'Moderne', description: 'Design épuré et contemporain' },
-    { value: 'traditional', label: 'Traditionnel', description: 'Motifs africains authentiques' },
-    { value: 'luxury', label: 'Luxe', description: 'Élégant avec accents dorés' },
-    { value: 'vibrant', label: 'Vibrant', description: 'Couleurs vives et dynamiques' }
-  ]
+    {
+      value: "modern",
+      label: "Moderne",
+      description: "Design épuré et contemporain",
+    },
+    {
+      value: "traditional",
+      label: "Traditionnel",
+      description: "Motifs africains authentiques",
+    },
+    {
+      value: "luxury",
+      label: "Luxe",
+      description: "Élégant avec accents dorés",
+    },
+    {
+      value: "vibrant",
+      label: "Vibrant",
+      description: "Couleurs vives et dynamiques",
+    },
+  ];
 
   const handleGeneration = async () => {
     if (!productName || !price) {
       toast({
         title: "Informations manquantes",
         description: "Nom du produit et prix requis",
-        variant: "destructive"
-      })
-      return
+        variant: "destructive",
+      });
+      return;
     }
 
-    const thumbnailResult = await generateThumbnail(productName, price, currency, category, style)
+    const thumbnailResult = await generateThumbnail(
+      productName,
+      price,
+      currency,
+      category,
+      style,
+    );
     if (thumbnailResult) {
-      setResult(thumbnailResult)
+      setResult(thumbnailResult);
       if (thumbnailResult.success && thumbnailResult.thumbnail_url) {
-        onThumbnailGenerated?.(thumbnailResult.thumbnail_url)
+        onThumbnailGenerated?.(thumbnailResult.thumbnail_url);
       }
     }
-  }
+  };
 
   const downloadThumbnail = async (url: string) => {
     try {
-      const response = await fetch(url)
-      const blob = await response.blob()
-      const downloadUrl = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = downloadUrl
-      a.download = `${productName}-miniature.webp`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(downloadUrl)
-      
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = downloadUrl;
+      a.download = `${productName}-miniature.webp`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(downloadUrl);
+
       toast({
         title: "Téléchargement démarré",
-        description: "La miniature a été téléchargée"
-      })
+        description: "La miniature a été téléchargée",
+      });
     } catch (error) {
       toast({
         title: "Erreur de téléchargement",
         description: "Impossible de télécharger l'image",
-        variant: "destructive"
-      })
+        variant: "destructive",
+      });
     }
-  }
+  };
 
   return (
     <Card className="w-full">
@@ -87,7 +115,7 @@ export function AIThumbnailGenerator({
           Générateur de Miniatures IA
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
@@ -96,7 +124,9 @@ export function AIThumbnailGenerator({
           </div>
           <div>
             <span className="font-medium">Prix :</span>
-            <p className="text-primary font-medium">{price} {currency}</p>
+            <p className="text-primary font-medium">
+              {price} {currency}
+            </p>
           </div>
         </div>
 
@@ -117,7 +147,9 @@ export function AIThumbnailGenerator({
                 <SelectItem key={styleOption.value} value={styleOption.value}>
                   <div>
                     <div className="font-medium">{styleOption.label}</div>
-                    <div className="text-xs text-muted-foreground">{styleOption.description}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {styleOption.description}
+                    </div>
                   </div>
                 </SelectItem>
               ))}
@@ -125,8 +157,8 @@ export function AIThumbnailGenerator({
           </Select>
         </div>
 
-        <Button 
-          onClick={handleGeneration} 
+        <Button
+          onClick={handleGeneration}
           disabled={loading || !productName}
           className="w-full"
         >
@@ -149,8 +181,8 @@ export function AIThumbnailGenerator({
               <div className="space-y-3">
                 <div className="text-sm font-medium">Miniature générée :</div>
                 <div className="relative">
-                  <img 
-                    src={result.thumbnail_url} 
+                  <img
+                    src={result.thumbnail_url}
                     alt={`Miniature ${productName}`}
                     className="w-full max-w-sm mx-auto rounded-lg border shadow-sm"
                   />
@@ -171,18 +203,27 @@ export function AIThumbnailGenerator({
               </div>
             ) : (
               <div className="space-y-3">
-                <div className="text-sm font-medium">Miniature texte (fallback) :</div>
-                <div 
+                <div className="text-sm font-medium">
+                  Miniature texte (fallback) :
+                </div>
+                <div
                   className="w-full max-w-sm mx-auto aspect-square rounded-lg flex flex-col items-center justify-center text-center p-4"
                   style={{
-                    backgroundColor: result.fallback_thumbnail?.backgroundColor || '#FF6B35',
-                    color: result.fallback_thumbnail?.textColor || '#FFFFFF'
+                    backgroundColor:
+                      result.fallback_thumbnail?.backgroundColor || "#FF6B35",
+                    color: result.fallback_thumbnail?.textColor || "#FFFFFF",
                   }}
                 >
                   <div className="text-xs font-bold mb-2">AfriKoin</div>
-                  <div className="text-sm font-medium mb-2 line-clamp-2">{productName}</div>
-                  <div className="text-lg font-bold">{price} {currency}</div>
-                  {category && <div className="text-xs mt-2 opacity-80">{category}</div>}
+                  <div className="text-sm font-medium mb-2 line-clamp-2">
+                    {productName}
+                  </div>
+                  <div className="text-lg font-bold">
+                    {price} {currency}
+                  </div>
+                  {category && (
+                    <div className="text-xs mt-2 opacity-80">{category}</div>
+                  )}
                 </div>
               </div>
             )}
@@ -190,5 +231,5 @@ export function AIThumbnailGenerator({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

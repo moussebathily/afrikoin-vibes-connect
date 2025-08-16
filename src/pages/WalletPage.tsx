@@ -1,85 +1,96 @@
-import React, { useEffect, useState } from 'react'
-import { Wallet, Plus, Minus, TrendingUp, Clock, CreditCard, Smartphone } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { supabase } from '@/integrations/supabase/client'
-import { useAuth } from '@/contexts/AuthContext'
-import { formatCurrency, formatRelativeTime } from '@/lib/utils'
-import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
+import React, { useEffect, useState } from "react";
+import {
+  Wallet,
+  Plus,
+  Minus,
+  TrendingUp,
+  Clock,
+  CreditCard,
+  Smartphone,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { formatCurrency, formatRelativeTime } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 export function WalletPage() {
-  const [balance, setBalance] = useState<any>(null)
-  const [likeCredits, setLikeCredits] = useState<any>(null)
-  const [transactions, setTransactions] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [purchaseLoading, setPurchaseLoading] = useState(false)
-  const { user } = useAuth()
-  const { t } = useTranslation()
+  const [balance, setBalance] = useState<any>(null);
+  const [likeCredits, setLikeCredits] = useState<any>(null);
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const { user } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user) {
-      fetchWalletData()
+      fetchWalletData();
     }
-  }, [user])
+  }, [user]);
 
   const fetchWalletData = async () => {
     try {
       // Fetch user balance
       const { data: balanceData } = await supabase
-        .from('user_balances')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single()
+        .from("user_balances")
+        .select("*")
+        .eq("user_id", user?.id)
+        .single();
 
-      setBalance(balanceData)
+      setBalance(balanceData);
 
       // Fetch like credits
       const { data: creditsData } = await supabase
-        .from('like_credits')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single()
+        .from("like_credits")
+        .select("*")
+        .eq("user_id", user?.id)
+        .single();
 
-      setLikeCredits(creditsData)
+      setLikeCredits(creditsData);
 
       // Fetch recent transactions
       const { data: transactionsData } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
+        .from("transactions")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(10);
 
-      setTransactions(transactionsData || [])
+      setTransactions(transactionsData || []);
     } catch (error) {
-      console.error('Error fetching wallet data:', error)
+      console.error("Error fetching wallet data:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleBuyLikes = async () => {
-    if (!user) return
-    
-    setPurchaseLoading(true)
-    try {
-      const { data, error } = await supabase.functions.invoke("create-like-checkout", {
-        body: { pack_id: "likes_1000" }
-      })
+    if (!user) return;
 
-      if (error) throw error
+    setPurchaseLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "create-like-checkout",
+        {
+          body: { pack_id: "likes_1000" },
+        },
+      );
+
+      if (error) throw error;
 
       if (data.url) {
         // Open Stripe checkout in a new tab
-        window.open(data.url, '_blank')
+        window.open(data.url, "_blank");
       }
     } catch (error) {
-      console.error("Error creating checkout:", error)
-      toast.error("Erreur lors de la création du paiement")
+      console.error("Error creating checkout:", error);
+      toast.error("Erreur lors de la création du paiement");
     } finally {
-      setPurchaseLoading(false)
+      setPurchaseLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -94,7 +105,7 @@ export function WalletPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -115,10 +126,12 @@ export function WalletPage() {
             Statistiques
           </Button>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-primary-foreground/80 text-sm">Solde disponible</p>
+            <p className="text-primary-foreground/80 text-sm">
+              Solde disponible
+            </p>
             <p className="text-2xl font-bold">
               {formatCurrency(balance?.available_balance || 0)}
             </p>
@@ -139,7 +152,7 @@ export function WalletPage() {
             <span className="text-red-500 mr-2">❤️</span>
             Crédits de Likes
           </h3>
-          <Button 
+          <Button
             onClick={handleBuyLikes}
             disabled={purchaseLoading}
             variant="gradient"
@@ -153,7 +166,7 @@ export function WalletPage() {
             {t("likes.purchase.button_buy", { likes: "1000", price: "2,99 €" })}
           </Button>
         </div>
-        
+
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-2xl font-bold text-primary">
@@ -178,18 +191,12 @@ export function WalletPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-4">
-        <Button 
-          variant="outline" 
-          className="h-20 flex-col space-y-2"
-        >
+        <Button variant="outline" className="h-20 flex-col space-y-2">
           <Plus className="h-6 w-6 text-success" />
           <span>Recharger</span>
         </Button>
-        
-        <Button 
-          variant="outline" 
-          className="h-20 flex-col space-y-2"
-        >
+
+        <Button variant="outline" className="h-20 flex-col space-y-2">
           <Minus className="h-6 w-6 text-destructive" />
           <span>Retirer</span>
         </Button>
@@ -209,9 +216,11 @@ export function WalletPage() {
                 <p className="text-sm text-muted-foreground">Mobile Money</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">Ajouter</Button>
+            <Button variant="ghost" size="sm">
+              Ajouter
+            </Button>
           </div>
-          
+
           <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
             <div className="flex items-center space-x-3">
               <div className="bg-yellow-500 text-white p-2 rounded-lg">
@@ -222,7 +231,9 @@ export function WalletPage() {
                 <p className="text-sm text-muted-foreground">Mobile Money</p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">Ajouter</Button>
+            <Button variant="ghost" size="sm">
+              Ajouter
+            </Button>
           </div>
 
           <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
@@ -232,10 +243,14 @@ export function WalletPage() {
               </div>
               <div>
                 <p className="font-medium">Carte bancaire</p>
-                <p className="text-sm text-muted-foreground">Visa, Mastercard</p>
+                <p className="text-sm text-muted-foreground">
+                  Visa, Mastercard
+                </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">Ajouter</Button>
+            <Button variant="ghost" size="sm">
+              Ajouter
+            </Button>
           </div>
         </div>
       </div>
@@ -248,50 +263,65 @@ export function WalletPage() {
             Voir tout
           </Button>
         </div>
-        
+
         {transactions.length === 0 ? (
           <div className="text-center py-8">
             <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">Aucune transaction pour le moment</p>
+            <p className="text-muted-foreground">
+              Aucune transaction pour le moment
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
             {transactions.map((transaction: any) => (
-              <div key={transaction.id} className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors">
+              <div
+                key={transaction.id}
+                className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors"
+              >
                 <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-lg ${
-                    transaction.transaction_type === 'deposit' ? 'bg-success/20 text-success' :
-                    transaction.transaction_type === 'withdrawal' ? 'bg-destructive/20 text-destructive' :
-                    'bg-primary/20 text-primary'
-                  }`}>
-                    {transaction.transaction_type === 'deposit' ? (
+                  <div
+                    className={`p-2 rounded-lg ${
+                      transaction.transaction_type === "deposit"
+                        ? "bg-success/20 text-success"
+                        : transaction.transaction_type === "withdrawal"
+                          ? "bg-destructive/20 text-destructive"
+                          : "bg-primary/20 text-primary"
+                    }`}
+                  >
+                    {transaction.transaction_type === "deposit" ? (
                       <Plus className="h-4 w-4" />
-                    ) : transaction.transaction_type === 'withdrawal' ? (
+                    ) : transaction.transaction_type === "withdrawal" ? (
                       <Minus className="h-4 w-4" />
                     ) : (
                       <TrendingUp className="h-4 w-4" />
                     )}
                   </div>
-                  
+
                   <div>
                     <p className="font-medium">
-                      {transaction.transaction_type === 'deposit' ? 'Dépôt' :
-                       transaction.transaction_type === 'withdrawal' ? 'Retrait' :
-                       'Transaction'}
+                      {transaction.transaction_type === "deposit"
+                        ? "Dépôt"
+                        : transaction.transaction_type === "withdrawal"
+                          ? "Retrait"
+                          : "Transaction"}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {formatRelativeTime(transaction.created_at)}
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="text-right">
-                  <p className={`font-semibold ${
-                    transaction.transaction_type === 'deposit' ? 'text-success' :
-                    transaction.transaction_type === 'withdrawal' ? 'text-destructive' :
-                    'text-foreground'
-                  }`}>
-                    {transaction.transaction_type === 'withdrawal' ? '-' : '+'}
+                  <p
+                    className={`font-semibold ${
+                      transaction.transaction_type === "deposit"
+                        ? "text-success"
+                        : transaction.transaction_type === "withdrawal"
+                          ? "text-destructive"
+                          : "text-foreground"
+                    }`}
+                  >
+                    {transaction.transaction_type === "withdrawal" ? "-" : "+"}
                     {formatCurrency(transaction.amount)}
                   </p>
                   <p className="text-sm text-muted-foreground capitalize">
@@ -304,5 +334,5 @@ export function WalletPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

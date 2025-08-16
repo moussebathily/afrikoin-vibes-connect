@@ -1,78 +1,534 @@
 [
-  {"code": "en", "name": "English", "nativeName": "English", "script": "Latin", "rtl": false},
-  {"code": "fr", "name": "French", "nativeName": "Français", "script": "Latin", "rtl": false},
-  {"code": "es", "name": "Spanish", "nativeName": "Español", "script": "Latin", "rtl": false},
-  {"code": "pt", "name": "Portuguese", "nativeName": "Português", "script": "Latin", "rtl": false},
-  {"code": "ar", "name": "Arabic", "nativeName": "العربية", "script": "Arabic", "rtl": true},
-  {"code": "de", "name": "German", "nativeName": "Deutsch", "script": "Latin", "rtl": false},
-  {"code": "it", "name": "Italian", "nativeName": "Italiano", "script": "Latin", "rtl": false},
-  {"code": "nl", "name": "Dutch", "nativeName": "Nederlands", "script": "Latin", "rtl": false},
-  {"code": "tr", "name": "Turkish", "nativeName": "Türkçe", "script": "Latin", "rtl": false},
-  {"code": "zh", "name": "Chinese (Simplified)", "nativeName": "简体中文", "script": "Han", "rtl": false},
-  {"code": "sw", "name": "Swahili", "nativeName": "Kiswahili", "script": "Latin", "rtl": false},
-  {"code": "am", "name": "Amharic", "nativeName": "አማርኛ", "script": "Geʽez", "rtl": false},
-  {"code": "om", "name": "Oromo", "nativeName": "Afaan Oromoo", "script": "Latin", "rtl": false},
-  {"code": "so", "name": "Somali", "nativeName": "Soomaaliga", "script": "Latin", "rtl": false},
-  {"code": "ti", "name": "Tigrinya", "nativeName": "ትግርኛ", "script": "Geʽez", "rtl": false},
-  {"code": "ha", "name": "Hausa", "nativeName": "Hausa", "script": "Latin", "rtl": false},
-  {"code": "yo", "name": "Yoruba", "nativeName": "Yorùbá", "script": "Latin", "rtl": false},
-  {"code": "ig", "name": "Igbo", "nativeName": "Asụsụ Igbo", "script": "Latin", "rtl": false},
-  {"code": "ff", "name": "Fulah (Fula, Fulfulde, Pulaar)", "nativeName": "Fulfulde", "script": "Latin", "rtl": false},
-  {"code": "bm", "name": "Bambara", "nativeName": "Bamanankan", "script": "Latin", "rtl": false},
-  {"code": "ln", "name": "Lingala", "nativeName": "Lingála", "script": "Latin", "rtl": false},
-  {"code": "rw", "name": "Kinyarwanda", "nativeName": "Kinyarwanda", "script": "Latin", "rtl": false},
-  {"code": "rn", "name": "Kirundi", "nativeName": "Ikirundi", "script": "Latin", "rtl": false},
-  {"code": "wo", "name": "Wolof", "nativeName": "Wolof", "script": "Latin", "rtl": false},
-  {"code": "st", "name": "Sesotho", "nativeName": "Sesotho", "script": "Latin", "rtl": false},
-  {"code": "tn", "name": "Setswana", "nativeName": "Setswana", "script": "Latin", "rtl": false},
-  {"code": "sn", "name": "Shona", "nativeName": "ChiShona", "script": "Latin", "rtl": false},
-  {"code": "xh", "name": "Xhosa", "nativeName": "isiXhosa", "script": "Latin", "rtl": false},
-  {"code": "zu", "name": "Zulu", "nativeName": "isiZulu", "script": "Latin", "rtl": false},
-  {"code": "af", "name": "Afrikaans", "nativeName": "Afrikaans", "script": "Latin", "rtl": false},
-  {"code": "ee", "name": "Ewe", "nativeName": "Eʋegbe", "script": "Latin", "rtl": false},
-  {"code": "ak", "name": "Akan (Twi/Fante)", "nativeName": "Akan", "script": "Latin", "rtl": false},
-  {"code": "en-NG", "name": "English (Nigeria)", "nativeName": "English (Nigeria)", "script": "Latin", "rtl": false},
-  {"code": "en-ZA", "name": "English (South Africa)", "nativeName": "English (South Africa)", "script": "Latin", "rtl": false},
-  {"code": "en-GH", "name": "English (Ghana)", "nativeName": "English (Ghana)", "script": "Latin", "rtl": false},
-  {"code": "en-KE", "name": "English (Kenya)", "nativeName": "English (Kenya)", "script": "Latin", "rtl": false},
-  {"code": "fr-SN", "name": "French (Senegal)", "nativeName": "Français (Sénégal)", "script": "Latin", "rtl": false},
-  {"code": "fr-CI", "name": "French (Côte d'Ivoire)", "nativeName": "Français (Côte d'Ivoire)", "script": "Latin", "rtl": false},
-  {"code": "fr-ML", "name": "French (Mali)", "nativeName": "Français (Mali)", "script": "Latin", "rtl": false},
-  {"code": "fr-BF", "name": "French (Burkina Faso)", "nativeName": "Français (Burkina Faso)", "script": "Latin", "rtl": false},
-  {"code": "fr-CM", "name": "French (Cameroon)", "nativeName": "Français (Cameroun)", "script": "Latin", "rtl": false},
-  {"code": "ar-MA", "name": "Arabic (Morocco)", "nativeName": "العربية (المغرب)", "script": "Arabic", "rtl": true},
-  {"code": "ar-DZ", "name": "Arabic (Algeria)", "nativeName": "العربية (الجزائر)", "script": "Arabic", "rtl": true},
-  {"code": "ar-TN", "name": "Arabic (Tunisia)", "nativeName": "العربية (تونس)", "script": "Arabic", "rtl": true},
-      {"code": "pt-AO", "name": "Portuguese (Angola)", "nativeName": "Português (Angola)", "script": "Latin", "rtl": false},
-      {"code": "pt-MZ", "name": "Portuguese (Mozambique)", "nativeName": "Português (Moçambique)", "script": "Latin", "rtl": false},
-      {"code": "sw-KE", "name": "Swahili (Kenya)", "nativeName": "Kiswahili (Kenya)", "script": "Latin", "rtl": false},
-      {"code": "sw-TZ", "name": "Swahili (Tanzania)", "nativeName": "Kiswahili (Tanzania)", "script": "Latin", "rtl": false},
-      {"code": "sw-CD", "name": "Swahili (DRC)", "nativeName": "Kiswahili (DRC)", "script": "Latin", "rtl": false},
-      {"code": "dyu", "name": "Dyula (Dioula/Jula)", "nativeName": "Dyula", "script": "Latin", "rtl": false},
-      {"code": "mos", "name": "Mooré (Mossi)", "nativeName": "Mooré", "script": "Latin", "rtl": false},
-      {"code": "snk", "name": "Soninké", "nativeName": "Soninké", "script": "Latin", "rtl": false},
-      {"code": "mnk", "name": "Mandinka", "nativeName": "Mandinka", "script": "Latin", "rtl": false},
-      {"code": "fon", "name": "Fon", "nativeName": "Fon", "script": "Latin", "rtl": false},
-      {"code": "gaa", "name": "Ga", "nativeName": "Ga", "script": "Latin", "rtl": false},
-      {"code": "kg", "name": "Kikongo (Kongo)", "nativeName": "Kikongo", "script": "Latin", "rtl": false},
-      {"code": "lua", "name": "Tshiluba", "nativeName": "Tshiluba", "script": "Latin", "rtl": false},
-      {"code": "sg", "name": "Sango", "nativeName": "Sango", "script": "Latin", "rtl": false},
-      {"code": "fan", "name": "Fang", "nativeName": "Fang", "script": "Latin", "rtl": false},
-      {"code": "ewo", "name": "Ewondo", "nativeName": "Ewondo", "script": "Latin", "rtl": false},
-      {"code": "bas", "name": "Bassa", "nativeName": "Bassa", "script": "Latin", "rtl": false},
-      {"code": "dua", "name": "Duala", "nativeName": "Duala", "script": "Latin", "rtl": false},
-      {"code": "gba", "name": "Gbaya", "nativeName": "Gbaya", "script": "Latin", "rtl": false},
-      {"code": "luo", "name": "Luo (Dholuo)", "nativeName": "Dholuo", "script": "Latin", "rtl": false},
-      {"code": "ki", "name": "Kikuyu (Gikuyu)", "nativeName": "Gikuyu", "script": "Latin", "rtl": false},
-      {"code": "ny", "name": "Chichewa (Chewa/Nyanja)", "nativeName": "Chichewa", "script": "Latin", "rtl": false},
-      {"code": "nd", "name": "Ndebele (North)", "nativeName": "isiNdebele", "script": "Latin", "rtl": false},
-      {"code": "ts", "name": "Tsonga", "nativeName": "Xitsonga", "script": "Latin", "rtl": false},
-      {"code": "kj", "name": "Oshiwambo (Kwanyama)", "nativeName": "Oshikwanyama", "script": "Latin", "rtl": false},
-      {"code": "hz", "name": "Herero", "nativeName": "Otjiherero", "script": "Latin", "rtl": false},
-      {"code": "zgh", "name": "Tamazight (Standard Moroccan)", "nativeName": "Tamazight", "script": "Latin", "rtl": false},
-      {"code": "shi", "name": "Tachelhit", "nativeName": "Tachelhit", "script": "Latin", "rtl": false},
-      {"code": "kab", "name": "Kabyle", "nativeName": "Taqbaylit", "script": "Latin", "rtl": false},
-      {"code": "shy", "name": "Chaoui (Shawiya)", "nativeName": "Tacawit", "script": "Latin", "rtl": false},
-      {"code": "tmh", "name": "Tamashek (Tuareg)", "nativeName": "Tamasheq", "script": "Latin", "rtl": false},
-      {"code": "mey", "name": "Hassaniya Arabic", "nativeName": "حسانية", "script": "Arabic", "rtl": true}
-    ]
+  {
+    "code": "en",
+    "name": "English",
+    "nativeName": "English",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr",
+    "name": "French",
+    "nativeName": "Français",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "es",
+    "name": "Spanish",
+    "nativeName": "Español",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "pt",
+    "name": "Portuguese",
+    "nativeName": "Português",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ar",
+    "name": "Arabic",
+    "nativeName": "العربية",
+    "script": "Arabic",
+    "rtl": true
+  },
+  {
+    "code": "de",
+    "name": "German",
+    "nativeName": "Deutsch",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "it",
+    "name": "Italian",
+    "nativeName": "Italiano",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "nl",
+    "name": "Dutch",
+    "nativeName": "Nederlands",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "tr",
+    "name": "Turkish",
+    "nativeName": "Türkçe",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "zh",
+    "name": "Chinese (Simplified)",
+    "nativeName": "简体中文",
+    "script": "Han",
+    "rtl": false
+  },
+  {
+    "code": "sw",
+    "name": "Swahili",
+    "nativeName": "Kiswahili",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "am",
+    "name": "Amharic",
+    "nativeName": "አማርኛ",
+    "script": "Geʽez",
+    "rtl": false
+  },
+  {
+    "code": "om",
+    "name": "Oromo",
+    "nativeName": "Afaan Oromoo",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "so",
+    "name": "Somali",
+    "nativeName": "Soomaaliga",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ti",
+    "name": "Tigrinya",
+    "nativeName": "ትግርኛ",
+    "script": "Geʽez",
+    "rtl": false
+  },
+  {
+    "code": "ha",
+    "name": "Hausa",
+    "nativeName": "Hausa",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "yo",
+    "name": "Yoruba",
+    "nativeName": "Yorùbá",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ig",
+    "name": "Igbo",
+    "nativeName": "Asụsụ Igbo",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ff",
+    "name": "Fulah (Fula, Fulfulde, Pulaar)",
+    "nativeName": "Fulfulde",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "bm",
+    "name": "Bambara",
+    "nativeName": "Bamanankan",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ln",
+    "name": "Lingala",
+    "nativeName": "Lingála",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "rw",
+    "name": "Kinyarwanda",
+    "nativeName": "Kinyarwanda",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "rn",
+    "name": "Kirundi",
+    "nativeName": "Ikirundi",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "wo",
+    "name": "Wolof",
+    "nativeName": "Wolof",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "st",
+    "name": "Sesotho",
+    "nativeName": "Sesotho",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "tn",
+    "name": "Setswana",
+    "nativeName": "Setswana",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "sn",
+    "name": "Shona",
+    "nativeName": "ChiShona",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "xh",
+    "name": "Xhosa",
+    "nativeName": "isiXhosa",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "zu",
+    "name": "Zulu",
+    "nativeName": "isiZulu",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "af",
+    "name": "Afrikaans",
+    "nativeName": "Afrikaans",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ee",
+    "name": "Ewe",
+    "nativeName": "Eʋegbe",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ak",
+    "name": "Akan (Twi/Fante)",
+    "nativeName": "Akan",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "en-NG",
+    "name": "English (Nigeria)",
+    "nativeName": "English (Nigeria)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "en-ZA",
+    "name": "English (South Africa)",
+    "nativeName": "English (South Africa)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "en-GH",
+    "name": "English (Ghana)",
+    "nativeName": "English (Ghana)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "en-KE",
+    "name": "English (Kenya)",
+    "nativeName": "English (Kenya)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr-SN",
+    "name": "French (Senegal)",
+    "nativeName": "Français (Sénégal)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr-CI",
+    "name": "French (Côte d'Ivoire)",
+    "nativeName": "Français (Côte d'Ivoire)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr-ML",
+    "name": "French (Mali)",
+    "nativeName": "Français (Mali)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr-BF",
+    "name": "French (Burkina Faso)",
+    "nativeName": "Français (Burkina Faso)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fr-CM",
+    "name": "French (Cameroon)",
+    "nativeName": "Français (Cameroun)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ar-MA",
+    "name": "Arabic (Morocco)",
+    "nativeName": "العربية (المغرب)",
+    "script": "Arabic",
+    "rtl": true
+  },
+  {
+    "code": "ar-DZ",
+    "name": "Arabic (Algeria)",
+    "nativeName": "العربية (الجزائر)",
+    "script": "Arabic",
+    "rtl": true
+  },
+  {
+    "code": "ar-TN",
+    "name": "Arabic (Tunisia)",
+    "nativeName": "العربية (تونس)",
+    "script": "Arabic",
+    "rtl": true
+  },
+  {
+    "code": "pt-AO",
+    "name": "Portuguese (Angola)",
+    "nativeName": "Português (Angola)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "pt-MZ",
+    "name": "Portuguese (Mozambique)",
+    "nativeName": "Português (Moçambique)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "sw-KE",
+    "name": "Swahili (Kenya)",
+    "nativeName": "Kiswahili (Kenya)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "sw-TZ",
+    "name": "Swahili (Tanzania)",
+    "nativeName": "Kiswahili (Tanzania)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "sw-CD",
+    "name": "Swahili (DRC)",
+    "nativeName": "Kiswahili (DRC)",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "dyu",
+    "name": "Dyula (Dioula/Jula)",
+    "nativeName": "Dyula",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "mos",
+    "name": "Mooré (Mossi)",
+    "nativeName": "Mooré",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "snk",
+    "name": "Soninké",
+    "nativeName": "Soninké",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "mnk",
+    "name": "Mandinka",
+    "nativeName": "Mandinka",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fon",
+    "name": "Fon",
+    "nativeName": "Fon",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "gaa",
+    "name": "Ga",
+    "nativeName": "Ga",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "kg",
+    "name": "Kikongo (Kongo)",
+    "nativeName": "Kikongo",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "lua",
+    "name": "Tshiluba",
+    "nativeName": "Tshiluba",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "sg",
+    "name": "Sango",
+    "nativeName": "Sango",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "fan",
+    "name": "Fang",
+    "nativeName": "Fang",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ewo",
+    "name": "Ewondo",
+    "nativeName": "Ewondo",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "bas",
+    "name": "Bassa",
+    "nativeName": "Bassa",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "dua",
+    "name": "Duala",
+    "nativeName": "Duala",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "gba",
+    "name": "Gbaya",
+    "nativeName": "Gbaya",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "luo",
+    "name": "Luo (Dholuo)",
+    "nativeName": "Dholuo",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ki",
+    "name": "Kikuyu (Gikuyu)",
+    "nativeName": "Gikuyu",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ny",
+    "name": "Chichewa (Chewa/Nyanja)",
+    "nativeName": "Chichewa",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "nd",
+    "name": "Ndebele (North)",
+    "nativeName": "isiNdebele",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "ts",
+    "name": "Tsonga",
+    "nativeName": "Xitsonga",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "kj",
+    "name": "Oshiwambo (Kwanyama)",
+    "nativeName": "Oshikwanyama",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "hz",
+    "name": "Herero",
+    "nativeName": "Otjiherero",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "zgh",
+    "name": "Tamazight (Standard Moroccan)",
+    "nativeName": "Tamazight",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "shi",
+    "name": "Tachelhit",
+    "nativeName": "Tachelhit",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "kab",
+    "name": "Kabyle",
+    "nativeName": "Taqbaylit",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "shy",
+    "name": "Chaoui (Shawiya)",
+    "nativeName": "Tacawit",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "tmh",
+    "name": "Tamashek (Tuareg)",
+    "nativeName": "Tamasheq",
+    "script": "Latin",
+    "rtl": false
+  },
+  {
+    "code": "mey",
+    "name": "Hassaniya Arabic",
+    "nativeName": "حسانية",
+    "script": "Arabic",
+    "rtl": true
+  }
+]

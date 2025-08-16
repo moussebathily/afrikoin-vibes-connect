@@ -1,19 +1,21 @@
-
 # Configuration Android pour AfriKoin
 
 ## Icônes requises (à placer dans android/app/src/main/res/)
 
-### Icônes d'application (mipmap-*)
+### Icônes d'application (mipmap-\*)
+
 - mipmap-mdpi/ic_launcher.png (48x48)
 - mipmap-hdpi/ic_launcher.png (72x72)
 - mipmap-xhdpi/ic_launcher.png (96x96)
 - mipmap-xxhdpi/ic_launcher.png (144x144)
 - mipmap-xxxhdpi/ic_launcher.png (192x192)
 
-### Splash screen (drawable-*)
+### Splash screen (drawable-\*)
+
 - drawable/splash.png (1080x1920 recommandé)
 
 ### Couleurs de thème (values/colors.xml)
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -25,6 +27,7 @@
 ```
 
 ### Styles (values/styles.xml)
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -33,7 +36,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    
+
     <style name="AppTheme.NoActionBarLaunch" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="android:windowNoTitle">true</item>
@@ -59,6 +62,7 @@
 11. Générez l'AAB pour le Play Store
 
 ## Permissions requises (android/app/src/main/AndroidManifest.xml)
+
 - INTERNET
 - ACCESS_NETWORK_STATE
 - ACCESS_WIFI_STATE
