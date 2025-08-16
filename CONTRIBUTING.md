@@ -12,11 +12,11 @@ Contributors must follow the Code of Conduct outlined at [https://gradle.org/con
 
 ### Development setup
 
-You can test local changes to `gradle-completion.bash` by executing 
+You can test local changes to `gradle-completion.bash` by executing
 
 ```bash
 source path/to/gradle-completion.bash
-``` 
+```
 
 and then using completion as normal.
 
@@ -35,11 +35,12 @@ You can get a debug trace of zsh completion by typing `Ctrl-X ?` instead of hitt
 Here's a handy [how-to on bash completion](https://iridakos.com/tutorials/2018/03/01/bash-programmable-completion-tutorial.html) and [zsh completion reference](https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org).
 
 ## Updating Homebrew formula
+
 Updating the `gradle-completion` formula for Homebrew takes extra setup to perform all of the verification Homebrew requires.
 
 First you will need to ensure you can build native ruby gem extensions necessary for `brew audit`:
 
-``` 
+```
 xcode-select --install
 brew vendor-install ruby
 
@@ -68,10 +69,10 @@ brew bump-formula-pr --url=https://github.com/gradle/gradle-completion/archive/v
 
 The commit messages that accompany your code changes are an important piece of documentation, please follow these guidelines when writing commit messages:
 
-* Keep commits discrete: avoid including multiple unrelated changes in a single commit
-* Keep commits self-contained: avoid spreading a single change across multiple commits. A single commit should make sense in isolation
-* If your commit pertains to a GitHub issue, include (`Issue: #123`) in the commit message on a separate line
-* [Sign off](https://git-scm.com/docs/git-commit#git-commit---signoff) your commits to indicate that you agree to the terms of [Developer Certificate of Origin](https://developercertificate.org/).
+- Keep commits discrete: avoid including multiple unrelated changes in a single commit
+- Keep commits self-contained: avoid spreading a single change across multiple commits. A single commit should make sense in isolation
+- If your commit pertains to a GitHub issue, include (`Issue: #123`) in the commit message on a separate line
+- [Sign off](https://git-scm.com/docs/git-commit#git-commit---signoff) your commits to indicate that you agree to the terms of [Developer Certificate of Origin](https://developercertificate.org/).
 
 ### Submitting Your Change
 
@@ -104,4 +105,3 @@ If you run into any trouble, please reach out to us on the issue you are working
 We deeply appreciate your effort toward improving Gradle. For any contribution, large or small, you will be immortalized in the release notes for the version you've contributed to.
 
 If you enjoyed this process, perhaps you should consider getting [paid to develop Gradle](https://gradle.com/careers)?
-

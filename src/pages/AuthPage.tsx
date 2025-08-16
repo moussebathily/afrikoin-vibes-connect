@@ -1,58 +1,62 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { useAuth } from '@/contexts/AuthContext'
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from "lucide-react";
 
 export function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true)
-  const [showPassword, setShowPassword] = useState(false)
+  const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: ''
-  })
-  const [loading, setLoading] = useState(false)
-  
-  const { signIn, signUp, user } = useAuth()
-  const navigate = useNavigate()
+    email: "",
+    password: "",
+    name: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const { signIn, signUp, user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
-      navigate('/')
+      navigate("/");
     }
-  }, [user, navigate])
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       if (isLogin) {
-        const { error } = await signIn(formData.email, formData.password)
+        const { error } = await signIn(formData.email, formData.password);
         if (!error) {
-          navigate('/')
+          navigate("/");
         }
       } else {
-        const { error } = await signUp(formData.email, formData.password, formData.name)
+        const { error } = await signUp(
+          formData.email,
+          formData.password,
+          formData.name,
+        );
         if (!error) {
-          setIsLogin(true)
+          setIsLogin(true);
         }
       }
     } catch (error) {
-      console.error('Auth error:', error)
+      console.error("Auth error:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 flex items-center justify-center p-4">
@@ -61,19 +65,21 @@ export function AuthPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center space-x-2 mb-4">
             <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-xl">A</span>
+              <span className="text-primary-foreground font-bold text-xl">
+                A
+              </span>
             </div>
             <span className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               AfriKoin
             </span>
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            {isLogin ? 'Bienvenue !' : 'Créer un compte'}
+            {isLogin ? "Bienvenue !" : "Créer un compte"}
           </h1>
           <p className="text-muted-foreground">
-            {isLogin 
-              ? 'Connectez-vous pour découvrir AfriKoin' 
-              : 'Rejoignez la communauté AfriKoin'}
+            {isLogin
+              ? "Connectez-vous pour découvrir AfriKoin"
+              : "Rejoignez la communauté AfriKoin"}
           </p>
         </div>
 
@@ -82,7 +88,10 @@ export function AuthPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <label htmlFor="name" className="text-sm font-medium text-foreground">
+                <label
+                  htmlFor="name"
+                  className="text-sm font-medium text-foreground"
+                >
                   Nom complet
                 </label>
                 <div className="relative">
@@ -102,7 +111,10 @@ export function AuthPage() {
             )}
 
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-foreground">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-foreground"
+              >
                 Email
               </label>
               <div className="relative">
@@ -121,7 +133,10 @@ export function AuthPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-foreground">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-foreground"
+              >
                 Mot de passe
               </label>
               <div className="relative">
@@ -129,7 +144,7 @@ export function AuthPage() {
                 <Input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -142,7 +157,11 @@ export function AuthPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -153,10 +172,13 @@ export function AuthPage() {
               className="w-full"
               disabled={loading}
             >
-              {loading 
-                ? (isLogin ? 'Connexion...' : 'Création...') 
-                : (isLogin ? 'Se connecter' : 'Créer un compte')
-              }
+              {loading
+                ? isLogin
+                  ? "Connexion..."
+                  : "Création..."
+                : isLogin
+                  ? "Se connecter"
+                  : "Créer un compte"}
             </Button>
           </form>
 
@@ -167,10 +189,9 @@ export function AuthPage() {
               onClick={() => setIsLogin(!isLogin)}
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
             >
-              {isLogin 
-                ? "Pas encore de compte ? S'inscrire" 
-                : 'Déjà un compte ? Se connecter'
-              }
+              {isLogin
+                ? "Pas encore de compte ? S'inscrire"
+                : "Déjà un compte ? Se connecter"}
             </button>
           </div>
         </div>
@@ -179,7 +200,7 @@ export function AuthPage() {
         <div className="mt-6 text-center">
           <Button
             variant="ghost"
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             className="text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -188,5 +209,5 @@ export function AuthPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

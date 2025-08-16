@@ -19,7 +19,7 @@ export function PaymentSuccessPage() {
   useEffect(() => {
     const verifyPayment = async () => {
       const sessionId = searchParams.get("session_id");
-      
+
       if (!sessionId) {
         setLoading(false);
         toast.error(t("likes.payment.error_message"));
@@ -27,9 +27,12 @@ export function PaymentSuccessPage() {
       }
 
       try {
-        const { data, error } = await supabase.functions.invoke("verify-like-payment", {
-          body: { session_id: sessionId }
-        });
+        const { data, error } = await supabase.functions.invoke(
+          "verify-like-payment",
+          {
+            body: { session_id: sessionId },
+          },
+        );
 
         if (error) throw error;
 
@@ -37,9 +40,11 @@ export function PaymentSuccessPage() {
           setSuccess(true);
           setNewBalance(data.new_balance);
           setLikesAdded(data.likes_added);
-          
+
           if (!data.already_processed) {
-            toast.success(t("likes.payment.success_message", { likes: data.likes_added }));
+            toast.success(
+              t("likes.payment.success_message", { likes: data.likes_added }),
+            );
           }
         } else {
           throw new Error("Payment verification failed");
@@ -87,7 +92,9 @@ export function PaymentSuccessPage() {
             )}
           </div>
           <CardTitle>
-            {success ? t("likes.payment.success_title") : t("likes.payment.error_title")}
+            {success
+              ? t("likes.payment.success_title")
+              : t("likes.payment.error_title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -101,9 +108,9 @@ export function PaymentSuccessPage() {
           ) : (
             <p className="text-center">{t("likes.payment.error_message")}</p>
           )}
-          
-          <Button 
-            onClick={handleReturnToWallet} 
+
+          <Button
+            onClick={handleReturnToWallet}
             className="w-full"
             variant="default"
           >

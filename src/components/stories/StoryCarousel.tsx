@@ -1,18 +1,18 @@
-import React from 'react'
-import { Plus } from 'lucide-react'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { useAuth } from '@/contexts/AuthContext'
+import React from "react";
+import { Plus } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function StoryCarousel() {
-  const { user, profile } = useAuth()
-  
+  const { user, profile } = useAuth();
+
   // Mock stories data - replace with real data later
   const stories = [
-    { id: '1', user: 'Marie', avatar: null, hasStory: true },
-    { id: '2', user: 'Ibrahim', avatar: null, hasStory: true },
-    { id: '3', user: 'Fatou', avatar: null, hasStory: true },
-    { id: '4', user: 'Kofi', avatar: null, hasStory: true },
-  ]
+    { id: "1", user: "Marie", avatar: null, hasStory: true },
+    { id: "2", user: "Ibrahim", avatar: null, hasStory: true },
+    { id: "3", user: "Fatou", avatar: null, hasStory: true },
+    { id: "4", user: "Kofi", avatar: null, hasStory: true },
+  ];
 
   return (
     <div className="bg-card rounded-lg border border-border p-4">
@@ -23,7 +23,9 @@ export function StoryCarousel() {
             <Avatar className="h-16 w-16 border-2 border-dashed border-primary">
               <AvatarImage src={profile?.avatar_url} />
               <AvatarFallback>
-                {profile?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                {profile?.name?.charAt(0)?.toUpperCase() ||
+                  user?.email?.charAt(0)?.toUpperCase() ||
+                  "U"}
               </AvatarFallback>
             </Avatar>
             <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground rounded-full p-1">
@@ -35,8 +37,8 @@ export function StoryCarousel() {
 
         {/* Stories */}
         {stories.map((story) => (
-          <div 
-            key={story.id} 
+          <div
+            key={story.id}
             className="flex flex-col items-center space-y-2 min-w-0 flex-shrink-0 cursor-pointer"
           >
             <div className="relative">
@@ -57,5 +59,5 @@ export function StoryCarousel() {
         ))}
       </div>
     </div>
-  )
+  );
 }

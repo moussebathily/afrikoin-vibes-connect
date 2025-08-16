@@ -11,49 +11,61 @@
     --card-foreground: 24 100% 5%;
     --popover: 0 0% 100%;
     --popover-foreground: 24 100% 5%;
-    
+
     /* Primary: Rich Gold/Amber - Represents prosperity and African gold */
     --primary: 43 96% 56%;
     --primary-foreground: 24 100% 5%;
     --primary-glow: 43 96% 70%;
-    
+
     /* Secondary: Deep Terracotta - African earth tones */
     --secondary: 16 72% 45%;
     --secondary-foreground: 0 0% 100%;
-    
+
     /* Accent: Vibrant Orange - Energy and warmth */
     --accent: 25 95% 55%;
     --accent-foreground: 0 0% 100%;
-    
+
     /* Success: African Green - Nature and growth */
     --success: 142 69% 45%;
     --success-foreground: 0 0% 100%;
-    
+
     /* Muted colors */
     --muted: 43 13% 94%;
     --muted-foreground: 24 5% 45%;
-    
+
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    
+
     /* Border and input */
     --border: 43 20% 88%;
     --input: 43 20% 88%;
     --ring: 43 96% 56%;
-    
+
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(43 96% 56%), hsl(43 96% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(16 72% 45%), hsl(25 95% 55%));
-    --gradient-accent: linear-gradient(135deg, hsl(25 95% 55%), hsl(43 96% 56%));
-    
+    --gradient-primary: linear-gradient(
+      135deg,
+      hsl(43 96% 56%),
+      hsl(43 96% 70%)
+    );
+    --gradient-secondary: linear-gradient(
+      135deg,
+      hsl(16 72% 45%),
+      hsl(25 95% 55%)
+    );
+    --gradient-accent: linear-gradient(
+      135deg,
+      hsl(25 95% 55%),
+      hsl(43 96% 56%)
+    );
+
     /* Shadows */
     --shadow-elegant: 0 10px 30px -10px hsl(43 96% 56% / 0.3);
     --shadow-glow: 0 0 40px hsl(43 96% 70% / 0.4);
-    
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
+
     --radius: 0.75rem;
 
     /* Safe area insets */
@@ -71,26 +83,26 @@
     --card-foreground: 43 96% 90%;
     --popover: 24 50% 8%;
     --popover-foreground: 43 96% 90%;
-    
+
     --primary: 43 96% 56%;
     --primary-foreground: 24 100% 5%;
     --primary-glow: 43 96% 70%;
-    
+
     --secondary: 16 72% 35%;
     --secondary-foreground: 43 96% 90%;
-    
+
     --accent: 25 95% 45%;
     --accent-foreground: 43 96% 90%;
-    
+
     --success: 142 69% 35%;
     --success-foreground: 43 96% 90%;
-    
+
     --muted: 24 20% 12%;
     --muted-foreground: 43 20% 65%;
-    
+
     --destructive: 0 84% 50%;
     --destructive-foreground: 43 96% 90%;
-    
+
     --border: 24 20% 18%;
     --input: 24 20% 18%;
     --ring: 43 96% 56%;
@@ -105,65 +117,75 @@
     @apply bg-background text-foreground;
     @apply transition-smooth;
   }
-  
+
   /* RTL Support */
   [dir="rtl"] {
     direction: rtl;
   }
-  
+
   [dir="rtl"] .text-left {
     text-align: right;
   }
-  
+
   [dir="rtl"] .text-right {
     text-align: left;
   }
-  
+
   [dir="rtl"] .ml-auto {
     margin-left: auto;
     margin-right: unset;
   }
-  
+
   [dir="rtl"] .mr-auto {
     margin-right: auto;
     margin-left: unset;
   }
-  
+
   [dir="rtl"] .flex-row-reverse {
     flex-direction: row-reverse;
   }
-  
+
   /* Custom utilities for African design */
   .bg-gradient-primary {
     background: var(--gradient-primary);
   }
-  
+
   .bg-gradient-secondary {
     background: var(--gradient-secondary);
   }
-  
+
   .bg-gradient-accent {
     background: var(--gradient-accent);
   }
-  
+
   .shadow-elegant {
     box-shadow: var(--shadow-elegant);
   }
-  
+
   .shadow-glow {
     box-shadow: var(--shadow-glow);
   }
-  
+
   .transition-smooth {
     transition: var(--transition-smooth);
   }
 }
 
 @layer utilities {
-  .pt-safe-top { padding-top: var(--sat); }
-  .pb-safe-bottom { padding-bottom: var(--sab); }
-  .pl-safe-left { padding-left: var(--sal); }
-  .pr-safe-right { padding-right: var(--sar); }
+  .pt-safe-top {
+    padding-top: var(--sat);
+  }
+  .pb-safe-bottom {
+    padding-bottom: var(--sab);
+  }
+  .pl-safe-left {
+    padding-left: var(--sal);
+  }
+  .pr-safe-right {
+    padding-right: var(--sar);
+  }
   /* Reserve space for bottom nav (h-16) plus device bottom inset */
-  .pb-safe-nav { padding-bottom: calc(4rem + var(--sab)); }
+  .pb-safe-nav {
+    padding-bottom: calc(4rem + var(--sab));
+  }
 }
