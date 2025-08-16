@@ -4,25 +4,27 @@
 - Voir build-mobile.md pour configurer les secrets et extraire la SHA-1.
 
 ## Android – Générer un AAB localement (Windows/macOS/Linux)
-1) Placez votre keystore à un emplacement sûr (ex: android/app/release.keystore).
-2) Copiez `android/gradle-local.properties.example` vers `android/gradle-local.properties` et remplissez:
+
+1. Placez votre keystore à un emplacement sûr (ex: android/app/release.keystore).
+2. Copiez `android/gradle-local.properties.example` vers `android/gradle-local.properties` et remplissez:
    - `MYAPP_UPLOAD_STORE_FILE=app/release.keystore` (ou chemin absolu)
    - `MYAPP_UPLOAD_STORE_PASSWORD=...`
    - `MYAPP_UPLOAD_KEY_ALIAS=...`
    - `MYAPP_UPLOAD_KEY_PASSWORD=...`
-3) Vérifiez la config: `./gradlew :app:printSigningConfig` (Windows: `gradlew.bat :app:printSigningConfig`). Assurez-vous que `HAS_RELEASE_SIGNING: true` et que `externalOverride` est `false`.
-4) Générez l’AAB: `./gradlew :app:bundleRelease`.
-5) Dans Android Studio: Build > Generate Signed Bundle/APK > Android App Bundle. Laissez les champs vides si Android Studio propose une signature externe pour éviter `externalOverride`; Gradle signera via vos propriétés.
-6) Téléversez le `.aab` dans Google Play Console.
+3. Vérifiez la config: `./gradlew :app:printSigningConfig` (Windows: `gradlew.bat :app:printSigningConfig`). Assurez-vous que `HAS_RELEASE_SIGNING: true` et que `externalOverride` est `false`.
+4. Générez l’AAB: `./gradlew :app:bundleRelease`.
+5. Dans Android Studio: Build > Generate Signed Bundle/APK > Android App Bundle. Laissez les champs vides si Android Studio propose une signature externe pour éviter `externalOverride`; Gradle signera via vos propriétés.
+6. Téléversez le `.aab` dans Google Play Console.
 
 # gradle-completion
+
 Bash and Zsh completion support for [Gradle](https://gradle.org).
 
 This provides _fast_ tab completion for:
 
- * Gradle tasks for the current project and sub-projects
- * Gradle CLI switches (e.g. `--parallel`)
- * Common Gradle properties (e.g. `-Dorg.gradle.debug`)
+- Gradle tasks for the current project and sub-projects
+- Gradle CLI switches (e.g. `--parallel`)
+- Common Gradle properties (e.g. `-Dorg.gradle.debug`)
 
 It also handles custom default build files, so `rootProject.buildFileName = 'build.gradle.kts'` is supported.
 
@@ -44,12 +46,14 @@ echo $fpath | grep "/usr/local/share/zsh/site-functions"
 
 ### Install as [oh-my-zsh](https://ohmyz.sh/) plugin
 
-Download and place the plugin and completion script into your oh-my-zsh plugins directory. 
+Download and place the plugin and completion script into your oh-my-zsh plugins directory.
+
 ```
 git clone https://github.com/gradle/gradle-completion ~/.oh-my-zsh/plugins/gradle-completion
 ```
 
 Add `gradle-completion` to the plugins array in your '.zshrc' file.
+
 ```
 plugins+=(gradle-completion)
 ```
@@ -57,11 +61,13 @@ plugins+=(gradle-completion)
 ### Install manually
 
 Download and place `_gradle` on your `$fpath`. I recommend `$HOME/.zsh/gradle-completion`:
+
 ```
 git clone https://github.com/gradle/gradle-completion ~/.zsh/gradle-completion
 ```
 
 Add the following do your '.zshrc' file:
+
 ```
 echo "\nfpath=($HOME/.zsh/gradle-completion \$fpath)" >> ~/.zshrc
 ```
@@ -69,6 +75,7 @@ echo "\nfpath=($HOME/.zsh/gradle-completion \$fpath)" >> ~/.zshrc
 Start a new terminal session. You may need to disable the `gradle` plugin for `oh-my-zsh`.
 
 #### (Optional) Manual Completion Cache Initialization
+
 Completion cache initialization happens the first time you invoke completion,
 and usually takes a few seconds, depending on the size of your project. You can
 manually initialize the cache and avoid interrupting your development mojo by
@@ -96,6 +103,7 @@ source ~/.bash_profile
 ### Install manually
 
 Download and place `gradle-completion.bash` in your `bash_completion.d` folder, usually `/etc/bash_completion.d`, `/usr/local/etc/bash_completion.d`, or `$HOME/bash_completion.d`:
+
 ```
 mkdir $HOME/bash_completion.d
 curl -LA gradle-completion https://edub.me/gradle-completion-bash -o $HOME/bash_completion.d/gradle-completion.bash
@@ -104,6 +112,7 @@ curl -LA gradle-completion https://edub.me/gradle-completion-bash -o $HOME/bash_
 NOTE: Ensure `bash-completion` 1.2+ is installed using your favorite package manager or by following the [bash-completion installation instructions](https://github.com/scop/bash-completion/blob/master/README.md#installation).
 
 Add the following to your `.bash_profile` (macOS) or `.bashrc` (Linux) file:
+
 ```
 source $HOME/bash_completion.d/gradle-completion.bash
 ```
@@ -111,6 +120,7 @@ source $HOME/bash_completion.d/gradle-completion.bash
 Start a new terminal session.
 
 #### (Optional) Manual Completion Cache Initialization
+
 Completion cache initialization happens the first time you invoke completion,
 and usually takes a few seconds, depending on the size of your project. You can
 manually initialize the cache and avoid interrupting your development mojo by
@@ -124,6 +134,7 @@ __gradle-completion-init
 ## Additional Configuration
 
 #### Excluding build scripts from UP-TO-DATE check
+
 Tab completion checks known build scripts to see if they've been changed and refreshes the task cache if so.
 You can exclude build scripts from this check (and speed up completion) by specifying:
 
@@ -135,23 +146,27 @@ export GRADLE_COMPLETION_EXCLUDE_PATTERN="gradle"
 ```
 
 #### Completion cache
+
 One can manually (re)generate the completion cache by invoking `__gradle-completion-init` after the
 completion script has been sourced. This graciously avoids an unexpected cache build when invoking
 completion.
 
-The build script cache is invalidated if any *.gradle or *.gradle.kts files change.
+The build script cache is invalidated if any _.gradle or _.gradle.kts files change.
 However, these completion scripts do not search for new build scripts every time completion is invoked, because
 that would make completion ~20x slower (unless you have so really good ideas on this).
 
 By default, the build script cache is invalidated every 3 weeks (30240 minutes).
 You can configure this value by exporting a new value for `$GRADLE_CACHE_TTL_MINUTES`:
+
 ```bash
 export GRADLE_CACHE_TTL_MINUTES=$(expr 1440 \* number_of_days_you_want)
 ```
 
 #### Implicit Tasks
+
 Gradle allows you to access tasks of subprojects from the project root implicitly.
 For example, given these tasks:
+
 ```
 :foo
 :help
@@ -173,19 +188,22 @@ export GRADLE_COMPLETION_UNQUALIFIED_TASKS="true"
 You may need to invalidate the cache using the cache config above or by executing `touch build.gradle`.
 
 ## Troubleshooting
+
 If zsh completion isn't working, first try checking your `$fpath` with `echo $fpath`.
 
 zsh completion using `./gradlew` may not work on Linux if you don't have `.` on your `$PATH`,
 so I recommend adding it in your `~/.zshrc` file:
+
 ```bash
 export PATH=".:$PATH"
 ```
 
 > HEADS UP: If you get an error 'parse error near `]]"', please [upgrade zsh](http://stackoverflow.com/questions/17648621/how-do-i-update-zsh-to-the-latest-version).
-zsh 5.0.5 has a bug in script parsing that is fixed as of zsh 5.0.8. See issues #4 and #7 for more details.
+> zsh 5.0.5 has a bug in script parsing that is fixed as of zsh 5.0.8. See issues #4 and #7 for more details.
 
 If zsh completion reports "Generating Gradle task cache..." every time, the zsh completion cache
 may be disabled. Enable it by adding the following to your `~/.zshrc` file:
+
 ```bash
 zstyle ':completion:*' use-cache on
 ```
@@ -195,14 +213,16 @@ zstyle ':completion:*' use-cache on
 See the [contributing guide](CONTRIBUTING.md).
 
 ## Acknowledgements
+
 Bash completion is inspired by [Nolan Lawson's Gradle tab completion for bash](https://gist.github.com/nolanlawson/8694399).
 
 Zsh completion is an improved version of [zsh](https://github.com/zsh-users/zsh)'s built-in Gradle completion.
 
 Current improvements over built-in support:
- - Subproject tasks are completed
- - Gradle CLI options are current as of Gradle 6.4
- - Common Gradle properties are completed
- - Handles default build file as specified in settings.gradle
- - ~20x faster completion speed for medium to large projects
- - Completion cache updates in the background after first invocation
+
+- Subproject tasks are completed
+- Gradle CLI options are current as of Gradle 6.4
+- Common Gradle properties are completed
+- Handles default build file as specified in settings.gradle
+- ~20x faster completion speed for medium to large projects
+- Completion cache updates in the background after first invocation

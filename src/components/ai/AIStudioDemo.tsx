@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
-import { Bot, Image, Sparkles } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { AIContentModerator } from './AIContentModerator'
-import { AIDescriptionEnhancer } from './AIDescriptionEnhancer'
-import { AIThumbnailGenerator } from './AIThumbnailGenerator'
+import React, { useState } from "react";
+import { Bot, Image, Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AIContentModerator } from "./AIContentModerator";
+import { AIDescriptionEnhancer } from "./AIDescriptionEnhancer";
+import { AIThumbnailGenerator } from "./AIThumbnailGenerator";
 
 export function AIStudioDemo() {
-  const [currentDemo, setCurrentDemo] = useState<'moderator' | 'enhancer' | 'thumbnail'>('moderator')
+  const [currentDemo, setCurrentDemo] = useState<
+    "moderator" | "enhancer" | "thumbnail"
+  >("moderator");
 
   const demoData = {
     productName: "Chaussures Nike Air Max",
@@ -15,8 +17,8 @@ export function AIStudioDemo() {
     price: 25000,
     currency: "XOF",
     category: "Chaussures",
-    imageUrl: "https://via.placeholder.com/300x300"
-  }
+    imageUrl: "https://via.placeholder.com/300x300",
+  };
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6">
@@ -30,27 +32,27 @@ export function AIStudioDemo() {
             Testez toutes les fonctionnalités d'intelligence artificielle
           </p>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           <div className="flex gap-2 flex-wrap">
             <Button
-              variant={currentDemo === 'moderator' ? 'default' : 'outline'}
-              onClick={() => setCurrentDemo('moderator')}
+              variant={currentDemo === "moderator" ? "default" : "outline"}
+              onClick={() => setCurrentDemo("moderator")}
               size="sm"
             >
               🛡️ Modération
             </Button>
             <Button
-              variant={currentDemo === 'enhancer' ? 'default' : 'outline'}
-              onClick={() => setCurrentDemo('enhancer')}
+              variant={currentDemo === "enhancer" ? "default" : "outline"}
+              onClick={() => setCurrentDemo("enhancer")}
               size="sm"
             >
               <Sparkles className="h-4 w-4 mr-1" />
               Description
             </Button>
             <Button
-              variant={currentDemo === 'thumbnail' ? 'default' : 'outline'}
-              onClick={() => setCurrentDemo('thumbnail')}
+              variant={currentDemo === "thumbnail" ? "default" : "outline"}
+              onClick={() => setCurrentDemo("thumbnail")}
               size="sm"
             >
               <Image className="h-4 w-4 mr-1" />
@@ -58,7 +60,7 @@ export function AIStudioDemo() {
             </Button>
           </div>
 
-          {currentDemo === 'moderator' && (
+          {currentDemo === "moderator" && (
             <AIContentModerator
               imageUrl={demoData.imageUrl}
               text={demoData.description}
@@ -66,7 +68,7 @@ export function AIStudioDemo() {
             />
           )}
 
-          {currentDemo === 'enhancer' && (
+          {currentDemo === "enhancer" && (
             <AIDescriptionEnhancer
               initialDescription={demoData.description}
               category={demoData.category}
@@ -74,7 +76,7 @@ export function AIStudioDemo() {
             />
           )}
 
-          {currentDemo === 'thumbnail' && (
+          {currentDemo === "thumbnail" && (
             <AIThumbnailGenerator
               productName={demoData.productName}
               price={demoData.price}
@@ -85,5 +87,5 @@ export function AIStudioDemo() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
