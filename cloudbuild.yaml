@@ -7,6 +7,7 @@ substitutions:
   _DEPLOY_REGION: 'europe-west1'
   _PLATFORM: 'managed'
   _SERVICE_NAME: 'afrikoin-vibes-connect'
+  _SERVICEURL: 'https://ton-api-ou-front.example'   # valeur par défaut (optionnel)
 
 # Image taggée par SHA du commit (valable pour rollback facile)
 images:
@@ -85,7 +86,7 @@ steps:
           --cpu 1 \
           --max-instances 10 \
           --min-instances 0 \
-          --set-env-vars NODE_ENV=production \
+          --set-env-vars "NODE_ENV=production,SERVICE_URL=${_SERVICEURL}" \
           --timeout 300
 
   # 6) Vérification du déploiement
