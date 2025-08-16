@@ -1,0 +1,19 @@
+# Dockerfile pour le développement
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer toutes les dépendances (dev incluses)
+RUN npm ci
+
+# Copier le code source
+COPY . .
+
+# Exposer le port de développement
+EXPOSE 5173
+
+# Commande de développement avec hot reload
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

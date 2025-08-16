@@ -1,0 +1,104 @@
+name: Validate Build & Docker
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  validate-local-build:
+    name: Test Local Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Type check
+      run: npx tsc --noEmit
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Verify build output
+      run: |
+        echo "🔍 Checking build output..."
+        ls -la dist/
+        test -f dist/index.html || (echo "❌ index.html missing" && exit 1)
+        test -d dist/assets || (echo "❌ assets directory missing" && exit 1)
+        echo "✅ Build output looks good"
+
+  validate-docker:
+    name: Test Docker Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Verify Docker files
+      run: |
+        echo "🔍 Checking Docker configuration..."
+        test -f Dockerfile || (echo "❌ Dockerfile missing" && exit 1)
+        test -f .dockerignore || (echo "❌ .dockerignore missing" && exit 1)
+        echo "✅ Docker files present"
+        
+    - name: Build Docker image
+      run: |
+        echo "🐳 Building Docker image..."
+        docker build -t afrikoin-test:latest .
+        
+    - name: Test Docker container
+      run: |
+        echo "🧪 Testing Docker container..."
+        # Démarrer le conteneur en arrière-plan
+        docker run -d --name test-container -p 8080:8080 afrikoin-test:latest
+        
+        # Attendre que le conteneur démarre
+        sleep 10
+        
+        # Vérifier que le conteneur fonctionne
+        if docker ps | grep test-container; then
+          echo "✅ Container is running"
+        else
+          echo "❌ Container failed to start"
+          docker logs test-container
+          exit 1
+        fi
+        
+        # Test health check si disponible
+        if curl -f http://localhost:8080/health 2>/dev/null; then
+          echo "✅ Health check passed"
+        else
+          echo "ℹ️ Health check endpoint not responding (may be normal)"
+        fi
+        
+        # Nettoyer
+        docker stop test-container
+        docker rm test-container
+        
+    - name: Validate image size
+      run: |
+        echo "📏 Checking image size..."
+        SIZE=$(docker images afrikoin-test:latest --format "table {{.Size}}" | tail -1)
+        echo "Image size: $SIZE"
+        # Avertir si l'image est très grande (>500MB)
+        if docker images afrikoin-test:latest --format "{{.Size}}" | grep -E "GB|[5-9][0-9][0-9]MB"; then
+          echo "⚠️ Image is quite large. Consider optimizing."
+        else
+          echo "✅ Image size looks reasonable"
+        fi

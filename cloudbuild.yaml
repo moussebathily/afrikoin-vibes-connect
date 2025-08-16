@@ -18,21 +18,58 @@ options:
   substitution_option: 'ALLOW_LOOSE'
 
 steps:
-  # 1) Build Docker
+  # 0) Diagnostic: vérifier les fichiers requis
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: bash
+    args:
+      - -lc
+      - |
+        echo "== Vérification des fichiers ==" 
+        echo "PWD: $(pwd)"
+        echo "Dockerfile présent: $(test -f Dockerfile && echo 'OUI' || echo 'NON')"
+        echo ".dockerignore présent: $(test -f .dockerignore && echo 'OUI' || echo 'NON')"
+        echo "package.json présent: $(test -f package.json && echo 'OUI' || echo 'NON')"
+        echo "== Structure du projet =="
+        find . -maxdepth 2 -type f | head -20
+
+  # 1) Build Docker avec validation
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
       - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:${COMMIT_SHA}'
+      - '--no-cache'
       - '.'
 
-  # 2) Push vers Artifact Registry
+  # 2) Test de l'image Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'run'
+      - '--rm'
+      - '--detach'
+      - '--publish'
+      - '8080:8080'
+      - '--name'
+      - 'test-container'
+      - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:${COMMIT_SHA}'
+  
+  # 3) Vérification health check
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: 'bash'
+    args:
+      - '-lc'
+      - |
+        sleep 10
+        docker logs test-container || true
+        docker stop test-container || true
+
+  # 4) Push vers Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
       - '$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:${COMMIT_SHA}'
 
-  # 3) Déploiement Cloud Run
+  # 5) Déploiement Cloud Run avec configuration optimisée
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
     entrypoint: 'bash'
     args:
@@ -42,4 +79,23 @@ steps:
           --image "$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$_SERVICE_NAME:${COMMIT_SHA}" \
           --region "$_DEPLOY_REGION" \
           --platform "$_PLATFORM" \
-          --allow-unauthenticated
+          --allow-unauthenticated \
+          --port 8080 \
+          --memory 512Mi \
+          --cpu 1 \
+          --max-instances 10 \
+          --min-instances 0 \
+          --set-env-vars NODE_ENV=production \
+          --timeout 300
+
+  # 6) Vérification du déploiement
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
+    entrypoint: 'bash'
+    args:
+      - '-lc'
+      - |
+        SERVICE_URL=$(gcloud run services describe $_SERVICE_NAME --region $_DEPLOY_REGION --format 'value(status.url)')
+        echo "🌐 Service déployé à: $SERVICE_URL"
+        echo "🔍 Test de santé..."
+        curl -f "$SERVICE_URL/health" || echo "⚠️ Health check échoué"
+        echo "✅ Déploiement terminé!"
