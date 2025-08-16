@@ -1,0 +1,12 @@
+- name: Corriger le style de code avec Prettier
+  run: npx prettier --write .
+
+- name: Commit et push si des changements sont détectés
+  run: |
+    git config --global user.name "github-actions[bot]"
+    git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    if [[ -n $(git status --porcelain) ]]; then
+      git add .
+      git commit -m "chore: auto-fix code style with Prettier"
+      git push
+    fi
