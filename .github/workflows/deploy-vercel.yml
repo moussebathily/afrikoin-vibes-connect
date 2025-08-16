@@ -5,6 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -14,31 +15,47 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Setup SSH (optional)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
-
-    - name: Add known_hosts (GitHub)
-      if: ${{ secrets.DEPLOY_SSH_KEY != '' }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
-      
-    - name: Setup Node.js
+    - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
-      run: npm ci
+      run: npm ci --legacy-peer-deps
+      
+    - name: Type check
+      run: npx tsc --noEmit
+      
+    - name: Lint check
+      run: npm run lint
       
     - name: Build application
       run: npm run build
-      
-    - name: Deploy to Vercel
+      env:
+        NODE_ENV: production
+        
+    - name: Verify build output
+      run: |
+        echo "🔍 Vérification du build..."
+        ls -la dist/
+        test -f dist/index.html || (echo "❌ index.html manquant" && exit 1)
+        test -d dist/assets || (echo "❌ dossier assets manquant" && exit 1)
+        echo "✅ Build vérifié"
+        
+    - name: Deploy to Vercel (Preview)
+      if: github.event_name == 'pull_request'
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        vercel-org-id: ${{ secrets.ORG_ID }}
+        vercel-project-id: ${{ secrets.PROJECT_ID }}
+        working-directory: ./
+        scope: ${{ secrets.ORG_ID }}
+        
+    - name: Deploy to Vercel (Production)
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -47,14 +64,57 @@ jobs:
         vercel-org-id: ${{ secrets.ORG_ID }}
         vercel-project-id: ${{ secrets.PROJECT_ID }}
         working-directory: ./
+        scope: ${{ secrets.ORG_ID }}
         
-    - name: Generate sitemap
+    - name: Generate and submit sitemap
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       run: |
-        echo "Sitemap generated and ready for Google indexing"
-        curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml"
+        echo "📍 Soumission du sitemap à Google..."
+        # Attendre que le déploiement soit actif
+        sleep 30
         
-    - name: Notify deployment
-      if: success()
+        # Ping Google avec le sitemap
+        curl -X POST "https://www.google.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml" || echo "⚠️ Erreur ping sitemap"
+        
+        # Ping Bing
+        curl -X POST "https://www.bing.com/ping?sitemap=https://www.afrikoin.online/sitemap.xml" || echo "⚠️ Erreur ping Bing"
+        
+    - name: Test deployed site
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       run: |
-        echo "🌐 Site available at: https://www.afrikoin.online"
+        echo "🧪 Test du site déployé..."
+        sleep 10
+        
+        # Test du site principal
+        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online)
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          echo "✅ Site principal accessible (HTTP $HTTP_CODE)"
+        else
+          echo "❌ Site principal inaccessible (HTTP $HTTP_CODE)"
+          exit 1
+        fi
+        
+        # Test du sitemap
+        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online/sitemap.xml)
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          echo "✅ Sitemap accessible (HTTP $HTTP_CODE)"
+        else
+          echo "⚠️ Sitemap inaccessible (HTTP $HTTP_CODE)"
+        fi
+        
+        # Test du robots.txt
+        HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://www.afrikoin.online/robots.txt)
+        if [ "$HTTP_CODE" -eq 200 ]; then
+          echo "✅ Robots.txt accessible (HTTP $HTTP_CODE)"
+        else
+          echo "⚠️ Robots.txt inaccessible (HTTP $HTTP_CODE)"
+        fi
+        
+    - name: Notify deployment success
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      run: |
+        echo "🎉 Déploiement Vercel réussi !"
+        echo "🌐 Site en ligne: https://www.afrikoin.online"
         echo "🗺️ Sitemap: https://www.afrikoin.online/sitemap.xml"
+        echo "🤖 Robots: https://www.afrikoin.online/robots.txt"
+        echo "📊 Analytics prêt pour l'indexation"

@@ -1,0 +1,10 @@
+# Configuration locale Vercel pour le développement
+{
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "framework": "vite",
+  "buildCommand": "npm run build:dev",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci --legacy-peer-deps"
+}
