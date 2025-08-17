@@ -1,16 +1,27 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
+import { User, Session, AuthError } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+
+interface Profile {
+  id: string
+  user_id: string
+  name: string
+  avatar_url?: string
+  is_verified: boolean
+  country?: string
+  created_at: string
+  updated_at: string
+}
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string, name: string) => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
+  signUp: (email: string, password: string, name: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<void>
-  profile: any
+  profile: Profile | null
   refreshProfile: () => Promise<void>
 }
 
@@ -20,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const { toast } = useToast()
 
   const fetchProfile = async (userId: string) => {

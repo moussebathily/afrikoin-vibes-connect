@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { PostCard } from '@/components/posts/PostCard'
+import { Post } from '@/types/post'
 
 export const EntertainmentSection: React.FC = () => {
-  const [videos, setVideos] = useState<any[]>([])
+  const [videos, setVideos] = useState<Post[]>([])
 
   useEffect(() => {
     const fetchVideos = async () => {

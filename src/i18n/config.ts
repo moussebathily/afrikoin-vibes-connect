@@ -33,7 +33,7 @@ export const setupI18n = async (userLng?: string) => {
   }
 
   // Load translation resources
-  const resources: Record<string, any> = {}
+  const resources: Record<string, Record<string, unknown>> = {}
   const bundle = await loadLocale(lng)
   resources[lng] = { common: bundle }
 

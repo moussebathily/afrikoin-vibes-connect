@@ -3,9 +3,10 @@ import { Heart, MessageCircle, Share, MoreHorizontal, MapPin, Crown } from 'luci
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { formatRelativeTime, cn } from '@/lib/utils'
+import { Post } from '@/types/post'
 
 interface PostCardProps {
-  post: any
+  post: Post
   onLike: () => void
 }
 

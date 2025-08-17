@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAI } from '@/hooks/useAI'
 import { useToast } from '@/hooks/use-toast'
+import { ThumbnailResult } from '@/types/ai'
 
 interface AIThumbnailGeneratorProps {
   productName: string
@@ -23,7 +24,7 @@ export function AIThumbnailGenerator({
   onThumbnailGenerated 
 }: AIThumbnailGeneratorProps) {
   const [style, setStyle] = useState('modern')
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<ThumbnailResult | null>(null)
   const { generateThumbnail, loading } = useAI()
   const { toast } = useToast()
 

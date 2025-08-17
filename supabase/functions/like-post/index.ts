@@ -128,9 +128,9 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error("like-post error", e);
-    return new Response(JSON.stringify({ error: e?.message || "Unexpected error" }), {
+    return new Response(JSON.stringify({ error: (e as Error)?.message || "Unexpected error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

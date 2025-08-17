@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Shield, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useAI } from '@/hooks/useAI'
+import { ModerationResult } from '@/types/ai'
 
 interface AIContentModeratorProps {
   imageUrl?: string
   text?: string
-  onModerationComplete?: (result: any) => void
+  onModerationComplete?: (result: ModerationResult) => void
   autoModerate?: boolean
 }
 
@@ -18,22 +19,22 @@ export function AIContentModerator({
   onModerationComplete,
   autoModerate = false 
 }: AIContentModeratorProps) {
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<ModerationResult | null>(null)
   const { moderateContent, loading } = useAI()
 
-  React.useEffect(() => {
-    if (autoModerate && (imageUrl || text)) {
-      handleModeration()
-    }
-  }, [imageUrl, text, autoModerate])
-
-  const handleModeration = async () => {
+  const handleModeration = useCallback(async () => {
     const moderationResult = await moderateContent(imageUrl, text)
     if (moderationResult) {
       setResult(moderationResult)
       onModerationComplete?.(moderationResult)
     }
-  }
+  }, [imageUrl, text, moderateContent, onModerationComplete])
+
+  React.useEffect(() => {
+    if (autoModerate && (imageUrl || text)) {
+      handleModeration()
+    }
+  }, [autoModerate, handleModeration])
 
   const getStatusIcon = () => {
     if (!result) return <Shield className="h-5 w-5 text-muted-foreground" />

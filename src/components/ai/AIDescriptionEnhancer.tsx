@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { useAI } from '@/hooks/useAI'
 import { useToast } from '@/hooks/use-toast'
+import { EnhancementResult } from '@/types/ai'
 
 interface AIDescriptionEnhancerProps {
   initialDescription: string
@@ -23,7 +24,7 @@ export function AIDescriptionEnhancer({
   onEnhancementComplete 
 }: AIDescriptionEnhancerProps) {
   const [description, setDescription] = useState(initialDescription)
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<EnhancementResult | null>(null)
   const [copied, setCopied] = useState(false)
   const { enhanceDescription, loading } = useAI()
   const { toast } = useToast()

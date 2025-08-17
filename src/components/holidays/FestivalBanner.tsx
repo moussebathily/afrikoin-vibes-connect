@@ -58,15 +58,23 @@ const getNextIndependenceDay = () => {
   return upcomingHolidays[0]
 }
 
+interface Holiday {
+  id: string
+  name: string
+  date: string
+  country: string
+  description?: string
+  is_national: boolean
+  daysUntil?: number
+  type?: string
+  countryCode?: string
+}
+
 export function FestivalBanner() {
-  const [currentHoliday, setCurrentHoliday] = useState<any>(null)
+  const [currentHoliday, setCurrentHoliday] = useState<Holiday | null>(null)
   const { t } = useTranslation()
 
-  useEffect(() => {
-    fetchUpcomingHoliday()
-  }, [])
-
-  const fetchUpcomingHoliday = async () => {
+  const fetchUpcomingHoliday = React.useCallback(async () => {
     try {
       const nextHoliday = getNextIndependenceDay()
       
@@ -78,14 +86,19 @@ export function FestivalBanner() {
         type: 'national',
         country: nextHoliday.country,
         countryCode: nextHoliday.countryCode,
-        daysUntil: nextHoliday.daysUntil
+        daysUntil: nextHoliday.daysUntil,
+        is_national: true
       }
       
       setCurrentHoliday(holiday)
     } catch (error) {
       console.error('Error fetching holidays:', error)
     }
-  }
+  }, [t])
+
+  useEffect(() => {
+    fetchUpcomingHoliday()
+  }, [fetchUpcomingHoliday])
 
   if (!currentHoliday) return null
 

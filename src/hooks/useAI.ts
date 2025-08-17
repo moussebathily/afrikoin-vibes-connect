@@ -1,68 +1,30 @@
 import { useState } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
+import { 
+  ModerationResult, 
+  EnhancementResult, 
+  ThumbnailResult, 
+  IllustrationResult, 
+  TranslationResult 
+} from '@/types/ai'
 
-interface ModerationResult {
-  approved: boolean
-  text_moderation?: any
-  image_moderation?: any
-  quality_analysis?: {
-    score: number
-    issues: string[]
-    price_range: string
-    category: string
-    suggestions: string[]
-  }
-  recommendations: {
-    can_publish: boolean
-    improvements: string[]
-  }
-}
+// Helper to safely invoke Supabase functions with error handling
+async function invokeFunction(functionName: string, payload: Record<string, unknown>): Promise<unknown> {
+  try {
+    const { data, error } = await supabase.functions.invoke(functionName, {
+      body: payload
+    })
 
-interface EnhancementResult {
-  original_description: string
-  enhanced_description: string
-  suggested_keywords: string[]
-  improvement_summary: {
-    length_improvement: boolean
-    added_value: number
-    readability_score: number
-  }
-}
+    if (error) {
+      console.error(`Error invoking ${functionName}:`, error)
+      return null
+    }
 
-interface ThumbnailResult {
-  success: boolean
-  thumbnail_url?: string
-  text_thumbnail?: {
-    productName: string
-    price: string
-    style: string
-    backgroundColor: string
-    textColor: string
-    category: string
-  }
-  metadata?: any
-  fallback_thumbnail?: any
-}
-
-interface IllustrationResult {
-  success: boolean
-  illustration_url?: string
-  metadata?: any
-  suggestions?: string[]
-  alternative_styles?: string[]
-}
-
-interface TranslationResult {
-  original_text: string
-  translated_text: string
-  source_language: string
-  target_language: string
-  context: string
-  quality_score: number
-  character_count: {
-    original: number
-    translated: number
+    return data
+  } catch (err) {
+    console.error(`Network error invoking ${functionName}:`, err)
+    return null
   }
 }
 
@@ -73,14 +35,8 @@ export function useAI() {
   const moderateContent = async (imageUrl?: string, text?: string): Promise<ModerationResult | null> => {
     try {
       setLoading(true)
-      
-      const { data, error } = await supabase.functions.invoke('ai-content-moderator', {
-        body: { imageUrl, text }
-      })
-
-      if (error) throw error
-
-      return data
+      const data = await invokeFunction('ai-content-moderator', { imageUrl, text })
+      return data as ModerationResult | null
     } catch (error) {
       console.error('Content moderation error:', error)
       toast({
@@ -102,18 +58,12 @@ export function useAI() {
   ): Promise<EnhancementResult | null> => {
     try {
       setLoading(true)
-      
-      const { data, error } = await supabase.functions.invoke('ai-description-enhancer', {
-        body: { description, category, price, language }
-      })
-
-      if (error) throw error
-
-      return data
+      const data = await invokeFunction('ai-description-enhancer', { description, category, price, language })
+      return data as EnhancementResult | null
     } catch (error) {
       console.error('Description enhancement error:', error)
       toast({
-        title: "Erreur d'amélioration",
+        title: "Erreur d'amélioration", 
         description: "Impossible d'améliorer la description",
         variant: "destructive"
       })
@@ -132,19 +82,13 @@ export function useAI() {
   ): Promise<ThumbnailResult | null> => {
     try {
       setLoading(true)
-      
-      const { data, error } = await supabase.functions.invoke('ai-thumbnail-generator', {
-        body: { productName, price, currency, category, style }
-      })
-
-      if (error) throw error
-
-      return data
+      const data = await invokeFunction('ai-thumbnail-generator', { productName, price, currency, category, style })
+      return data as ThumbnailResult | null
     } catch (error) {
       console.error('Thumbnail generation error:', error)
       toast({
         title: "Erreur de miniature",
-        description: "Impossible de générer la miniature",
+        description: "Impossible de générer la miniature", 
         variant: "destructive"
       })
       return null
@@ -162,20 +106,10 @@ export function useAI() {
   ): Promise<IllustrationResult | null> => {
     try {
       setLoading(true)
-      
-      const { data, error } = await supabase.functions.invoke('ai-illustration-generator', {
-        body: { 
-          productDescription, 
-          category, 
-          style, 
-          aspectRatio, 
-          includeContext 
-        }
+      const data = await invokeFunction('ai-illustration-generator', { 
+        productDescription, category, style, aspectRatio, includeContext 
       })
-
-      if (error) throw error
-
-      return data
+      return data as IllustrationResult | null
     } catch (error) {
       console.error('Illustration generation error:', error)
       toast({
@@ -197,14 +131,8 @@ export function useAI() {
   ): Promise<TranslationResult | null> => {
     try {
       setLoading(true)
-      
-      const { data, error } = await supabase.functions.invoke('ai-text-translator', {
-        body: { text, targetLanguage, sourceLanguage, context }
-      })
-
-      if (error) throw error
-
-      return data
+      const data = await invokeFunction('ai-text-translator', { text, targetLanguage, sourceLanguage, context })
+      return data as TranslationResult | null
     } catch (error) {
       console.error('Translation error:', error)
       toast({

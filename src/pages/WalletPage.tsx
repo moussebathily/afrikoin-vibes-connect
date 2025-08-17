@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Wallet, Plus, Minus, TrendingUp, Clock, CreditCard, Smartphone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { supabase } from '@/integrations/supabase/client'
@@ -6,23 +6,18 @@ import { useAuth } from '@/contexts/AuthContext'
 import { formatCurrency, formatRelativeTime } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
+import { Transaction, UserBalance, LikeCredits } from '@/types/wallet'
 
 export function WalletPage() {
-  const [balance, setBalance] = useState<any>(null)
-  const [likeCredits, setLikeCredits] = useState<any>(null)
-  const [transactions, setTransactions] = useState([])
+  const [balance, setBalance] = useState<UserBalance | null>(null)
+  const [likeCredits, setLikeCredits] = useState<LikeCredits | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
   const [purchaseLoading, setPurchaseLoading] = useState(false)
   const { user } = useAuth()
   const { t } = useTranslation()
 
-  useEffect(() => {
-    if (user) {
-      fetchWalletData()
-    }
-  }, [user])
-
-  const fetchWalletData = async () => {
+  const fetchWalletData = useCallback(async () => {
     try {
       // Fetch user balance
       const { data: balanceData } = await supabase
@@ -56,7 +51,13 @@ export function WalletPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (user) {
+      fetchWalletData()
+    }
+  }, [user, fetchWalletData])
 
   const handleBuyLikes = async () => {
     if (!user) return
@@ -256,7 +257,7 @@ export function WalletPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {transactions.map((transaction: any) => (
+            {transactions.map((transaction) => (
               <div key={transaction.id} className="flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors">
                 <div className="flex items-center space-x-3">
                   <div className={`p-2 rounded-lg ${
