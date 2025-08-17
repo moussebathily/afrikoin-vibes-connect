@@ -27,10 +27,13 @@ echo "📦 Installation des dépendances..."
 npm ci --legacy-peer-deps
 
 echo "🔍 Vérification TypeScript..."
-npx tsc --noEmit
+npm run type-check
 
 echo "🧹 Vérification du linting..."
 npm run lint
+
+echo "🧪 Tests de validation..."
+npm run test
 
 echo "🔨 Build de l'application..."
 npm run build

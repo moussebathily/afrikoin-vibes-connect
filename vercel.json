@@ -4,45 +4,37 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm ci",
-  "devCommand": "npm run dev",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
   "routes": [
     {
       "src": "/sitemap.xml",
-      "dest": "/sitemap.xml",
       "headers": {
         "Content-Type": "application/xml"
       }
     },
     {
       "src": "/robots.txt", 
-      "dest": "/robots.txt",
       "headers": {
         "Content-Type": "text/plain"
       }
     },
     {
       "src": "/manifest.json",
-      "dest": "/manifest.json",
       "headers": {
         "Content-Type": "application/json"
       }
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
       "dest": "/index.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -90,15 +82,7 @@
       ]
     }
   ],
-  "functions": {
-    "app/api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  },
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "regions": ["fra1"],
+  "regions": ["cdg1"],
   "cleanUrls": true,
   "trailingSlash": false
 }
