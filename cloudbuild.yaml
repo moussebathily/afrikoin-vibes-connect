@@ -18,19 +18,14 @@ options:
   substitution_option: 'ALLOW_LOOSE'
 
 steps:
-  # 0) Diagnostic: vérifier les fichiers requis
+  # Garde-fou : vérifier que Dockerfile existe
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:alpine'
     entrypoint: bash
     args:
       - -lc
       - |
-        echo "== Vérification des fichiers ==" 
-        echo "PWD: $(pwd)"
-        echo "Dockerfile présent: $(test -f Dockerfile && echo 'OUI' || echo 'NON')"
-        echo ".dockerignore présent: $(test -f .dockerignore && echo 'OUI' || echo 'NON')"
-        echo "package.json présent: $(test -f package.json && echo 'OUI' || echo 'NON')"
-        echo "== Structure du projet =="
-        find . -maxdepth 2 -type f | head -20
+        test -f Dockerfile || { echo "❌ Dockerfile manquant à la racine"; exit 1; }
+        gcloud auth configure-docker $_AR_HOSTNAME --quiet
 
   # 1) Build Docker avec validation
   - name: 'gcr.io/cloud-builders/docker'
