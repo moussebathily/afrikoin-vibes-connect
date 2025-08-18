@@ -34,7 +34,7 @@ export function AIContentModerator({
     if (autoModerate && (imageUrl || text)) {
       handleModeration()
     }
-  }, [autoModerate, handleModeration])
+  }, [autoModerate, imageUrl, text, handleModeration])
 
   const getStatusIcon = () => {
     if (!result) return <Shield className="h-5 w-5 text-muted-foreground" />

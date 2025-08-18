@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { PostCard } from '@/components/posts/PostCard'
 import { Post } from '@/types/post'
 
-export const EntertainmentSection: React.FC = () => {
+export const EntertainmentSection = () => {
   const [videos, setVideos] = useState<Post[]>([])
 
   useEffect(() => {
