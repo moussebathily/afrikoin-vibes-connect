@@ -1,0 +1,285 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Gradle Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    - name: Build with Gradle
+      run: ./gradlew build
+
+    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # the publishing section of your build.gradle
+    - name: Publish to GitHub Packages
+      run: ./gradlew publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - nom : Télécharger un artefact de construction
+  utilisations : actions/upload-artifact@v4.6.2
+  avec:
+    # Nom de l'artefact
+    nom : # facultatif, la valeur par défaut est artefact
+    # Un fichier, un répertoire ou un modèle générique qui décrit ce qu'il faut télécharger
+    chemin:
+    # Le comportement souhaité si aucun fichier n'est trouvé en utilisant le chemin fourni.
+Options disponibles :
+  avertir : afficher un avertissement mais ne pas faire échouer l'action
+  erreur : Échec de l'action avec un message d'erreur
+  ignorer : ne pas afficher d'avertissements ni d'erreurs, l'action n'échoue pas
+
+    if-no-files-found: # facultatif, la valeur par défaut est warn
+    # Durée après laquelle l'artefact expirera en jours. 0 signifie utiliser la rétention par défaut.
+Minimum 1 jour. Maximum 90 jours, sauf modification depuis la page des paramètres du dépôt.
+
+    jours de rétention : # facultatif
+    # Niveau de compression Zlib à appliquer à l'archive d'artefacts. La valeur peut varier de 0 à 9 : - 0 : Aucune compression - 1 : Vitesse optimale - 6 : Compression par défaut (identique à GNU Gzip) - 9 : Compression optimale. Des niveaux de compression plus élevés donneront une meilleure compression, mais prendront plus de temps. Pour les fichiers volumineux qui ne sont pas facilement compressibles, une valeur de 0 est recommandée pour des téléchargements nettement plus rapides.
+
+    niveau de compression : # facultatif, la valeur par défaut est 6
+    # Si la valeur est « true », un artefact portant le même nom sera supprimé avant qu'un nouveau ne soit téléchargé. Si la valeur est « false », l'action échouera si un artefact portant le même nom existe déjà. L'action n'échoue pas si l'artefact n'existe pas.
+
+    écraser : # facultatif, la valeur par défaut est false
+    # Si la valeur est true, les fichiers cachés seront inclus dans l'artefact. Si la valeur est false, les fichiers cachés seront exclus de l'artefact.
+
+    include-hidden-files: # facultatif, la valeur par défaut est false
+                 - nom : Télécharger un artefact de construction
+  utilisations : actions/upload-artifact@v4.6.2
+  avec:
+    # Nom de l'artefact
+    nom : # facultatif, la valeur par défaut est artefact
+    # Un fichier, un répertoire ou un modèle générique qui décrit ce qu'il faut télécharger
+    chemin:
+    # Le comportement souhaité si aucun fichier n'est trouvé en utilisant le chemin fourni.
+Options disponibles :
+  avertir : afficher un avertissement mais ne pas faire échouer l'action
+  erreur : Échec de l'action avec un message d'erreur
+  ignorer : ne pas afficher d'avertissements ni d'erreurs, l'action n'échoue pas
+
+    if-no-files-found: # facultatif, la valeur par défaut est warn
+    # Durée après laquelle l'artefact expirera en jours. 0 signifie utiliser la rétention par défaut.
+Minimum 1 jour. Maximum 90 jours, sauf modification depuis la page des paramètres du dépôt.
+
+    jours de rétention : # facultatif
+    # Niveau de compression Zlib à appliquer à l'archive d'artefacts. La valeur peut varier de 0 à 9 : - 0 : Aucune compression - 1 : Vitesse optimale - 6 : Compression par défaut (identique à GNU Gzip) - 9 : Compression optimale. Des niveaux de compression plus élevés donneront une meilleure compression, mais prendront plus de temps. Pour les fichiers volumineux qui ne sont pas facilement compressibles, une valeur de 0 est recommandée pour des téléchargements nettement plus rapides.
+
+    niveau de compression : # facultatif, la valeur par défaut est 6
+    # Si la valeur est « true », un artefact portant le même nom sera supprimé avant qu'un nouveau ne soit téléchargé. Si la valeur est « false », l'action échouera si un artefact portant le même nom existe déjà. L'action n'échoue pas si l'artefact n'existe pas.
+
+    écraser : # facultatif, la valeur par défaut est false
+    # Si la valeur est true, les fichiers cachés seront inclus dans l'artefact. Si la valeur est false, les fichiers cachés seront exclus de l'artefact.
+
+    include-hidden-files: # facultatif, la valeur par défaut est false
+                  - nom : Fermer les problèmes obsolètes
+  utilisations : actions/stale@v9.1.0
+  avec:
+    # Jeton pour le dépôt. Peut être transmis via `{{ secrets.GITHUB_TOKEN }}`.
+    repo-token : # facultatif, la valeur par défaut est ${{ github.token }}
+    # Message à publier sur le ticket lors de son marquage. Si aucun message n'est fourni, le ticket ne sera pas marqué comme obsolète.
+    message de problème obsolète : # facultatif
+    # Message à publier lors de l'étiquetage de la pull request. Si aucun message n'est fourni, les pull requests ne seront pas marquées comme obsolètes.
+    stale-pr-message : # facultatif
+    # Message à publier lors de la clôture du ticket. Si aucun message n'est fourni, aucun commentaire ne sera publié lors de la clôture du ticket.
+    close-issue-message: # facultatif
+    # Message à publier lors de la fermeture de la pull request. Si aucun message n'est fourni, aucun commentaire ne sera publié lors de la fermeture de la pull request.
+    close-pr-message : # facultatif
+    # Nombre de jours avant qu'un ticket ou une pull request ne soit marqué comme obsolète. Définissez-le sur -1 pour ne jamais marquer automatiquement les tickets ou les pull requests comme obsolètes.
+    days-before-stale: # facultatif, la valeur par défaut est 60
+    # Nombre de jours avant qu'un ticket ne soit marqué comme obsolète. Définissez-le sur -1 pour ne jamais le marquer automatiquement comme obsolète. Remplacez l'option « days-before-stale » pour les tickets uniquement.
+    jours-avant-problème-obsolète : # facultatif
+    # Nombre de jours avant qu'une pull request ne soit marquée comme obsolète. Définissez-le sur -1 pour ne jamais la marquer automatiquement comme obsolète. Remplacez l'option « days-before-stale » pour les pull requests uniquement.
+    jours-avant-pr-stale : # facultatif
+    # Nombre de jours d'attente avant la clôture d'un ticket ou d'une pull request après qu'il a été marqué comme obsolète. Définissez-le sur -1 pour ne jamais clôturer les tickets ou les pull requests obsolètes.
+    jours-avant-fermeture : # facultatif, la valeur par défaut est 7
+    # Nombre de jours d'attente avant la fermeture d'un ticket après qu'il a été marqué comme obsolète. Définissez-le sur -1 pour ne jamais fermer les tickets obsolètes. Remplacez l'option « days-before-close » pour les tickets uniquement.
+    jours-avant-la-clôture-du-problème : # facultatif
+    # Nombre de jours d'attente avant la clôture d'une pull request après son marquage comme obsolète. Définissez-le sur -1 pour ne jamais clôturer les pull requests obsolètes. Remplacez l'option « days-before-close » pour les pull requests uniquement.
+    jours-avant-clôture-pr : # facultatif
+    # L'étiquette à appliquer lorsqu'un problème est obsolète.
+    stale-issue-label : # facultatif, la valeur par défaut est Stale
+    # L'étiquette à appliquer lorsqu'un problème est fermé.
+    close-issue-label : # facultatif
+    # Les étiquettes qui indiquent qu'un problème ne peut pas être marqué comme obsolète. Séparez les étiquettes par des virgules (par exemple : « étiquette1, étiquette2 »).
+    exempt-issue-labels : # facultatif, la valeur par défaut est
+    # La raison à utiliser lors de la fermeture d'un problème.
+    close-issue-reason: # facultatif, la valeur par défaut est not_planned
+    # L'étiquette à appliquer lorsqu'une demande d'extraction est obsolète.
+    stale-pr-label : # facultatif, la valeur par défaut est Stale
+    # L'étiquette à appliquer lorsqu'une demande d'extraction est fermée.
+    close-pr-label : # facultatif
+    # Les libellés qui signifient qu'une pull request ne peut pas être marquée comme obsolète. Séparez les libellés par des virgules (par exemple : « label1,label2 »).
+    exempt-pr-labels : # facultatif, la valeur par défaut est
+    # Les jalons qui signifient qu'un problème ou une demande d'extraction ne sont pas marqués comme obsolètes. Séparez les jalons par des virgules (par exemple : « jalon1, jalon2 »).
+    exempt-milestones : # facultatif, la valeur par défaut est
+    # Les jalons qui permettent à un problème d'être exempté d'être marqué comme obsolète. Séparez les jalons par des virgules (par exemple, « milestone1,milestone2 »). Remplacez l'option « exempt-milestones » pour les problèmes uniquement.
+    exempt-issue-milestones : # facultatif, la valeur par défaut est
+    # Les jalons qui excluent une demande d'extraction de la possibilité d'être marquée comme obsolète. Séparez les jalons par des virgules (par exemple, « milestone1,milestone2 »). Remplacez l'option « exempt-milestones » uniquement pour les demandes d'extraction.
+    exempt-pr-milestones : # facultatif, la valeur par défaut est
+    # Empêcher tous les problèmes et demandes d'extraction comportant des jalons d'être marqués comme obsolètes. La valeur par défaut est « false ».
+    exempt-all-milestones : # facultatif, la valeur par défaut est false
+    # Exclure tous les problèmes comportant des jalons de l'affichage comme obsolètes. Remplacer l'option « exempt-all-milestones » concernant uniquement les problèmes.
+    exempt-all-issue-milestones : # facultatif, la valeur par défaut est
+    # Exclure toutes les demandes d'extraction comportant des jalons de l'affichage comme obsolètes. Remplacer l'option « exempt-all-milestones » concernant uniquement les demandes d'extraction.
+    exempt-all-pr-milestones : # facultatif, la valeur par défaut est
+    # Seuls les problèmes ou les demandes d'extraction portant toutes ces étiquettes sont vérifiés s'ils sont obsolètes. La valeur par défaut est « ` » (désactivé) et peut être une liste d'étiquettes séparées par des virgules.
+    only-labels : # facultatif, la valeur par défaut est
+    # Seuls les problèmes ou les demandes d'extraction comportant au moins une de ces étiquettes sont vérifiés s'ils sont obsolètes. La valeur par défaut est « ` » (désactivé) et peut être une liste d'étiquettes séparées par des virgules.
+    any-of-labels : # facultatif, la valeur par défaut est
+    # Seuls les problèmes portant au moins une de ces étiquettes sont vérifiés s'ils sont obsolètes. La valeur par défaut est « ` » (désactivé) et peut être une liste d'étiquettes séparées par des virgules. Remplacez l'option « any-of-labels » concernant uniquement les problèmes.
+    any-of-issue-labels : # facultatif, la valeur par défaut est
+    # Seules les requêtes d'extraction comportant au moins un de ces libellés sont vérifiées si elles sont obsolètes. La valeur par défaut est « ` » (désactivé) et peut être une liste de libellés séparés par des virgules. Remplacez l'option « any-of-labels » concernant uniquement les requêtes d'extraction.
+    any-of-pr-labels : # facultatif, la valeur par défaut est
+    # Seuls les problèmes portant toutes ces étiquettes sont vérifiés s'ils sont obsolètes. La valeur par défaut est « [] » (désactivé) et peut être une liste d'étiquettes séparées par des virgules. Remplacez l'option « only-labels » pour les problèmes uniquement.
+    only-issue-labels : # facultatif, la valeur par défaut est
+    # Seules les requêtes d'extraction comportant tous ces libellés sont vérifiées si elles sont obsolètes. La valeur par défaut est « [] » (désactivée) et peut être une liste de libellés séparés par des virgules. Remplacez l'option « only-labels » concernant uniquement les requêtes d'extraction.
+    only-pr-labels : # facultatif, la valeur par défaut est
+    # Le nombre maximal d'opérations par exécution, utilisé pour contrôler la limitation du débit (lié à l'API GitHub CRUD).
+    opérations par exécution : # facultatif, la valeur par défaut est 30
+    # Supprimez les étiquettes obsolètes des problèmes et des demandes d'extraction lorsqu'ils sont mis à jour ou commentés.
+    remove-stale-when-updated : # facultatif, la valeur par défaut est true
+    # Supprimez les étiquettes obsolètes des tickets lorsqu'ils sont mis à jour ou commentés. Remplacez l'option « remove-stale-when-updated » uniquement pour les tickets.
+    remove-issue-stale-when-updated: # facultatif, la valeur par défaut est
+    # Supprimez les étiquettes obsolètes des requêtes de tirage lorsqu'elles sont mises à jour ou commentées. Remplacez l'option « remove-stale-when-updated » uniquement pour les requêtes de tirage.
+    remove-pr-stale-when-updated : # facultatif, la valeur par défaut est
+    # Exécutez le processeur en mode débogage sans effectuer aucune opération sur les problèmes en direct.
+    debug-only : # facultatif, la valeur par défaut est false
+    # Ordre d'obtention des problèmes ou des demandes d'extraction. La valeur par défaut est « false », ce qui correspond à un ordre décroissant.
+    croissant : # facultatif, la valeur par défaut est false
+    # Supprimez la branche git après avoir fermé une demande d'extraction obsolète.
+    delete-branch : # facultatif, la valeur par défaut est false
+    # La date utilisée pour ignorer l'action obsolète sur le problème/la demande d'extraction créée avant elle (ISO 8601 ou RFC 2822).
+    date de début : # facultatif, la valeur par défaut est
+    # Les personnes affectées qui permettent d'éviter qu'un ticket ou une demande d'extraction soit marqué comme obsolète. Séparez les personnes affectées par des virgules (par exemple : « utilisateur1, utilisateur2 »).
+    exempt-assignees : # facultatif, la valeur par défaut est
+    # Les personnes responsables qui exemptent un ticket d'être marqué comme obsolète. Séparez les personnes responsables par des virgules (par exemple, « utilisateur1, utilisateur2 »). Remplacez l'option « exempt-assignees » pour les tickets uniquement.
+    exempt-issue-assignees : # facultatif, la valeur par défaut est
+    # Les cessionnaires qui exemptent une pull request d'être marquée comme obsolète. Séparez les cessionnaires par des virgules (par exemple, « utilisateur1, utilisateur2 »). Remplacez l'option « exempt-assignees » uniquement pour les pull requests.
+    exempt-pr-assignees : # facultatif, la valeur par défaut est
+    # Empêcher tous les problèmes et demandes d'extraction avec des cessionnaires d'être marqués comme obsolètes. La valeur par défaut est « false ».
+    exempt-all-assignees : # facultatif, la valeur par défaut est false
+    # Exempter tous les problèmes avec des cessionnaires de l'affichage comme obsolètes. Remplacer l'option « exempt-all-assignees » concernant uniquement les problèmes.
+    exempt-all-issue-assignees : # facultatif, la valeur par défaut est
+    # Exclure toutes les demandes d'extraction avec des assignataires de l'affichage comme obsolètes. Remplacer l'option « exempt-all-assignees » concernant uniquement les demandes d'extraction.
+    exempt-all-pr-assignees : # facultatif, la valeur par défaut est
+    # Empêche les brouillons de demandes d'extraction d'être marqués comme obsolètes. La valeur par défaut est « false ».
+    exempt-draft-pr : # facultatif, la valeur par défaut est false
+    # Afficher quelques statistiques à la fin concernant le flux de travail obsolète (uniquement lorsque les journaux sont activés).
+    enable-statistics : # facultatif, la valeur par défaut est true
+    # Une liste délimitée par des virgules d'étiquettes à ajouter lorsqu'un problème ou une demande d'extraction devient obsolète.
+    labels-to-add-when-unstale: # facultatif, la valeur par défaut est
+    # Une liste délimitée par des virgules d'étiquettes à supprimer lorsqu'un problème ou une demande d'extraction devient obsolète.
+    labels-to-remove-when-stained: # facultatif, la valeur par défaut est
+    # Une liste délimitée par des virgules d'étiquettes à supprimer lorsqu'un problème ou une demande d'extraction devient obsolète.
+    labels-to-remove-when-unstale: # facultatif, la valeur par défaut est
+    # Toute mise à jour (mise à jour/commentaire) peut réinitialiser le temps d'inactivité obsolète sur les problèmes et les demandes d'extraction.
+    ignore-updates : # facultatif, la valeur par défaut est false
+    # Toute mise à jour (mise à jour/commentaire) peut réinitialiser le temps d'inactivité des problèmes. Remplacez l'option « ignorer les mises à jour » concernant uniquement les problèmes.
+    ignore-issue-updates : # facultatif, la valeur par défaut est
+    # Toute mise à jour (mise à jour/commentaire) peut réinitialiser le temps d'inactivité des requêtes d'extraction. Remplacez l'option « ignore-updates » uniquement pour les requêtes d'extraction.
+    ignore-pr-updates : # facultatif, la valeur par défaut est
+    # Seuls les problèmes ou les demandes d'extraction avec un cessionnaire seront automatiquement marqués comme obsolètes.
+    include-only-assigned : # facultatif, la valeur par défaut est false
+                - nom : Cache
+  utilisations : actions/cache@v4.2.4
+  avec:
+    # Une liste de fichiers, de répertoires et de modèles génériques à mettre en cache et à restaurer
+    chemin:
+    # Une clé explicite pour restaurer et sauvegarder le cache
+    clé:
+    # Une chaîne multiligne ordonnée listant les clés correspondant au préfixe, utilisées pour restaurer le cache obsolète si aucune correspondance n'a été trouvée pour la clé. Notez que `cache-hit` renvoie false dans ce cas.
+    restore-keys : # facultatif
+    # La taille du bloc utilisé pour diviser les fichiers volumineux lors du téléchargement, en octets
+    upload-chunk-size : # facultatif
+    # Un booléen facultatif lorsqu'il est activé, permet aux exécuteurs Windows d'enregistrer ou de restaurer des caches qui peuvent être restaurés ou enregistrés respectivement sur d'autres plates-formes
+    enableCrossOsArchive : # facultatif, la valeur par défaut est false
+    # Échec du flux de travail si l'entrée du cache n'est pas trouvée
+    fail-on-cache-miss : # facultatif, la valeur par défaut est false
+    # Vérifier si une entrée de cache existe pour les entrées données (clé, clés de restauration) sans télécharger le cache
+    recherche uniquement : # facultatif, la valeur par défaut est false
+    # Exécutez l'étape de publication pour enregistrer le cache même si une autre étape avant échoue
+    save-always : # facultatif, la valeur par défaut est false
+                  - nom : Configuration du JDK Java
+  utilisations : actions/setup-java@v3.14.1
+  avec:
+    # La version Java à configurer. Nécessite une version Java complète ou partielle. Voir des exemples de syntaxe prise en charge dans le fichier README.
+    java-version: # facultatif
+    # Chemin d'accès au fichier « .java-version ». Voir des exemples de syntaxe prise en charge dans le fichier README.
+    fichier-version-java : # facultatif
+    # Distribution Java. Consultez la liste des distributions prises en charge dans le fichier README.
+    distribution:
+    # Le type de package (jdk, jre, jdk+fx, jre+fx)
+    java-package : # facultatif, la valeur par défaut est jdk
+    # L'architecture du package (par défaut, l'architecture du lanceur d'action)
+    architecture : # facultatif
+    # Chemin vers l'emplacement du JDK compressé
+    jdkFile : # facultatif
+    # Définissez cette option si vous souhaitez que l'action vérifie la dernière version disponible qui satisfait aux spécifications de version
+    check-latest : # facultatif
+    # ID du dépôt distributionManagement dans le fichier pom.xml. La valeur par défaut est « github ».
+    server-id : # facultatif, la valeur par défaut est github
+    # Nom de la variable d'environnement pour l'authentification auprès du dépôt Apache Maven. La valeur par défaut est $GITHUB_ACTOR.
+    server-username : # facultatif, la valeur par défaut est GITHUB_ACTOR
+    # Nom de la variable d'environnement pour le mot de passe ou le jeton d'authentification auprès du dépôt Apache Maven. La valeur par défaut est $GITHUB_TOKEN.
+    server-password : # facultatif, la valeur par défaut est GITHUB_TOKEN
+    # Chemin d'accès vers lequel le fichier settings.xml sera écrit. La valeur par défaut est ~/.m2.
+    paramètres-chemin : # facultatif
+    # Écraser le fichier settings.xml s'il existe. La valeur par défaut est « true ».
+    overwrite-settings : # facultatif, la valeur par défaut est true
+    # Clé privée GPG à importer. La valeur par défaut est une chaîne vide.
+    gpg-private-key : # facultatif
+    # Nom de la variable d'environnement pour la phrase secrète de la clé privée GPG. La valeur par défaut est $GPG_PASSPHRASE.
+    gpg-passphrase : # facultatif
+    # Nom de la plateforme de build pour mettre en cache les dépendances. Il peut s'agir de « maven », « gradle » ou « sbt ».
+    cache : # facultatif
+    # Solution de contournement pour transmettre le statut de la tâche à l'étape de publication. Cette variable n'est pas destinée à un réglage manuel.
+    job-status : # facultatif, la valeur par défaut est ${{ job.status }}
+    # Jeton utilisé pour l'authentification lors de la récupération des manifestes de version hébergés sur github.com, comme pour la version Microsoft d'OpenJDK. Lors de l'exécution de cette action sur github.com, la valeur par défaut est suffisante. Lors de l'exécution sur GHES, vous pouvez transmettre un jeton d'accès personnel pour github.com si vous rencontrez une limitation de débit.
+    jeton : # facultatif, la valeur par défaut est ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Nom de l'identifiant de la chaîne d'outils Maven si le nom par défaut « ${distribution}_${java-version} » n'est pas souhaité. Voir des exemples de syntaxe prise en charge dans le fichier d'utilisation avancée.
+    mvn-toolchain-id : # facultatif
+    # Nom du fournisseur de la chaîne d'outils Maven si le nom par défaut « ${distribution} » n'est pas souhaité. Voir des exemples de syntaxe prise en charge dans le fichier d'utilisation avancée.
+    mvn-toolchain-vendor : # facultatif
+                 - nom : Environnement de configuration Go
+  utilisations : actions/setup-go@v5.5.0
+  avec:
+    # La version Go à télécharger (si nécessaire) et à utiliser. Prend en charge les spécifications et les plages semver. Assurez-vous d'inclure cette option entre guillemets simples.
+    go-version : # facultatif
+    # Chemin vers le fichier go.mod ou go.work.
+    go-version-file : # facultatif
+    # Définissez cette option sur true si vous souhaitez que l'action vérifie toujours la dernière version disponible qui satisfait la spécification de version
+    check-latest : # facultatif
+    # Utilisé pour extraire les distributions Go des versions Go. Puisqu'il existe une valeur par défaut, elle n'est généralement pas fournie par l'utilisateur. Lors de l'exécution de cette action sur github.com, la valeur par défaut est suffisante. Lors de l'exécution sur GHES, vous pouvez transmettre un jeton d'accès personnel pour github.com si vous rencontrez une limitation de débit.
+    jeton : # facultatif, la valeur par défaut est ${{ github.server_url == 'https://github.com' && github.token || '' }}
+    # Permet de spécifier si la mise en cache est nécessaire. Définissez cette option sur « true » si vous souhaitez activer la mise en cache.
+    cache : # facultatif, la valeur par défaut est true
+    # Utilisé pour spécifier le chemin vers un fichier de dépendance - go.sum
+    cache-dependency-path : # facultatif
+    # Architecture cible à utiliser par Go. Exemples : x86, x64. L'architecture système sera utilisée par défaut.
+    architecture : # facultatif
+                                  
