@@ -43,6 +43,30 @@ Tous les workflows Android utilisent maintenant une configuration standardisée 
 - **Configuration unifiée** sur tous les workflows
 - **Meilleure fiabilité** des builds Android
 
+## Solution pour les problèmes persistants
+
+Si vous voyez encore l'erreur même après la correction :
+
+### 1. Vider le cache GitHub Actions
+- Aller sur GitHub → Actions → Caches
+- Supprimer tous les caches Android/Gradle
+- Ou déclencher un workflow avec `workflow_dispatch`
+
+### 2. Forcer un nouveau build
+```bash
+# Créer un commit vide pour forcer la synchronisation
+git commit --allow-empty -m "chore: force workflows sync - Android SDK fix"
+git push
+```
+
+### 3. Vérifier la branche
+- Les workflows se déclenchent depuis la branche `main`
+- S'assurer que tous les fichiers workflow sont sur `main`
+
+### 4. Déclencher manuellement
+- GitHub → Actions → Choisir un workflow
+- "Run workflow" → Sélectionner branche `main`
+
 ### Notes Importantes
 
 - Tous les workflows utilisent maintenant Java 17 et Node.js 20
