@@ -1,0 +1,29 @@
+// Fichier: BuildManager.kt
+package com.afrikoin.build
+
+import java.io.File
+
+class BuildManager(private val keystorePath: String, private val properties: Map<String, String>) {
+
+    // Génère un AAB en utilisant les propriétés fournies
+    fun generateAAB(): Boolean {
+        // Vérifie si le keystore existe
+        if (!File(keystorePath).exists()) {
+            println("Erreur : Le keystore n'existe pas à l'emplacement spécifié.")
+            return false
+        }
+
+        // Configuration des propriétés de Gradle
+        properties.forEach { (key, value) ->
+            System.setProperty(key, value)
+        }
+
+        // Commande Gradle pour générer l'AAB
+        val process = ProcessBuilder("./gradlew", ":app:bundleRelease")
+            .inheritIO()
+            .start()
+
+        // Attendre la fin du processus
+        return process.waitFor() == 0
+    }
+}
