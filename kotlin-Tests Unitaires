@@ -1,0 +1,56 @@
+// Fichier: BuildManagerTest.kt
+package com.afrikoin.build
+
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito.*
+import java.io.File
+
+class BuildManagerTest {
+
+    @Test
+    fun `test generateAAB with valid keystore`() {
+        // Préparation
+        val keystorePath = "src/test/resources/valid_keystore.jks"
+        val properties = mapOf(
+            "MYAPP_UPLOAD_STORE_FILE" to keystorePath,
+            "MYAPP_UPLOAD_STORE_PASSWORD" to "password",
+            "MYAPP_UPLOAD_KEY_ALIAS" to "alias",
+            "MYAPP_UPLOAD_KEY_PASSWORD" to "keyPassword"
+        )
+
+        // Création d'un fichier de test valide
+        File(keystorePath).createNewFile()
+
+        val buildManager = BuildManager(keystorePath, properties)
+
+        // Exécution
+        val result = buildManager.generateAAB()
+
+        // Vérification
+        assertTrue(result)
+
+        // Nettoyage
+        File(keystorePath).delete()
+    }
+
+    @Test
+    fun `test generateAAB with invalid keystore`() {
+        // Préparation
+        val keystorePath = "src/test/resources/invalid_keystore.jks"
+        val properties = mapOf(
+            "MYAPP_UPLOAD_STORE_FILE" to keystorePath,
+            "MYAPP_UPLOAD_STORE_PASSWORD" to "password",
+            "MYAPP_UPLOAD_KEY_ALIAS" to "alias",
+            "MYAPP_UPLOAD_KEY_PASSWORD" to "keyPassword"
+        )
+
+        val buildManager = BuildManager(keystorePath, properties)
+
+        // Exécution
+        val result = buildManager.generateAAB()
+
+        // Vérification
+        assertFalse(result)
+    }
+}
