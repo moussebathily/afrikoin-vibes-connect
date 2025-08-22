@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === 'development' && componentTagger(),
-    mode === 'production' && checker({
+    mode === 'development' && checker({
       typescript: {
         tsconfigPath: './tsconfig.app.json',
       },
