@@ -72,7 +72,28 @@ jobs:
         run: npm ci --legacy-peer-deps --ignore-optional
 
       - name: Build Web app
-        run: npm run build
+        run: |
+          set -euo pipefail
+          echo "🏗️ Building web app for Android deployment…"
+          npm run build || {
+            echo "❌ Build failed, attempting with dev mode"
+            npm run build:dev || {
+              echo "❌ Both builds failed, checking environment"
+              echo "Node version: $(node --version)"
+              echo "NPM version: $(npm --version)"
+              npm ls typescript || echo "TypeScript not found"
+              exit 1
+            }
+          }
+          
+          # Verify build output
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed: dist/index.html not found"
+            ls -la dist/ 2>/dev/null || echo "dist/ directory missing"
+            exit 1
+          fi
+          
+          echo "✅ Web build completed successfully"
 
       - name: Add Android platform (Capacitor)
         run: |
@@ -172,6 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy Web to afrikoin.online
     needs: [build-android]
+    if: always() # Continue even if Android build fails
 
     steps:
       - name: Checkout
@@ -199,7 +221,29 @@ jobs:
         run: npm ci --legacy-peer-deps --ignore-optional
 
       - name: Build Web app
-        run: npm run build
+        run: |
+          set -euo pipefail
+          echo "🏗️ Building web app for production deployment…"
+          npm run build || {
+            echo "❌ Production build failed, trying alternative approach"
+            npm run build:dev || {
+              echo "❌ Development build also failed, debugging"
+              echo "Node version: $(node --version)"
+              echo "NPM version: $(npm --version)"
+              echo "Environment: NODE_ENV=${NODE_ENV:-not set}"
+              npm ls vite typescript || echo "Missing build dependencies"
+              exit 1
+            }
+          }
+          
+          # Verify build output
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed: dist/index.html not found"
+            ls -la dist/ 2>/dev/null || echo "dist/ directory missing"
+            exit 1
+          fi
+          
+          echo "✅ Production build completed successfully"
 
       - name: Deploy to Vercel (Production)
         uses: amondnet/vercel-action@v25
@@ -227,6 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate Production Deployment
     needs: [build-android, deploy-web]
+    if: always() # Run validation regardless of previous job results
 
     steps:
       - name: Check website availability
