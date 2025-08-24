@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -12,6 +12,11 @@ import { useEffect, useState } from 'react'
 import './index.css'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
+
+// Lazy load AI Studio Demo
+const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(module => ({
+  default: module.AIStudioDemo
+})))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -80,9 +85,13 @@ function App() {
               <Route path="wallet" element={<WalletPage />} />
               <Route path="ai-studio" element={
                 <div className="p-4">
-                  {React.createElement(
-                    React.lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
-                  )}
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <AIStudioDemo />
+                  </Suspense>
                 </div>
               } />
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
