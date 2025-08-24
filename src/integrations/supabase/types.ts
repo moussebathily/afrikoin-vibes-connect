@@ -46,12 +46,57 @@ export type Database = {
           },
         ]
       }
+      course_invitations: {
+        Row: {
+          course_id: string
+          created_at: string
+          created_by: string
+          current_uses: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          qr_code: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          created_by: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          qr_code: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          created_by?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          qr_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_invitations_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           created_at: string
           description: string | null
           id: string
           owner_id: string
+          subject: string | null
           title: string
           updated_at: string
         }
@@ -60,6 +105,7 @@ export type Database = {
           description?: string | null
           id?: string
           owner_id: string
+          subject?: string | null
           title: string
           updated_at?: string
         }
@@ -68,6 +114,7 @@ export type Database = {
           description?: string | null
           id?: string
           owner_id?: string
+          subject?: string | null
           title?: string
           updated_at?: string
         }
