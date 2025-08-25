@@ -1,0 +1,144 @@
+name: Optimized Deploy (Reduced Usage)
+
+on:
+  # Seulement sur les tags pour réduire l'usage
+  push:
+    tags: ['v*']
+  # Déploiement manuel seulement
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy target'
+        required: true
+        default: 'web'
+        type: choice
+        options:
+        - web
+        - android
+        - all
+
+jobs:
+  deploy-web:
+    if: contains(github.event.inputs.deploy_target || 'all', 'web') || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps --ignore-optional
+      
+    - name: Build web app
+      run: npm run build
+      
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./
+        
+    - name: Notify success
+      run: |
+        echo "✅ Web deployment successful!"
+        echo "🌐 Available at: https://afrikoin.online"
+
+  build-android:
+    if: contains(github.event.inputs.deploy_target || 'all', 'android') || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        accept-android-sdk-licenses: true
+        packages: |
+          platform-tools
+          platforms;android-35
+          build-tools;35.0.0
+          
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      
+    - name: Install dependencies
+      run: npm ci --legacy-peer-deps --ignore-optional
+      
+    - name: Build web app
+      run: npm run build
+      
+    - name: Sync Capacitor
+      run: npx cap sync android
+      
+    - name: Setup Android signing
+      if: secrets.ANDROID_KEYSTORE != ''
+      run: |
+        echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > android/app/release.keystore
+        echo "MYAPP_UPLOAD_STORE_FILE=release.keystore" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_STORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/gradle.properties
+        echo "MYAPP_UPLOAD_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/gradle.properties
+        
+    - name: Build Android AAB
+      working-directory: android
+      run: |
+        if [ -f "app/release.keystore" ]; then
+          echo "🔨 Building signed release AAB..."
+          ./gradlew bundleRelease --stacktrace
+          AAB_PATH="app/build/outputs/bundle/release/app-release.aab"
+        else
+          echo "🔨 Building debug AAB..."
+          ./gradlew bundleDebug --stacktrace
+          AAB_PATH="app/build/outputs/bundle/debug/app-debug.aab"
+        fi
+        echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
+        
+    - name: Upload AAB
+      uses: actions/upload-artifact@v4
+      with:
+        name: afrikoin-${{ github.run_number }}.aab
+        path: android/${{ env.AAB_PATH }}
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: android/${{ env.AAB_PATH }}
+        name: AfriKoin ${{ github.ref_name }}
+        body: |
+          ## AfriKoin ${{ github.ref_name }}
+          
+          ### 📱 Android AAB
+          - Version: ${{ github.ref_name }}
+          - Build: ${{ github.run_number }}
+          
+          ### 🚀 Deployment
+          - Use local scripts for development builds
+          - This optimized workflow reduces GitHub Actions usage
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

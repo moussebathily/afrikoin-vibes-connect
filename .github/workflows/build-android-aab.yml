@@ -1,12 +1,16 @@
 name: Build Android AAB
 
 on:
+  # Réduire l'usage - seulement sur tags et manuel
   push:
-    branches: [ main, master ]
     tags: [ 'v*' ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      force_build:
+        description: 'Force build (ignorer la limite)'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   build:
