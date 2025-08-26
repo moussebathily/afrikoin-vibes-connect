@@ -52,12 +52,6 @@ export default {
 				card: {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
-				},
-				// Couleurs AfriKoin personnalisées
-				afrikoin: {
-					gold: 'hsl(var(--afrikoin-gold))',
-					earth: 'hsl(var(--afrikoin-earth))',
-					sunset: 'hsl(var(--afrikoin-sunset))'
 				}
 			},
 			borderRadius: {
