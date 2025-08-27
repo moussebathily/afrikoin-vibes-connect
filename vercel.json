@@ -2,8 +2,8 @@
   "version": 2,
   "framework": "vite",
   "buildCommand": "vite build",
+  "installCommand": "npm ci --legacy-peer-deps",
   "outputDirectory": "dist",
-  "installCommand": "npm ci",
   "routes": [
     {
       "src": "/sitemap.xml",
