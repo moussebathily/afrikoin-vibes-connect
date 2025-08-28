@@ -1,7 +1,7 @@
 {
   "version": 2,
   "framework": "vite",
-  "buildCommand": "npx vite build",
+  "buildCommand": "vite build",
   "installCommand": "npm ci --legacy-peer-deps",
   "outputDirectory": "dist",
   "routes": [
