@@ -2,9 +2,10 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.627c2a1590254f3b8d084e5bbf9c4f69',
+  appId: 'app.lovable.afrikoin',
   appName: 'AfriKoin - Marché Panafricain',
   webDir: 'dist',
+  bundledWebRuntime: false,
   server: process.env.NODE_ENV === 'production'
     ? undefined
     : {
@@ -15,19 +16,35 @@ const config: CapacitorConfig = {
     buildOptions: {
       keystorePath: process.env.ANDROID_KEYSTORE_FILE,
       keystoreAlias: process.env.ANDROID_KEY_ALIAS,
-    }
+    },
+    allowMixedContent: true
+  },
+  ios: {
+    contentInset: 'automatic',
+    scrollEnabled: true
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 3000,
+      launchShowDuration: 2000,
       launchAutoHide: true,
-      backgroundColor: "#22c55e",
+      backgroundColor: "#f59e0b",
       androidSplashResourceName: "splash",
       androidScaleType: "CENTER_CROP",
       showSpinner: false,
       splashFullScreen: true,
       splashImmersive: true,
+      iosSpinnerStyle: "small",
+      spinnerColor: "#ffffff"
     },
+    StatusBar: {
+      style: 'light',
+      backgroundColor: '#f59e0b'
+    },
+    Keyboard: {
+      resize: 'body',
+      style: 'dark',
+      resizeOnFullScreen: true
+    }
   },
 };
 
