@@ -7,6 +7,7 @@ import { AuthPage } from '@/pages/AuthPage'
 import { WalletPage } from '@/pages/WalletPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
+import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
 import './index.css'
 import { Capacitor } from '@capacitor/core'
@@ -101,6 +102,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
+          <Toaster />
         </div>
       </Router>
     </AuthProvider>
