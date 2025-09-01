@@ -1,7 +1,17 @@
-# AfriKoin – CI Android (SHA-1 & AAB)
+# 🌍 AfriKoin - Plateforme Sociale Africaine
 
-- Workflows CI vérifient la SHA-1 contre `EXPECTED_UPLOAD_SHA1` (fallback: `PLAY_UPLOAD_SHA1`).
-- Voir build-mobile.md pour configurer les secrets et extraire la SHA-1.
+AfriKoin est une plateforme sociale moderne qui connecte les communautés africaines à travers le continent et la diaspora. Construite avec les technologies web les plus récentes, elle offre une expérience utilisateur riche avec support multilingue, fonctionnalités IA, et intégration de portefeuille numérique.
+
+## ✨ Fonctionnalités Principales
+
+- **🔐 Authentification sécurisée** avec Supabase Auth
+- **💬 Posts et interactions sociales** avec système de likes
+- **🤖 Fonctionnalités IA** : modération de contenu, génération de miniatures, amélioration de descriptions
+- **💰 Portefeuille numérique** intégré avec paiements
+- **🌐 Support multilingue** (EN, FR, AR, HA, PT, SW, YO)
+- **📱 Application mobile** via Capacitor
+- **🎨 Interface moderne** avec shadcn/ui et Tailwind CSS
+- **🌙 Mode sombre/clair** automatique
 
 ## Android – Générer un AAB localement (Windows/macOS/Linux)
 1) Placez votre keystore à un emplacement sûr (ex: android/app/release.keystore).
