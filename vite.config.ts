@@ -43,6 +43,10 @@ export default defineConfig(({ mode }) => ({
   esbuild: {
     logOverride: { 'this-is-undefined-in-esm': 'silent' },
     target: 'esnext',
+    legalComments: 'none',
+  },
+  css: {
+    devSourcemap: true,
   },
   define: {
     'process.env.NODE_ENV': JSON.stringify(mode),
