@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Thenga futhi uthengise ku-Afrika yonke ngokwethemba"
+  },
+  "auth": {
+    "login": "Ngena",
+    "signup": "Bhalisa",
+    "logout": "Phuma",
+    "email": "I-email",
+    "password": "Iphasiwedi",
+    "name": "Igama eliphelele",
+    "welcome": "Sawubona ku-AfriKoin",
+    "createAccount": "Dala i-akhawunti yakho",
+    "alreadyHaveAccount": "Senaso i-akhawunti?",
+    "noAccount": "Awunayo i-akhawunti?"
+  },
+  "navigation": {
+    "home": "Ekhaya",
+    "likes": "Okuthandwayo",
+    "holidays": "Amaholide",
+    "wallet": "Isikhwama",
+    "profile": "Iphrofayela",
+    "search": "Sesha",
+    "notifications": "Izaziso",
+    "create": "Dala"
+  },
+  "market": {
+    "post": "Thumela isikhangiso",
+    "search": "Sesha",
+    "price": "Intengo",
+    "noResults": "Ayikho imiphumela etholiwe",
+    "categories": "Izigaba"
+  },
+  "wallet": {
+    "balance": "Ibhalansi",
+    "addFunds": "Engeza imali",
+    "withdraw": "Khipha",
+    "transactions": "Okwenziwayo",
+    "send": "Thumela",
+    "receive": "Thola"
+  },
+  "likes": {
+    "buyCredits": "Thenga ama-credits okuthandayo",
+    "remaining": "Ama-credits asele: {{count}}",
+    "noCredits": "Awekho ama-credits"
+  },
+  "posts": {
+    "noPostsYet": "Azikho izithombe okwamanje",
+    "beFirst": "Yiba owokuqala ukwabelana ngokuqukethwe!",
+    "likes": "okuthandwayo",
+    "comments": "amazwana",
+    "share": "Yabelana"
+  },
+  "holidays": {
+    "discover": "Thola",
+    "upcoming": "Amaholide azayo",
+    "today": "Namuhla"
+  },
+  "welcome": {
+    "title": "Sawubona ku-AfriKoin!",
+    "subtitle": "Xhumana, thenga, futhi ugubhe ku-Afrika yonke",
+    "freeLikes": "10 okuthandwayo kwamahhala",
+    "premiumContent": "Okuqukethwe okukahle",
+    "community": "Umphakathi",
+    "createFirstPost": "Dala isithombe sami sokuqala"
+  },
+  "common": {
+    "loading": "Kuyalayishwa...",
+    "error": "Iphutha",
+    "success": "Impumelelo",
+    "cancel": "Khansela",
+    "save": "Gcina",
+    "delete": "Susa",
+    "edit": "Hlela",
+    "close": "Vala",
+    "back": "Emuva",
+    "next": "Okulandelayo",
+    "previous": "Okudlule",
+    "language": "Ulimi"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

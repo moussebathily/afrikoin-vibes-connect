@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Kaufen und verkaufen Sie vertrauensvoll in ganz Afrika"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "name": "Vollständiger Name",
+    "welcome": "Willkommen bei AfriKoin",
+    "createAccount": "Erstellen Sie Ihr Konto",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "noAccount": "Haben Sie kein Konto?"
+  },
+  "navigation": {
+    "home": "Startseite",
+    "likes": "Gefällt mir",
+    "holidays": "Feiertage",
+    "wallet": "Brieftasche",
+    "profile": "Profil",
+    "search": "Suchen",
+    "notifications": "Benachrichtigungen",
+    "create": "Erstellen"
+  },
+  "market": {
+    "post": "Anzeige veröffentlichen",
+    "search": "Suchen",
+    "price": "Preis",
+    "noResults": "Keine Ergebnisse gefunden",
+    "categories": "Kategorien"
+  },
+  "wallet": {
+    "balance": "Guthaben",
+    "addFunds": "Guthaben hinzufügen",
+    "withdraw": "Abheben",
+    "transactions": "Transaktionen",
+    "send": "Senden",
+    "receive": "Empfangen"
+  },
+  "likes": {
+    "buyCredits": "Gefällt mir-Kredite kaufen",
+    "remaining": "Verbleibende Kredite: {{count}}",
+    "noCredits": "Keine Kredite"
+  },
+  "posts": {
+    "noPostsYet": "Noch keine Beiträge",
+    "beFirst": "Seien Sie der Erste, der Inhalte teilt!",
+    "likes": "Gefällt mir",
+    "comments": "Kommentare",
+    "share": "Teilen"
+  },
+  "holidays": {
+    "discover": "Entdecken",
+    "upcoming": "Kommende Feiertage",
+    "today": "Heute"
+  },
+  "welcome": {
+    "title": "Willkommen bei AfriKoin!",
+    "subtitle": "Verbinden, handeln und feiern Sie in ganz Afrika",
+    "freeLikes": "10 kostenlose Gefällt mir",
+    "premiumContent": "Premium-Inhalte",
+    "community": "Gemeinschaft",
+    "createFirstPost": "Meinen ersten Beitrag erstellen"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "language": "Sprache"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

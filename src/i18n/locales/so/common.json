@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Afrika oo dhan ku iibso oo ku iibi aamminid"
+  },
+  "auth": {
+    "login": "Gal",
+    "signup": "Isdiiwaangeli",
+    "logout": "Ka bax",
+    "email": "Email",
+    "password": "Erayga sirta ah",
+    "name": "Magaca buuxa",
+    "welcome": "Kusoo dhawaada AfriKoin",
+    "createAccount": "Akoonkaaga samee",
+    "alreadyHaveAccount": "Akoon ma leedahay?",
+    "noAccount": "Akoon ma lihid?"
+  },
+  "navigation": {
+    "home": "Guriga",
+    "likes": "Jeclaansho",
+    "holidays": "Ciidaha",
+    "wallet": "Jeebka",
+    "profile": "Astaanta",
+    "search": "Raadi",
+    "notifications": "Ogeysiiska",
+    "create": "Samee"
+  },
+  "market": {
+    "post": "Xayeysiis dhig",
+    "search": "Raadi",
+    "price": "Qiimaha",
+    "noResults": "Natiijo lama helin",
+    "categories": "Qaybaha"
+  },
+  "wallet": {
+    "balance": "Haraaga",
+    "addFunds": "Lacag ku dar",
+    "withdraw": "Ka saar",
+    "transactions": "Macaamulada",
+    "send": "Dir",
+    "receive": "Hel"
+  },
+  "likes": {
+    "buyCredits": "Jeclaansho credits iibso",
+    "remaining": "Credits ka hartay: {{count}}",
+    "noCredits": "Credits ma leh"
+  },
+  "posts": {
+    "noPostsYet": "Farriin weli ma jiraan",
+    "beFirst": "Noqo kii ugu horreeyay ee waxa la wadaago!",
+    "likes": "jeclaansho",
+    "comments": "faallooyinka",
+    "share": "La wadaag"
+  },
+  "holidays": {
+    "discover": "Ogaado",
+    "upcoming": "Ciidaha soo socda",
+    "today": "Maanta"
+  },
+  "welcome": {
+    "title": "Kusoo dhawaada AfriKoin!",
+    "subtitle": "Ku xidho, ganacso, oo ku dabaal deg Afrika oo dhan",
+    "freeLikes": "10 jeclaansho oo bilaash ah",
+    "premiumContent": "Waxyaabo khaas ah",
+    "community": "Bulshada",
+    "createFirstPost": "Samayn fariintayda ugu horreysa"
+  },
+  "common": {
+    "loading": "Waa la raraa...",
+    "error": "Qalad",
+    "success": "Guul",
+    "cancel": "Jooji",
+    "save": "Kaydi",
+    "delete": "Tirtir",
+    "edit": "Wax ka beddel",
+    "close": "Xir",
+    "back": "Dib u noqo",
+    "next": "Xiga",
+    "previous": "Kii hore",
+    "language": "Luuqadda"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Compra e vendi in tutta l'Africa con fiducia"
+  },
+  "auth": {
+    "login": "Accedi",
+    "signup": "Registrati",
+    "logout": "Esci",
+    "email": "Email",
+    "password": "Password",
+    "name": "Nome completo",
+    "welcome": "Benvenuto su AfriKoin",
+    "createAccount": "Crea il tuo account",
+    "alreadyHaveAccount": "Hai già un account?",
+    "noAccount": "Non hai un account?"
+  },
+  "navigation": {
+    "home": "Home",
+    "likes": "Mi piace",
+    "holidays": "Festività",
+    "wallet": "Portafoglio",
+    "profile": "Profilo",
+    "search": "Cerca",
+    "notifications": "Notifiche",
+    "create": "Crea"
+  },
+  "market": {
+    "post": "Pubblica annuncio",
+    "search": "Cerca",
+    "price": "Prezzo",
+    "noResults": "Nessun risultato trovato",
+    "categories": "Categorie"
+  },
+  "wallet": {
+    "balance": "Saldo",
+    "addFunds": "Aggiungi fondi",
+    "withdraw": "Preleva",
+    "transactions": "Transazioni",
+    "send": "Invia",
+    "receive": "Ricevi"
+  },
+  "likes": {
+    "buyCredits": "Acquista crediti mi piace",
+    "remaining": "Crediti rimanenti: {{count}}",
+    "noCredits": "Nessun credito"
+  },
+  "posts": {
+    "noPostsYet": "Nessun post ancora",
+    "beFirst": "Sii il primo a condividere contenuti!",
+    "likes": "mi piace",
+    "comments": "commenti",
+    "share": "Condividi"
+  },
+  "holidays": {
+    "discover": "Scopri",
+    "upcoming": "Prossime festività",
+    "today": "Oggi"
+  },
+  "welcome": {
+    "title": "Benvenuto su AfriKoin!",
+    "subtitle": "Connettiti, commercia e celebra in tutta l'Africa",
+    "freeLikes": "10 mi piace gratuiti",
+    "premiumContent": "Contenuti premium",
+    "community": "Comunità",
+    "createFirstPost": "Crea il mio primo post"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "success": "Successo",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "next": "Avanti",
+    "previous": "Precedente",
+    "language": "Lingua"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}
