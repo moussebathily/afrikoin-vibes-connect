@@ -7,6 +7,9 @@ import { AuthPage } from '@/pages/AuthPage'
 import { WalletPage } from '@/pages/WalletPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
+import { CulturePage } from '@/pages/CulturePage'
+import { SportsPage } from '@/pages/SportsPage'
+import { RankingsPage } from '@/pages/RankingsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
 import './index.css'
@@ -82,6 +85,9 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<HomePage />} />
+              <Route path="culture" element={<CulturePage />} />
+              <Route path="sports" element={<SportsPage />} />
+              <Route path="rankings" element={<RankingsPage />} />
               <Route path="wallet" element={<WalletPage />} />
               <Route path="ai-studio" element={
                 <div className="p-4">

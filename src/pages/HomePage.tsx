@@ -5,6 +5,8 @@ import { WelcomeCard } from '@/components/home/WelcomeCard'
 import { FestivalBanner } from '@/components/holidays/FestivalBanner'
 import { IndependenceBanner } from '@/components/holidays/IndependenceBanner'
 import { EntertainmentSection } from '@/components/entertainment/EntertainmentSection'
+import { CategoryTabs } from '@/components/categories/CategoryTabs'
+import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
@@ -14,17 +16,58 @@ import { toast } from 'sonner'
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [rankings, setRankings] = useState([])
+  const [activeCategory, setActiveCategory] = useState('general')
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
   const { t } = useTranslation()
 
   useEffect(() => {
-    fetchPosts()
+    fetchInitialData()
   }, [])
+
+  useEffect(() => {
+    fetchPosts()
+  }, [activeCategory])
+
+  const fetchInitialData = async () => {
+    try {
+      // Fetch categories
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('content_categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name')
+
+      if (categoriesError) throw categoriesError
+      setCategories(categoriesData || [])
+
+      // Fetch rankings
+      const { data: rankingsData, error: rankingsError } = await supabase
+        .from('weekly_rankings')
+        .select(`
+          *,
+          profiles!weekly_rankings_user_id_fkey(name, avatar_url, is_verified)
+        `)
+        .order('rank_position')
+        .limit(5)
+
+      if (rankingsError) throw rankingsError
+      setRankings(rankingsData || [])
+
+      // Fetch initial posts
+      await fetchPosts()
+    } catch (error) {
+      console.error('Error fetching initial data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('posts')
         .select(`
           *,
@@ -32,15 +75,19 @@ export function HomePage() {
           media_files(*)
         `)
         .eq('status', 'published')
-        .order('created_at', { ascending: false })
+
+      if (activeCategory !== 'general') {
+        query = query.eq('category_slug', activeCategory)
+      }
+
+      const { data, error } = await query
+        .order('trending_score', { ascending: false })
         .limit(20)
 
       if (error) throw error
       setPosts(data || [])
     } catch (error) {
       console.error('Error fetching posts:', error)
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -119,6 +166,15 @@ export function HomePage() {
       {/* Festival Banner */}
       <FestivalBanner />
       
+      {/* Category Tabs */}
+      {categories.length > 0 && (
+        <CategoryTabs 
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      )}
+      
       {/* Stories Carousel */}
       <StoryCarousel />
       
@@ -126,14 +182,26 @@ export function HomePage() {
       <EntertainmentSection />
       
       {/* Posts Feed */}
-      <div className="space-y-6">
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onLike={() => handleLikePost(post.id)}
-          />
-        ))}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          {posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post as any}
+              onLike={() => handleLikePost(post.id)}
+            />
+          ))}
+        </div>
+        
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {rankings.length > 0 && (
+            <WeeklyRankingsCard 
+              rankings={rankings} 
+              category="Cette semaine"
+            />
+          )}
+        </div>
       </div>
 
       {posts.length === 0 && (
