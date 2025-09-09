@@ -10,6 +10,7 @@ import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
 import { CulturePage } from '@/pages/CulturePage'
 import { SportsPage } from '@/pages/SportsPage'
 import { RankingsPage } from '@/pages/RankingsPage'
+import { MarketsPage } from '@/pages/MarketsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
 import './index.css'
@@ -87,6 +88,7 @@ function App() {
               <Route index element={<HomePage />} />
               <Route path="culture" element={<CulturePage />} />
               <Route path="sports" element={<SportsPage />} />
+              <Route path="markets" element={<MarketsPage />} />
               <Route path="rankings" element={<RankingsPage />} />
               <Route path="wallet" element={<WalletPage />} />
               <Route path="ai-studio" element={
