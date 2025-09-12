@@ -7,8 +7,13 @@ const config: CapacitorConfig = {
   webDir: 'dist',
   bundledWebRuntime: false,
   server: process.env.NODE_ENV === 'production'
-    ? undefined
+    ? {
+        // Production: use local files, no external server
+        androidScheme: 'https',
+        iosScheme: 'capacitor'
+      }
     : {
+        // Development: use Lovable preview URL
         url: 'https://627c2a15-9025-4f3b-8d08-4e5bbf9c4f69.lovableproject.com?forceHideBadge=true',
         cleartext: true
       },

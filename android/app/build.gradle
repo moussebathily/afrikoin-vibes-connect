@@ -50,14 +50,23 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false  // Disable resource shrinking for hybrid apps
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            zipAlignEnabled true
             if (HAS_RELEASE_SIGNING) {
                 signingConfig signingConfigs.release
             }
+            // Enable WebView debugging in release for troubleshooting
+            buildConfigField "boolean", "DEBUG_WEBVIEW", "false"
         }
         debug {
             applicationIdSuffix ".debug"
             debuggable true
+            minifyEnabled false
+            buildConfigField "boolean", "DEBUG_WEBVIEW", "true"
         }
     }
 

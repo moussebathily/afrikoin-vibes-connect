@@ -45,27 +45,32 @@
     public static <fields>;
 }
 
-# Enhanced security and optimization rules
+# Enhanced rules for hybrid apps - more conservative
 -dontwarn **
--ignorewarnings
 
-# Remove logging in release builds for better performance and security
--assumenosideeffects class android.util.Log {
-    public static *** d(...);
-    public static *** v(...);
-    public static *** i(...);
+# Keep critical JavaScript interfaces for Capacitor
+-keep class * {
+    @android.webkit.JavascriptInterface <methods>;
 }
 
-# Remove debug and test code
--assumenosideeffects class * {
-    public void debug(...);
-    public void test*(...);
+# Keep all Capacitor plugin classes and methods
+-keep class com.getcapacitor.** { *; }
+-keep class com.capacitorjs.plugins.** { *; }
+
+# Keep React/JavaScript bridge classes
+-keepclassmembers class * {
+    @com.getcapacitor.annotation.CapacitorPlugin *;
+    @com.getcapacitor.PluginMethod *;
 }
 
-# Optimize and obfuscate
--optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
--optimizationpasses 5
--allowaccessmodification
+# Preserve all public classes and methods for hybrid app compatibility
+-keep public class * {
+    public protected *;
+}
+
+# Conservative optimization for hybrid apps
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*,!class/unboxing/enum
+-optimizationpasses 3
 -dontpreverify
 
 # Keep native method names
@@ -131,6 +136,30 @@
 -keepresources drawable/ic_launcher*
 -keepresources mipmap/ic_launcher*
 
-# Security enhancements - obfuscate class and member names
+# Keep all classes that might be used by JavaScript
+-keep class **.R$* {
+    public static <fields>;
+}
+
+# Keep all classes with @JavascriptInterface annotation
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# Keep React Native/Capacitor specific classes
+-keep class com.facebook.react.** { *; }
+-keep class com.swmansion.** { *; }
+
+# Keep all enum values and methods
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Keep all classes that extend WebViewClient and WebChromeClient
+-keep class * extends android.webkit.WebViewClient { *; }
+-keep class * extends android.webkit.WebChromeClient { *; }
+
+# Less aggressive obfuscation for hybrid apps
 -renamesourcefileattribute SourceFile
--repackageclasses ''
+-dontobfuscate
