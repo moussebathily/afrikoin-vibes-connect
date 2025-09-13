@@ -7,6 +7,7 @@ substitutions:
   _DEPLOY_REGION: 'europe-west1'
   _PLATFORM: 'managed'
   _SERVICE_NAME: 'afrikoin-vibes-connect'
+  _SERVICEURL: 'https://afrikoin-vibes-connect.example.com'
 
 # Image taggée par SHA du commit (valable pour rollback facile)
 images:
@@ -89,8 +90,7 @@ steps:
     args:
       - '-lc'
       - |
-        SERVICE_URL=$(gcloud run services describe $_SERVICE_NAME --region $_DEPLOY_REGION --format 'value(status.url)')
-        echo "🌐 Service déployé à: $SERVICE_URL"
+        echo "🌐 Service déployé à: $_SERVICEURL"
         echo "🔍 Test de santé..."
-        curl -f "$SERVICE_URL/health" || echo "⚠️ Health check échoué"
+        curl -f "$_SERVICEURL/health" || echo "⚠️ Health check échoué"
         echo "✅ Déploiement terminé!"
