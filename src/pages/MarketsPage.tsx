@@ -23,19 +23,33 @@ export function MarketsPage() {
   const fetchMarketsData = async () => {
     try {
       // Fetch market-related posts
-      const { data: postsData } = await supabase
+      const { data: postsData, error: postsError } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey(name, country, is_verified),
-          media_files(*)
-        `)
+        .select('*, media_files(*)')
         .eq('category_slug', 'marches-panafricains')
         .eq('status', 'published')
         .order('trending_score', { ascending: false })
         .limit(10)
 
-      setPosts(postsData || [])
+      if (postsError) {
+        console.error('Error fetching posts:', postsError)
+        setPosts([])
+      } else if (postsData && postsData.length > 0) {
+        // Fetch profiles separately
+        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, country, is_verified')
+          .in('id', userIds)
+        
+        const postsWithProfiles = postsData.map(post => ({
+          ...post,
+          profiles: profilesData?.find(p => p.id === post.user_id) || null
+        }))
+        setPosts(postsWithProfiles)
+      } else {
+        setPosts([])
+      }
 
       // Fetch market news
       const { data: newsData } = await supabase

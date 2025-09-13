@@ -22,7 +22,8 @@ const config: CapacitorConfig = {
       keystorePath: process.env.ANDROID_KEYSTORE_FILE,
       keystoreAlias: process.env.ANDROID_KEY_ALIAS,
     },
-    allowMixedContent: true
+    allowMixedContent: true,
+    webContentsDebuggingEnabled: process.env.NODE_ENV !== 'production'
   },
   ios: {
     contentInset: 'automatic',

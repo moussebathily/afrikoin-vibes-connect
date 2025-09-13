@@ -30,26 +30,36 @@ export function SportsPage() {
       // Fetch sports posts
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey(name, avatar_url, is_verified, country),
-          media_files(*)
-        `)
+        .select('*, media_files(*)')
         .eq('category_slug', 'sport')
         .eq('status', 'published')
         .order('trending_score', { ascending: false })
         .limit(20)
 
-      if (postsError) throw postsError
-      setPosts(postsData || [])
+      if (postsError) {
+        console.error('Error fetching posts:', postsError)
+        setPosts([])
+      } else if (postsData && postsData.length > 0) {
+        // Fetch profiles separately
+        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, avatar_url, is_verified, country')
+          .in('id', userIds)
+        
+        const postsWithProfiles = postsData.map(post => ({
+          ...post,
+          profiles: profilesData?.find(p => p.id === post.user_id) || null
+        }))
+        setPosts(postsWithProfiles)
+      } else {
+        setPosts([])
+      }
 
       // Fetch weekly rankings for sports
       const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
-        .select(`
-          *,
-          profiles!weekly_rankings_user_id_fkey(name, avatar_url, is_verified)
-        `)
+        .select('*')
         .eq('category_slug', 'sport')
         .order('rank_position')
         .limit(10)

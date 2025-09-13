@@ -8,15 +8,33 @@ export const EntertainmentSection = () => {
 
   useEffect(() => {
     const fetchVideos = async () => {
-      const { data, error } = await supabase
+      const { data: postsData, error } = await supabase
         .from('posts')
-        .select(`*, profiles!posts_user_id_fkey(name, is_verified), media_files(*)`)
+        .select('*, media_files(*)')
         .eq('status', 'published')
         .eq('content_type', 'video')
         .order('like_count', { ascending: false })
         .limit(6)
 
-      if (!error) setVideos(data || [])
+      if (error) {
+        console.error('Error fetching videos:', error)
+        return
+      }
+
+      if (postsData && postsData.length > 0) {
+        // Fetch profiles separately
+        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, is_verified')
+          .in('id', userIds)
+        
+        const videosWithProfiles = postsData.map(video => ({
+          ...video,
+          profiles: profilesData?.find(p => p.id === video.user_id) || null
+        }))
+        setVideos(videosWithProfiles)
+      }
     }
     fetchVideos()
   }, [])

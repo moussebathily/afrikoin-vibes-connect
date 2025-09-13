@@ -60,10 +60,7 @@ export function RankingsPage() {
     try {
       let query = supabase
         .from('weekly_rankings')
-        .select(`
-          *,
-          profiles!weekly_rankings_user_id_fkey(name, avatar_url, is_verified)
-        `)
+        .select('*')
         .order('rank_position')
 
       if (selectedCategory !== 'all') {
@@ -74,13 +71,31 @@ export function RankingsPage() {
         query = query.eq('country_code', selectedCountry)
       }
 
-      const { data, error } = await query.limit(50)
+      const { data: rankingsData, error } = await query.limit(50)
 
-      if (error) throw error
-      setRankings(data || [])
+      if (error) {
+        console.error('Error fetching rankings:', error)
+        setRankings([])
+      } else if (rankingsData && rankingsData.length > 0) {
+        // Fetch profiles separately
+        const userIds = rankingsData.map(r => r.user_id).filter(Boolean)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, avatar_url, is_verified')
+          .in('id', userIds)
+        
+        const rankingsWithProfiles = rankingsData.map(ranking => ({
+          ...ranking,
+          profiles: profilesData?.find(p => p.id === ranking.user_id) || null
+        }))
+        setRankings(rankingsWithProfiles)
+      } else {
+        setRankings([])
+      }
     } catch (error) {
       console.error('Error fetching rankings:', error)
       toast.error('Erreur lors du chargement des classements')
+      setRankings([])
     } finally {
       setLoading(false)
     }

@@ -33,33 +33,55 @@ export function HomePage() {
 
   const fetchInitialData = async () => {
     try {
-      // Fetch categories
+      // Fetch categories safely
       const { data: categoriesData, error: categoriesError } = await supabase
         .from('content_categories')
         .select('*')
         .eq('is_active', true)
         .order('name')
 
-      if (categoriesError) throw categoriesError
-      setCategories(categoriesData || [])
+      if (categoriesError) {
+        console.error('Error fetching categories:', categoriesError)
+      } else {
+        setCategories(categoriesData || [])
+      }
 
-      // Fetch rankings
+      // Fetch rankings safely without foreign key dependency
       const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
-        .select(`
-          *,
-          profiles!weekly_rankings_user_id_fkey(name, avatar_url, is_verified)
-        `)
+        .select('*')
         .order('rank_position')
         .limit(5)
 
-      if (rankingsError) throw rankingsError
-      setRankings(rankingsData || [])
+      if (rankingsError) {
+        console.error('Error fetching rankings:', rankingsError)
+      } else {
+        // Fetch profiles separately for rankings
+        if (rankingsData && rankingsData.length > 0) {
+          const userIds = rankingsData.map(r => r.user_id).filter(Boolean)
+          const { data: profilesData } = await supabase
+            .from('profiles')
+            .select('id, name, avatar_url, is_verified')
+            .in('id', userIds)
+          
+          const rankingsWithProfiles = rankingsData.map(ranking => ({
+            ...ranking,
+            profiles: profilesData?.find(p => p.id === ranking.user_id) || null
+          }))
+          setRankings(rankingsWithProfiles)
+        } else {
+          setRankings([])
+        }
+      }
 
       // Fetch initial posts
       await fetchPosts()
     } catch (error) {
       console.error('Error fetching initial data:', error)
+      // Don't fail completely - continue loading with empty data
+      setCategories([])
+      setRankings([])
+      setPosts([])
     } finally {
       setLoading(false)
     }
@@ -69,25 +91,42 @@ export function HomePage() {
     try {
       let query = supabase
         .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey(name, country, is_verified),
-          media_files(*)
-        `)
+        .select('*, media_files(*)')
         .eq('status', 'published')
 
       if (activeCategory !== 'general') {
         query = query.eq('category_slug', activeCategory)
       }
 
-      const { data, error } = await query
+      const { data: postsData, error } = await query
         .order('trending_score', { ascending: false })
         .limit(20)
 
-      if (error) throw error
-      setPosts(data || [])
+      if (error) {
+        console.error('Error fetching posts:', error)
+        setPosts([])
+        return
+      }
+
+      // Fetch profiles separately to avoid foreign key issues
+      if (postsData && postsData.length > 0) {
+        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, name, country, is_verified')
+          .in('id', userIds)
+        
+        const postsWithProfiles = postsData.map(post => ({
+          ...post,
+          profiles: profilesData?.find(p => p.id === post.user_id) || null
+        }))
+        setPosts(postsWithProfiles)
+      } else {
+        setPosts([])
+      }
     } catch (error) {
       console.error('Error fetching posts:', error)
+      setPosts([])
     }
   }
 
