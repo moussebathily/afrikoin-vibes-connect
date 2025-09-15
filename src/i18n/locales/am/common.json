@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "በአፍሪካ ውስጥ በአተማታቴ ይግዙና ይሸጡ"
+  },
+  "auth": {
+    "login": "ግባ",
+    "signup": "ሂሳብ ክፈት",
+    "logout": "ውጣ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "name": "ሙሉ ስም",
+    "welcome": "ወደ AfriKoin እንኳን ደህና መጡ",
+    "createAccount": "ሂሳብዎን ይፍጠሩ",
+    "alreadyHaveAccount": "ሂሳብ አለዎት?",
+    "noAccount": "ሂሳብ የለዎትም?"
+  },
+  "navigation": {
+    "home": "ቤት",
+    "likes": "ወዳጅነት",
+    "holidays": "በዓላት",
+    "wallet": "ዋላት",
+    "profile": "መገለጫ",
+    "search": "ፈልግ",
+    "notifications": "ማሳወቂያዎች",
+    "create": "ፍጠር"
+  },
+  "market": {
+    "post": "ማስታወቂያ አስተናግድ",
+    "search": "ፈልግ",
+    "price": "ዋጋ",
+    "noResults": "ውጤት አልተገኘም",
+    "categories": "ምድቦች"
+  },
+  "wallet": {
+    "balance": "ቀሪ ገንዘብ",
+    "addFunds": "ገንዘብ ጨምር",
+    "withdraw": "አውጣ",
+    "transactions": "ግብይቶች",
+    "send": "ላክ",
+    "receive": "ተቀበል"
+  },
+  "likes": {
+    "buyCredits": "የወዳጅነት ክሬዲት ግዛ",
+    "remaining": "የቀሩ ክሬዲቶች: {{count}}",
+    "noCredits": "ክሬዲት የለም"
+  },
+  "posts": {
+    "noPostsYet": "ገና ጽሁፎች የሉም",
+    "beFirst": "ይዘት የሚያካፍለው የመጀመሪያው ሁን!",
+    "likes": "ወዳጅነት",
+    "comments": "አስተያየቶች",
+    "share": "አካፍል"
+  },
+  "holidays": {
+    "discover": "ያግኙ",
+    "upcoming": "የሚመጡ በዓላት",
+    "today": "ዛሬ"
+  },
+  "welcome": {
+    "title": "ወደ AfriKoin እንኳን ደህና መጣችሁ!",
+    "subtitle": "በአፍሪካ ውስጥ ተገናኙ፣ ተወዳደሩና ያክብሩ",
+    "freeLikes": "10 ነጻ ወዳጅነቶች",
+    "premiumContent": "ፕሪሚየም ይዘት",
+    "community": "ማህበረሰብ",
+    "createFirstPost": "የመጀመሪያ ጽሁፌን ፍጠር"
+  },
+  "common": {
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት",
+    "success": "ተሳክቷል",
+    "cancel": "ሰርዝ",
+    "save": "አስቀምጥ",
+    "delete": "ሰርዝ",
+    "edit": "አርም",
+    "close": "ዝጋ",
+    "back": "ተመለስ",
+    "next": "ቀጣይ",
+    "previous": "ቀደም",
+    "language": "ቋንቋ"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

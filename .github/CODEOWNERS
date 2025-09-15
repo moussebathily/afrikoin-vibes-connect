@@ -1,0 +1,55 @@
+# AfriKoin Code Owners
+# This file defines who should review changes to specific parts of the codebase
+
+# Global owners - require approval for any changes
+* @afrikoin-team
+
+# Frontend Application
+/src/ @afrikoin-team/frontend
+/src/components/ @afrikoin-team/frontend
+/src/pages/ @afrikoin-team/frontend
+/src/contexts/ @afrikoin-team/frontend
+
+# Mobile Configuration
+/android/ @afrikoin-team/mobile
+/capacitor.config.ts @afrikoin-team/mobile
+/vite.config.ts @afrikoin-team/mobile @afrikoin-team/frontend
+
+# Backend & Supabase
+/supabase/ @afrikoin-team/backend
+/src/integrations/supabase/ @afrikoin-team/backend
+
+# AI Features
+/src/components/ai/ @afrikoin-team/ai
+/supabase/functions/ai-* @afrikoin-team/ai @afrikoin-team/backend
+
+# DevOps & Deployment
+/.github/ @afrikoin-team/devops
+/scripts/ @afrikoin-team/devops
+/Dockerfile* @afrikoin-team/devops
+/vercel.json @afrikoin-team/devops
+/cloudbuild.yaml @afrikoin-team/devops
+
+# Security & Authentication
+/src/contexts/AuthContext.tsx @afrikoin-team/security @afrikoin-team/backend
+/supabase/functions/verify-* @afrikoin-team/security @afrikoin-team/backend
+
+# Payment Integration
+/src/pages/PaymentSuccessPage.tsx @afrikoin-team/payments @afrikoin-team/backend
+/supabase/functions/*checkout* @afrikoin-team/payments @afrikoin-team/backend
+/supabase/functions/verify-like-payment/ @afrikoin-team/payments @afrikoin-team/backend
+
+# Internationalization
+/src/i18n/ @afrikoin-team/i18n
+/src/components/ui/language-selector.tsx @afrikoin-team/i18n
+
+# Configuration Files
+/package.json @afrikoin-team/devops @afrikoin-team/core
+/tsconfig*.json @afrikoin-team/core
+/tailwind.config.ts @afrikoin-team/frontend @afrikoin-team/core
+/eslint.config.js @afrikoin-team/core
+
+# Documentation
+/README.md @afrikoin-team/core
+/CONTRIBUTING.md @afrikoin-team/core
+/*.md @afrikoin-team/documentation

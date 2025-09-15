@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -7,11 +7,20 @@ import { AuthPage } from '@/pages/AuthPage'
 import { WalletPage } from '@/pages/WalletPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
+import { CulturePage } from '@/pages/CulturePage'
+import { SportsPage } from '@/pages/SportsPage'
+import { RankingsPage } from '@/pages/RankingsPage'
+import { MarketsPage } from '@/pages/MarketsPage'
+import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
-import { useEffect, useState } from 'react'
 import './index.css'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
+
+// Lazy load AI Studio Demo
+const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(module => ({
+  default: module.AIStudioDemo
+})))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -77,12 +86,20 @@ function App() {
               </ProtectedRoute>
             }>
               <Route index element={<HomePage />} />
+              <Route path="culture" element={<CulturePage />} />
+              <Route path="sports" element={<SportsPage />} />
+              <Route path="markets" element={<MarketsPage />} />
+              <Route path="rankings" element={<RankingsPage />} />
               <Route path="wallet" element={<WalletPage />} />
               <Route path="ai-studio" element={
                 <div className="p-4">
-                  {React.createElement(
-                    React.lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
-                  )}
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <AIStudioDemo />
+                  </Suspense>
                 </div>
               } />
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
@@ -93,6 +110,7 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
+          <Toaster />
         </div>
       </Router>
     </AuthProvider>

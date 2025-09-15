@@ -7,13 +7,310 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
+      challenges: {
+        Row: {
+          category_slug: string
+          challenge_type: string
+          created_at: string
+          current_participants: number
+          description: string
+          end_date: string
+          id: string
+          is_active: boolean
+          max_participants: number | null
+          reward_points: number
+          reward_title: string | null
+          start_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_slug: string
+          challenge_type?: string
+          created_at?: string
+          current_participants?: number
+          description: string
+          end_date: string
+          id?: string
+          is_active?: boolean
+          max_participants?: number | null
+          reward_points?: number
+          reward_title?: string | null
+          start_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_slug?: string
+          challenge_type?: string
+          created_at?: string
+          current_participants?: number
+          description?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          max_participants?: number | null
+          reward_points?: number
+          reward_title?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      course_enrollments: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_invitations: {
+        Row: {
+          course_id: string
+          created_at: string
+          created_by: string
+          current_uses: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          qr_code: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          created_by: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          qr_code: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          created_by?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          qr_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_invitations_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          owner_id: string
+          subject: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id: string
+          subject?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id?: string
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_news: {
+        Row: {
+          category_slug: string
+          content: string
+          country_codes: string[] | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_breaking: boolean
+          is_featured: boolean
+          published_at: string
+          source_url: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_slug: string
+          content: string
+          country_codes?: string[] | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          is_featured?: boolean
+          published_at?: string
+          source_url?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_slug?: string
+          content?: string
+          country_codes?: string[] | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          is_featured?: boolean
+          published_at?: string
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          ai_summary: string | null
+          course_id: string | null
+          created_at: string
+          description: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string
+          id: string
+          is_ai_explained: boolean
+          storage_bucket: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type: string
+          id?: string
+          is_ai_explained?: boolean
+          storage_bucket?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_summary?: string | null
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          is_ai_explained?: boolean
+          storage_bucket?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       followers: {
         Row: {
           created_at: string
@@ -317,51 +614,77 @@ export type Database = {
       }
       posts: {
         Row: {
+          category_slug: string | null
+          challenge_id: string | null
           content_type: string
+          country_code: string | null
           created_at: string
           description: string | null
           id: string
           is_monetized: boolean
+          is_news_article: boolean
           like_count: number
           location: string | null
           price: number | null
           status: string
           title: string | null
+          trending_score: number
           updated_at: string
           user_id: string
           view_count: number
+          weekly_score: number
         }
         Insert: {
+          category_slug?: string | null
+          challenge_id?: string | null
           content_type?: string
+          country_code?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_monetized?: boolean
+          is_news_article?: boolean
           like_count?: number
           location?: string | null
           price?: number | null
           status?: string
           title?: string | null
+          trending_score?: number
           updated_at?: string
           user_id: string
           view_count?: number
+          weekly_score?: number
         }
         Update: {
+          category_slug?: string | null
+          challenge_id?: string | null
           content_type?: string
+          country_code?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_monetized?: boolean
+          is_news_article?: boolean
           like_count?: number
           location?: string | null
           price?: number | null
           status?: string
           title?: string | null
+          trending_score?: number
           updated_at?: string
           user_id?: string
           view_count?: number
+          weekly_score?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -465,6 +788,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_description: string | null
+          achievement_name: string
+          achievement_type: string
+          category_slug: string | null
+          earned_at: string
+          id: string
+          metadata: Json | null
+          points_earned: number
+          user_id: string
+          week_start: string | null
+        }
+        Insert: {
+          achievement_description?: string | null
+          achievement_name: string
+          achievement_type: string
+          category_slug?: string | null
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          points_earned?: number
+          user_id: string
+          week_start?: string | null
+        }
+        Update: {
+          achievement_description?: string | null
+          achievement_name?: string
+          achievement_type?: string
+          category_slug?: string | null
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          points_earned?: number
+          user_id?: string
+          week_start?: string | null
+        }
+        Relationships: []
+      }
       user_balances: {
         Row: {
           available_balance: number | null
@@ -549,6 +911,57 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_rankings: {
+        Row: {
+          category_slug: string
+          country_code: string
+          created_at: string
+          id: string
+          rank_position: number | null
+          title: string | null
+          total_likes: number
+          total_posts: number
+          total_score: number
+          total_views: number
+          updated_at: string
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          category_slug: string
+          country_code: string
+          created_at?: string
+          id?: string
+          rank_position?: number | null
+          title?: string | null
+          total_likes?: number
+          total_posts?: number
+          total_score?: number
+          total_views?: number
+          updated_at?: string
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          category_slug?: string
+          country_code?: string
+          created_at?: string
+          id?: string
+          rank_position?: number | null
+          title?: string | null
+          total_likes?: number
+          total_posts?: number
+          total_score?: number
+          total_views?: number
+          updated_at?: string
+          user_id?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       withdrawal_requests: {
         Row: {
           amount: number
@@ -604,11 +1017,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      is_course_owner: {
+        Args: { course_id_param: string }
+        Returns: boolean
+      }
+      is_enrolled_in_course: {
+        Args: { course_id_param: string }
+        Returns: boolean
+      }
       update_user_balance: {
         Args: {
-          user_id: string
           available_change?: number
           pending_change?: number
+          user_id: string
         }
         Returns: {
           available_balance: number

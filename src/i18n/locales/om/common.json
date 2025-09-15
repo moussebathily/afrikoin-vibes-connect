@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Afrika mara guutuutti amanamummaan bituu fi gurguruu"
+  },
+  "auth": {
+    "login": "Seeni",
+    "signup": "Galmeessi",
+    "logout": "Ba'i",
+    "email": "Email",
+    "password": "Jecha icciitii",
+    "name": "Maqaa guutuu",
+    "welcome": "AfriKoin keessa nagaan dhufte",
+    "createAccount": "Herrega kee uumi",
+    "alreadyHaveAccount": "Herrega qabdaa?",
+    "noAccount": "Herrega hin qabdu?"
+  },
+  "navigation": {
+    "home": "Mana",
+    "likes": "Jaalala",
+    "holidays": "Ayyaanota",
+    "wallet": "Korojoo",
+    "profile": "Seensa",
+    "search": "Barbaadi",
+    "notifications": "Beeksisa",
+    "create": "Uumi"
+  },
+  "market": {
+    "post": "Labsii maxxansi",
+    "search": "Barbaadi",
+    "price": "Gatii",
+    "noResults": "Bu'aan hin argamne",
+    "categories": "Ramaddii"
+  },
+  "wallet": {
+    "balance": "Haala maallaqa",
+    "addFunds": "Maallaq dabaluu",
+    "withdraw": "Baasuu",
+    "transactions": "Daldalaa",
+    "send": "Ergi",
+    "receive": "Fudhatu"
+  },
+  "likes": {
+    "buyCredits": "Jaalala lakkaddaa bituu",
+    "remaining": "Lakkaddaa hafe: {{count}}",
+    "noCredits": "Lakkaddaan hin jiru"
+  },
+  "posts": {
+    "noPostsYet": "Ergaan amma hin jiru",
+    "beFirst": "Qabiyyee qooduuf jalqabaa ta'i!",
+    "likes": "jaalala",
+    "comments": "yaada",
+    "share": "Qoodi"
+  },
+  "holidays": {
+    "discover": "Argadhu",
+    "upcoming": "Ayyaanota dhufaa jiran",
+    "today": "Har'a"
+  },
+  "welcome": {
+    "title": "AfriKoin keessa nagaan dhufte!",
+    "subtitle": "Afrika guutuutti wal qunnamuun, daldaluu fi ayyaaneffadhaa",
+    "freeLikes": "Jaalala 10 bilisaa",
+    "premiumContent": "Qabiyyee adda",
+    "community": "Hawaasa",
+    "createFirstPost": "Erga koo jalqabaa uumuu"
+  },
+  "common": {
+    "loading": "Fe'aa jira...",
+    "error": "Dogoggora",
+    "success": "Milkaa'ina",
+    "cancel": "Dhiisi",
+    "save": "Olkaa'i",
+    "delete": "Haqi",
+    "edit": "Fooyya'i",
+    "close": "Cufii",
+    "back": "Duubatti",
+    "next": "Itti aanuu",
+    "previous": "Duraa",
+    "language": "Afaan"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AfriKoin</string>
+    
+    <!-- Écran de bienvenue -->
+    <string name="welcome_title">Bienvenue sur AfriKoin</string>
+    <string name="welcome_subtitle">Découvrez l\'écosystème financier panafricain et connectez-vous avec l\'Afrique</string>
+    <string name="start_button">Commencer</string>
+    <string name="app_logo">Logo AfriKoin</string>
 </resources>

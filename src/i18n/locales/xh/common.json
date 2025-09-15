@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Thenga uze uthengise kulo lonke elaseAfrika ngokuthembeka"
+  },
+  "auth": {
+    "login": "Ngena",
+    "signup": "Bhalisela",
+    "logout": "Phuma",
+    "email": "I-imeyile",
+    "password": "Iphaswedi",
+    "name": "Igama elipheleleyo",
+    "welcome": "Wamkelekile kwiAfriKoin",
+    "createAccount": "Yenza iakhawunti yakho",
+    "alreadyHaveAccount": "Sele unayo iakhawunti?",
+    "noAccount": "Awunayo iakhawunti?"
+  },
+  "navigation": {
+    "home": "Ekhaya",
+    "likes": "Izinto ezithandwayo",
+    "holidays": "Iiholide",
+    "wallet": "Isikhwama",
+    "profile": "Iprofayile",
+    "search": "Khangela",
+    "notifications": "Izaziso",
+    "create": "Yenza"
+  },
+  "market": {
+    "post": "Thumela intengiso",
+    "search": "Khangela",
+    "price": "Ixabiso",
+    "noResults": "Akukho ziphumo zifunyenweyo",
+    "categories": "Iindidi"
+  },
+  "wallet": {
+    "balance": "Ibhalansi",
+    "addFunds": "Yongeza imali",
+    "withdraw": "Rhola",
+    "transactions": "Iintengiselwano",
+    "send": "Thumela",
+    "receive": "Fumana"
+  },
+  "likes": {
+    "buyCredits": "Thenga iikhredithi zezinto ezithandwayo",
+    "remaining": "Iikhredithi eziseleyo: {{count}}",
+    "noCredits": "Akukho khredithi"
+  },
+  "posts": {
+    "noPostsYet": "Akukho zipowuni okwangoku",
+    "beFirst": "Yiba wokuqala ukwabelana ngomxholo!",
+    "likes": "izinto ezithandwayo",
+    "comments": "amagqabantshintshi",
+    "share": "Yabelana"
+  },
+  "holidays": {
+    "discover": "Fumanisa",
+    "upcoming": "Iiholide ezizayo",
+    "today": "Namhlanje"
+  },
+  "welcome": {
+    "title": "Wamkelekile kwiAfriKoin!",
+    "subtitle": "Nxibelelana, rhweba, uze ubhiyozele kulo lonke elaseAfrika",
+    "freeLikes": "I-10 yezinto ezithandwayo zasimahla",
+    "premiumContent": "Umxholo ophakamileyo",
+    "community": "Uluntu",
+    "createFirstPost": "Yenza ipowuni yam yokuqala"
+  },
+  "common": {
+    "loading": "Kuyalayishwa...",
+    "error": "Impazamo",
+    "success": "Impumelelo",
+    "cancel": "Rhoxisa",
+    "save": "Gcina",
+    "delete": "Cima",
+    "edit": "Hlela",
+    "close": "Vala",
+    "back": "Emva",
+    "next": "Okulandelayo",
+    "previous": "Okudlulileyo",
+    "language": "Ulwimi"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

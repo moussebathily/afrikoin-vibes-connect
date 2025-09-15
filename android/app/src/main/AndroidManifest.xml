@@ -13,9 +13,9 @@
         android:hardwareAccelerated="true"
         >
 
+        <!-- Activité de démarrage avec splash screen -->
         <activity
             android:exported="true"
-            android:launchMode="singleTask"
             android:name="app.lovable.afrikoin.MainActivity"
             android:theme="@style/AppTheme.NoActionBarLaunch"
             android:screenOrientation="portrait">
@@ -24,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Activité principale avec Capacitor -->
+        <activity
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:name="app.lovable.afrikoin.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBarLaunch"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

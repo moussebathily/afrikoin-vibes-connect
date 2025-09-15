@@ -1,0 +1,85 @@
+{
+  "app": {
+    "name": "AfriKoin",
+    "tagline": "Zụọ ma ree n'Afrika niile n'ụzọ ntụkwasị obi"
+  },
+  "auth": {
+    "login": "Banye",
+    "signup": "Debanye aha",
+    "logout": "Pụọ",
+    "email": "Email",
+    "password": "Okwu nzuzo",
+    "name": "Aha zuru ezu",
+    "welcome": "Nnọọ na AfriKoin",
+    "createAccount": "Mepụta akaụntụ gị",
+    "alreadyHaveAccount": "Ị nwere akaụntụ?",
+    "noAccount": "Ị enweghị akaụntụ?"
+  },
+  "navigation": {
+    "home": "Ụlọ",
+    "likes": "Mmasị",
+    "holidays": "Ezumike",
+    "wallet": "Akpa ego",
+    "profile": "Profaịlụ",
+    "search": "Chọọ",
+    "notifications": "Ọkwa",
+    "create": "Mepụta"
+  },
+  "market": {
+    "post": "Bipụta mgbasa ozi",
+    "search": "Chọọ",
+    "price": "Ọnụ ahịa",
+    "noResults": "Achọtaghị ihe ọ bụla",
+    "categories": "Ụdị"
+  },
+  "wallet": {
+    "balance": "Ego dị",
+    "addFunds": "Tinye ego",
+    "withdraw": "Wepụ",
+    "transactions": "Azụmahịa",
+    "send": "Zipu",
+    "receive": "Nata"
+  },
+  "likes": {
+    "buyCredits": "Zụta kredit mmasị",
+    "remaining": "Kredit fọdụrụ: {{count}}",
+    "noCredits": "Enweghị kredit"
+  },
+  "posts": {
+    "noPostsYet": "Enwebeghị post",
+    "beFirst": "Bụrụ onye mbụ ịkekọrịta ọdịnaya!",
+    "likes": "mmasị",
+    "comments": "nkwupụta",
+    "share": "Kekọrịta"
+  },
+  "holidays": {
+    "discover": "Chọpụta",
+    "upcoming": "Ezumike na-abịa",
+    "today": "Taa"
+  },
+  "welcome": {
+    "title": "Nnọọ na AfriKoin!",
+    "subtitle": "Jikọọ, zụọ ahịa ma mee mmemme n'ofe Afrika",
+    "freeLikes": "Mmasị 10 efu",
+    "premiumContent": "Ọdịnaya premium",
+    "community": "Obodo",
+    "createFirstPost": "Mepụta post mbụ m"
+  },
+  "common": {
+    "loading": "Na-ebu...",
+    "error": "Njehie",
+    "success": "Ihe ịga nke ọma",
+    "cancel": "Kagbuo",
+    "save": "Chekwaa",
+    "delete": "Hichapụ",
+    "edit": "Dezie",
+    "close": "Mechie",
+    "back": "Laghachi azụ",
+    "next": "Ọzọ",
+    "previous": "Nke gara aga",
+    "language": "Asụsụ"
+  },
+  "_meta": {
+    "rtl": false
+  }
+}

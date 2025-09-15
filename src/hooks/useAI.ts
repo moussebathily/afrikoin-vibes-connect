@@ -10,7 +10,7 @@ import {
 } from '@/types/ai'
 
 // Helper to safely invoke Supabase functions with error handling
-async function invokeFunction(functionName: string, payload: Record<string, unknown>): Promise<unknown> {
+async function invokeFunction(functionName: string, payload: Record<string, any>): Promise<any> {
   try {
     const { data, error } = await supabase.functions.invoke(functionName, {
       body: payload

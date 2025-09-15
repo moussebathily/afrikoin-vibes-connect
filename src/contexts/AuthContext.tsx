@@ -120,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { error: null }
     } catch (err) {
-      return { error: err }
+      return { error: err as AuthError }
     }
   }
 
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { error: null }
     } catch (err) {
-      return { error: err }
+      return { error: err as AuthError }
     }
   }
 
