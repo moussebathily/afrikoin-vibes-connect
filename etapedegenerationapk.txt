@@ -1,0 +1,30 @@
+
+ - Delete folder android
+ - install 
+ npm ci --legacy-peer-deps  @capacitor/core @capacitor/cli
+ -run
+ npx cap init
+
+ -configure it by editing the capacitor.config.ts:
+
+	const config: CapacitorConfig = {
+	  appId: 'app.lovable.afrikoin',
+	  appName: 'afrikoin',
+	  webDir: 'dist'
+	};
+  - run one by one
+ npm ci --legacy-peer-deps  run build
+
+ npm ci --legacy-peer-deps @capacitor/android
+ 
+ npx cap add android
+ 
+ npm install --force --save-dev @capacitor/assets
+ 
+ - Create a folder resources in the root folderof your application and add icon.png and slah.png
+ -run one by one 
+  npx capacitor-assets generate resources 
+
+  npx cap sync    
+
+- Open folder android into android studio to signe the aab or apk and generate it.  
