@@ -176,8 +176,8 @@ jobs:
         with:
           name: android-release-${{ github.run_number }}
           path: |
-            android/app/build/outputs/**/*.aab
-            android/app/build/outputs/**/mapping.txt
+            android/app/build/outputs/bundle/release/app-release.aab
+            android/app/build/outputs/mapping/release/mapping.txt
           if-no-files-found: warn
           retention-days: 7
 
@@ -243,15 +243,15 @@ jobs:
             echo "⚠️ AAB seems too small (< 1MB), please verify"
           fi
 
-      - name: Upload to Google Play
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: ${{ env.PACKAGE_NAME }}
-          releaseFiles: android/app/build/outputs/**/*.aab
-          mappingFile: android/app/build/outputs/**/mapping.txt
-          track: ${{ steps.track.outputs.track }}
-          status: ${{ steps.track.outputs.status }}
-          userFraction: ${{ steps.track.outputs.userFraction }}
-          inAppUpdatePriority: 3
-          releaseNotes: "Automatic release from commit ${{ github.sha }}"
+        - name: Upload to Google Play
+          uses: r0adkll/upload-google-play@v1
+          with:
+            serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+            packageName: ${{ env.PACKAGE_NAME }}
+            releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+            mappingFile: android/app/build/outputs/mapping/release/mapping.txt
+            track: ${{ steps.track.outputs.track }}
+            status: ${{ steps.track.outputs.status }}
+            userFraction: ${{ steps.track.outputs.userFraction }}
+            inAppUpdatePriority: 3
+            releaseNotes: "Automatic release from commit ${{ github.sha }}"
