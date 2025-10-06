@@ -14,6 +14,134 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenges: {
+        Row: {
+          category_slug: string
+          challenge_type: string
+          created_at: string | null
+          current_participants: number | null
+          description: string
+          end_date: string
+          id: string
+          is_active: boolean | null
+          max_participants: number | null
+          reward_points: number | null
+          reward_title: string | null
+          start_date: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_slug: string
+          challenge_type: string
+          created_at?: string | null
+          current_participants?: number | null
+          description: string
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          reward_points?: number | null
+          reward_title?: string | null
+          start_date: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_slug?: string
+          challenge_type?: string
+          created_at?: string | null
+          current_participants?: number | null
+          description?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          max_participants?: number | null
+          reward_points?: number | null
+          reward_title?: string | null
+          start_date?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      content_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      course_accessibility: {
+        Row: {
+          accessibility_features: Json | null
+          autism_friendly: boolean | null
+          communication_support: Json | null
+          course_id: string
+          created_at: string | null
+          id: string
+          sensory_considerations: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          accessibility_features?: Json | null
+          autism_friendly?: boolean | null
+          communication_support?: Json | null
+          course_id: string
+          created_at?: string | null
+          id?: string
+          sensory_considerations?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          accessibility_features?: Json | null
+          autism_friendly?: boolean | null
+          communication_support?: Json | null
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          sensory_considerations?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_accessibility_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: true
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_enrollments: {
         Row: {
           course_id: string
@@ -116,9 +244,6 @@ export type Database = {
       }
       courses: {
         Row: {
-          accessibility_features: Json | null
-          autism_friendly: boolean | null
-          communication_support: Json | null
           created_at: string
           description: string | null
           duration: string | null
@@ -129,16 +254,12 @@ export type Database = {
           qr_code: string | null
           schedule: string | null
           school_id: string
-          sensory_considerations: Json | null
           subject: string
           teacher_id: string
           title: string
           updated_at: string
         }
         Insert: {
-          accessibility_features?: Json | null
-          autism_friendly?: boolean | null
-          communication_support?: Json | null
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -149,16 +270,12 @@ export type Database = {
           qr_code?: string | null
           schedule?: string | null
           school_id: string
-          sensory_considerations?: Json | null
           subject: string
           teacher_id: string
           title: string
           updated_at?: string
         }
         Update: {
-          accessibility_features?: Json | null
-          autism_friendly?: boolean | null
-          communication_support?: Json | null
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -169,7 +286,6 @@ export type Database = {
           qr_code?: string | null
           schedule?: string | null
           school_id?: string
-          sensory_considerations?: Json | null
           subject?: string
           teacher_id?: string
           title?: string
@@ -191,6 +307,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      daily_news: {
+        Row: {
+          category_slug: string
+          content: string
+          country_codes: string[] | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_breaking: boolean | null
+          is_featured: boolean | null
+          published_at: string | null
+          source_url: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_slug: string
+          content: string
+          country_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          source_url?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_slug?: string
+          content?: string
+          country_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          source_url?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       documents: {
         Row: {
@@ -248,32 +409,199 @@ export type Database = {
           },
         ]
       }
+      like_credits: {
+        Row: {
+          balance: number | null
+          created_at: string | null
+          id: string
+          total_purchased: number | null
+          total_used: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          total_purchased?: number | null
+          total_used?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          total_purchased?: number | null
+          total_used?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      like_purchases: {
+        Row: {
+          amount: number
+          created_at: string | null
+          credits_purchased: number
+          id: string
+          payment_status: string | null
+          stripe_payment_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          credits_purchased: number
+          id?: string
+          payment_status?: string | null
+          stripe_payment_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          credits_purchased?: number
+          id?: string
+          payment_status?: string | null
+          stripe_payment_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      media_files: {
+        Row: {
+          created_at: string | null
+          file_path: string
+          id: string
+          mime_type: string
+          post_id: string
+          thumbnail_path: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          file_path: string
+          id?: string
+          mime_type: string
+          post_id: string
+          thumbnail_path?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          file_path?: string
+          id?: string
+          mime_type?: string
+          post_id?: string
+          thumbnail_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_files_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          category_slug: string | null
+          challenge_id: string | null
+          content_type: string
+          country_code: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_monetized: boolean | null
+          is_news_article: boolean | null
+          like_count: number | null
+          location: string | null
+          price: number | null
+          status: string | null
+          title: string | null
+          trending_score: number | null
+          updated_at: string | null
+          user_id: string
+          view_count: number | null
+          weekly_score: number | null
+        }
+        Insert: {
+          category_slug?: string | null
+          challenge_id?: string | null
+          content_type: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_monetized?: boolean | null
+          is_news_article?: boolean | null
+          like_count?: number | null
+          location?: string | null
+          price?: number | null
+          status?: string | null
+          title?: string | null
+          trending_score?: number | null
+          updated_at?: string | null
+          user_id: string
+          view_count?: number | null
+          weekly_score?: number | null
+        }
+        Update: {
+          category_slug?: string | null
+          challenge_id?: string | null
+          content_type?: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_monetized?: boolean | null
+          is_news_article?: boolean | null
+          like_count?: number | null
+          location?: string | null
+          price?: number | null
+          status?: string | null
+          title?: string | null
+          trending_score?: number | null
+          updated_at?: string | null
+          user_id?: string
+          view_count?: number | null
+          weekly_score?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
+          country: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
-          role: string
+          is_verified: boolean | null
+          name: string | null
           updated_at: string
         }
         Insert: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id: string
-          role?: string
+          is_verified?: boolean | null
+          name?: string | null
           updated_at?: string
         }
         Update: {
           avatar_url?: string | null
+          country?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
-          role?: string
+          is_verified?: boolean | null
+          name?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -322,6 +650,144 @@ export type Database = {
           },
         ]
       }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string | null
+          description: string | null
+          id: string
+          status: string | null
+          transaction_type: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          transaction_type: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          status?: string | null
+          transaction_type?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_balances: {
+        Row: {
+          available_balance: number | null
+          created_at: string | null
+          id: string
+          pending_balance: number | null
+          total_balance: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          available_balance?: number | null
+          created_at?: string | null
+          id?: string
+          pending_balance?: number | null
+          total_balance?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          available_balance?: number | null
+          created_at?: string | null
+          id?: string
+          pending_balance?: number | null
+          total_balance?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          assigned_at: string | null
+          assigned_by: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_by?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_rankings: {
+        Row: {
+          category_slug: string
+          country_code: string
+          created_at: string | null
+          id: string
+          rank_position: number | null
+          title: string | null
+          total_likes: number | null
+          total_posts: number | null
+          total_score: number | null
+          total_views: number | null
+          updated_at: string | null
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          category_slug: string
+          country_code: string
+          created_at?: string | null
+          id?: string
+          rank_position?: number | null
+          title?: string | null
+          total_likes?: number | null
+          total_posts?: number | null
+          total_score?: number | null
+          total_views?: number | null
+          updated_at?: string | null
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          category_slug?: string
+          country_code?: string
+          created_at?: string | null
+          id?: string
+          rank_position?: number | null
+          title?: string | null
+          total_likes?: number | null
+          total_posts?: number | null
+          total_score?: number | null
+          total_views?: number | null
+          updated_at?: string | null
+          user_id?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -331,9 +797,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "teacher" | "student"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -460,6 +933,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "teacher", "student"],
+    },
   },
 } as const

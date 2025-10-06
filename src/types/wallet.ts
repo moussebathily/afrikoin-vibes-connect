@@ -2,7 +2,7 @@
 export interface Transaction {
   id: string
   type: string
-  transaction_type: 'deposit' | 'withdrawal' | 'transfer' | 'purchase'
+  transaction_type: string
   amount: number
   description: string
   created_at: string

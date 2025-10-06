@@ -5,7 +5,6 @@ import { useToast } from '@/hooks/use-toast'
 
 interface Profile {
   id: string
-  user_id: string
   name: string
   avatar_url?: string
   is_verified: boolean
@@ -39,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('user_id', userId)
+        .eq('id', userId)
         .single()
 
       if (error && error.code !== 'PGRST116') {

@@ -53,7 +53,7 @@ export interface Challenge {
   title: string
   description: string
   category_slug: string
-  challenge_type: 'weekly' | 'monthly' | 'special'
+  challenge_type: string
   start_date: string
   end_date: string
   reward_points: number
