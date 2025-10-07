@@ -300,6 +300,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "courses_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "courses_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
@@ -444,28 +451,55 @@ export type Database = {
           amount: number
           created_at: string | null
           credits_purchased: number
+          currency: string | null
           id: string
+          likes_amount: number
+          pack_name: string | null
           payment_status: string | null
+          price_amount: number
+          product_id: string | null
+          purchase_token: string | null
+          status: string
+          store_type: string | null
           stripe_payment_id: string | null
           user_id: string
+          verified_at: string | null
         }
         Insert: {
           amount: number
           created_at?: string | null
           credits_purchased: number
+          currency?: string | null
           id?: string
+          likes_amount: number
+          pack_name?: string | null
           payment_status?: string | null
+          price_amount: number
+          product_id?: string | null
+          purchase_token?: string | null
+          status?: string
+          store_type?: string | null
           stripe_payment_id?: string | null
           user_id: string
+          verified_at?: string | null
         }
         Update: {
           amount?: number
           created_at?: string | null
           credits_purchased?: number
+          currency?: string | null
           id?: string
+          likes_amount?: number
+          pack_name?: string | null
           payment_status?: string | null
+          price_amount?: number
+          product_id?: string | null
+          purchase_token?: string | null
+          status?: string
+          store_type?: string | null
           stripe_payment_id?: string | null
           user_id?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
@@ -790,9 +824,43 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      schools_public: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          id: string | null
+          name: string | null
+          qr_code: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          qr_code?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          id?: string | null
+          name?: string | null
+          qr_code?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      credit_likes: {
+        Args: { p_likes_amount: number; p_user_id: string }
+        Returns: number
+      }
+      decrement_like_credit: {
+        Args: { p_post_id: string; p_user_id: string }
+        Returns: Json
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -802,6 +870,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_school_admin: {
+        Args: { _school_id: string; _user_id: string }
         Returns: boolean
       }
     }

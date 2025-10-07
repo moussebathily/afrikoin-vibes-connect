@@ -15,9 +15,21 @@ serve(async (req) => {
   }
 
   try {
-    const { postId } = await req.json();
-    if (!postId) {
-      return new Response(JSON.stringify({ error: "postId is required" }), {
+    const requestBody = await req.json();
+    const { postId } = requestBody;
+    
+    // Validate input
+    if (!postId || typeof postId !== 'string') {
+      return new Response(JSON.stringify({ error: "Valid postId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Basic UUID validation
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(postId)) {
+      return new Response(JSON.stringify({ error: "Invalid postId format" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -60,37 +72,31 @@ serve(async (req) => {
       });
     }
 
-    // Get like credits
-    const { data: credits, error: creditsErr } = await sbUser
-      .from("like_credits")
-      .select("id, balance")
-      .eq("user_id", userId)
-      .maybeSingle();
+    // Decrement like credits atomically to prevent race conditions
+    // Using service client for atomic operation with RLS check
+    const { data: decrementResult, error: decErr } = await sbService.rpc('decrement_like_credit', {
+      p_user_id: userId,
+      p_post_id: postId
+    });
 
-    const currentBalance = credits?.balance ?? 0;
-    if (creditsErr) {
-      console.error("like_credits fetch error", creditsErr);
-    }
-
-    if (currentBalance <= 0) {
-      return new Response(
-        JSON.stringify({ error: "INSUFFICIENT_CREDITS", message: "Solde de likes insuffisant" }),
-        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Decrement like credits (user-scoped client to satisfy RLS)
-    const { error: decErr } = await sbUser
-      .from("like_credits")
-      .update({ balance: currentBalance - 1, total_used: (credits?.total_used ?? 0) + 1 })
-      .eq("user_id", userId);
-    if (decErr) {
-      console.error("decrement credits error", decErr);
+    if (decErr || !decrementResult) {
+      console.error("decrement_like_credit RPC error", decErr);
+      
+      // Check if it's an insufficient credits error
+      if (decErr?.message?.includes("insufficient") || decErr?.code === 'P0001') {
+        return new Response(
+          JSON.stringify({ error: "INSUFFICIENT_CREDITS", message: "Solde de likes insuffisant" }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       return new Response(JSON.stringify({ error: "FAILED_DEBIT" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const currentBalance = decrementResult.new_balance + 1; // Balance before decrement
 
     // Increment post like_count atomically (service client)
     const { data: updatedPost, error: upErr } = await sbService

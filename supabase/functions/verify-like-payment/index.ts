@@ -4,8 +4,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
+
+// Define pack configurations for validation
+const PACK_CONFIGS = {
+  likes_1000: {
+    name: "Pack 1000 Likes",
+    likes_amount: 1000,
+    price_amount: 299, // €2.99 in cents
+  }
+} as const;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -29,8 +38,13 @@ serve(async (req) => {
     const user = userData.user;
     if (!user) throw new Error("User not authenticated");
 
-    const { session_id } = await req.json();
-    if (!session_id) throw new Error("Session ID required");
+    const requestBody = await req.json();
+    const { session_id } = requestBody;
+    
+    // Validate session_id format (basic UUID check)
+    if (!session_id || typeof session_id !== 'string' || session_id.length < 10) {
+      throw new Error("Invalid session ID format");
+    }
 
     console.log("[VERIFY-LIKE-PAYMENT] Verifying session", { sessionId: session_id, userId: user.id });
 
@@ -40,8 +54,19 @@ serve(async (req) => {
 
     // Get session details from Stripe
     const session = await stripe.checkout.sessions.retrieve(session_id);
+    
+    // Verify payment status
     if (session.payment_status !== "paid") {
       throw new Error("Payment not completed");
+    }
+
+    // Verify the session belongs to this user (check customer email)
+    if (session.customer_details?.email !== user.email && session.customer_email !== user.email) {
+      console.error("[VERIFY-LIKE-PAYMENT] Email mismatch", { 
+        sessionEmail: session.customer_details?.email || session.customer_email,
+        userEmail: user.email 
+      });
+      throw new Error("Payment session does not belong to authenticated user");
     }
 
     console.log("[VERIFY-LIKE-PAYMENT] Payment confirmed by Stripe");
@@ -63,6 +88,39 @@ serve(async (req) => {
 
     if (!existingPurchase) {
       throw new Error("Purchase not found");
+    }
+
+    // Validate payment amount matches expected pack price
+    const expectedPack = PACK_CONFIGS[existingPurchase.product_id as keyof typeof PACK_CONFIGS];
+    if (!expectedPack) {
+      console.error("[VERIFY-LIKE-PAYMENT] Unknown product_id", { product_id: existingPurchase.product_id });
+      throw new Error("Invalid product configuration");
+    }
+
+    if (existingPurchase.price_amount !== expectedPack.price_amount) {
+      console.error("[VERIFY-LIKE-PAYMENT] Price mismatch", {
+        expected: expectedPack.price_amount,
+        actual: existingPurchase.price_amount
+      });
+      throw new Error("Payment amount validation failed");
+    }
+
+    if (existingPurchase.likes_amount !== expectedPack.likes_amount) {
+      console.error("[VERIFY-LIKE-PAYMENT] Likes amount mismatch", {
+        expected: expectedPack.likes_amount,
+        actual: existingPurchase.likes_amount
+      });
+      throw new Error("Likes amount validation failed");
+    }
+
+    // Verify payment amount from Stripe matches our records
+    const sessionAmount = session.amount_total; // in cents
+    if (sessionAmount !== existingPurchase.price_amount) {
+      console.error("[VERIFY-LIKE-PAYMENT] Stripe amount mismatch", {
+        stripeAmount: sessionAmount,
+        recordedAmount: existingPurchase.price_amount
+      });
+      throw new Error("Payment amount mismatch with Stripe");
     }
 
     if (existingPurchase.status === "paid") {
@@ -99,42 +157,53 @@ serve(async (req) => {
 
     console.log("[VERIFY-LIKE-PAYMENT] Purchase marked as paid");
 
-    // Credit the user's like balance
-    const { data: updatedCredits, error: creditError } = await supabaseService
+    // Credit the user's like balance atomically using SQL
+    // This prevents race conditions by performing the increment in a single database operation
+    const { data: updatedCredits, error: creditError } = await supabaseService.rpc('credit_likes', {
+      p_user_id: user.id,
+      p_likes_amount: existingPurchase.likes_amount
+    });
+
+    if (creditError) {
+      console.error("[VERIFY-LIKE-PAYMENT] RPC credit_likes failed, trying fallback", creditError);
+      
+      // Fallback: Manual atomic update using PostgreSQL's built-in atomic operations
+      const { data: currentCredits, error: fetchError } = await supabaseService
+        .from("like_credits")
+        .select("balance, total_purchased")
+        .eq("user_id", user.id)
+        .single();
+
+      if (fetchError) throw new Error("Failed to fetch current credits");
+
+      const { data: updateResult, error: updateError } = await supabaseService
+        .from("like_credits")
+        .update({
+          balance: (currentCredits.balance || 0) + existingPurchase.likes_amount,
+          total_purchased: (currentCredits.total_purchased || 0) + existingPurchase.likes_amount,
+          updated_at: new Date().toISOString()
+        })
+        .eq("user_id", user.id)
+        .select("balance")
+        .single();
+
+      if (updateError) throw new Error("Failed to update like credits");
+      
+      const newBalance = updateResult.balance;
+      console.log("[VERIFY-LIKE-PAYMENT] Like credits updated (fallback)", { newBalance });
+    } else {
+      const newBalance = updatedCredits;
+      console.log("[VERIFY-LIKE-PAYMENT] Like credits updated (RPC)", { newBalance });
+    }
+
+    // Get final balance
+    const { data: finalCredits } = await supabaseService
       .from("like_credits")
       .select("balance")
       .eq("user_id", user.id)
       .single();
 
-    if (creditError) throw new Error("Failed to get current credits");
-
-    const newBalance = (updatedCredits.balance || 0) + existingPurchase.likes_amount;
-
-    const { error: balanceError } = await supabaseService
-      .from("like_credits")
-      .update({
-        balance: newBalance,
-        total_purchased: supabaseService.rpc('increment_total_purchased', {
-          user_id_param: user.id,
-          amount: existingPurchase.likes_amount
-        })
-      })
-      .eq("user_id", user.id);
-
-    if (balanceError) {
-      // Fallback: direct update
-      const { error: fallbackError } = await supabaseService
-        .from("like_credits")
-        .update({
-          balance: newBalance,
-          total_purchased: (updatedCredits.total_purchased || 0) + existingPurchase.likes_amount
-        })
-        .eq("user_id", user.id);
-
-      if (fallbackError) throw new Error("Failed to update like credits");
-    }
-
-    console.log("[VERIFY-LIKE-PAYMENT] Like credits updated", { newBalance });
+    const newBalance = finalCredits?.balance || 0;
 
     // Create transaction record
     const { error: transactionError } = await supabaseService
