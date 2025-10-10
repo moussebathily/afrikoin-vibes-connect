@@ -300,13 +300,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "courses_school_id_fkey"
-            columns: ["school_id"]
-            isOneToOne: false
-            referencedRelation: "schools_public"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "courses_teacher_id_fkey"
             columns: ["teacher_id"]
             isOneToOne: false
@@ -415,6 +408,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      failed_login_attempts: {
+        Row: {
+          attempted_at: string | null
+          email: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempted_at?: string | null
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempted_at?: string | null
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+        }
+        Relationships: []
       }
       like_credits: {
         Row: {
@@ -684,6 +701,42 @@ export type Database = {
           },
         ]
       }
+      security_audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -824,35 +877,17 @@ export type Database = {
       }
     }
     Views: {
-      schools_public: {
-        Row: {
-          address: string | null
-          created_at: string | null
-          id: string | null
-          name: string | null
-          qr_code: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string | null
-          id?: string | null
-          name?: string | null
-          qr_code?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          address?: string | null
-          created_at?: string | null
-          id?: string | null
-          name?: string | null
-          qr_code?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
+      check_and_block_account: {
+        Args: { p_email: string }
+        Returns: Json
+      }
+      cleanup_security_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       credit_likes: {
         Args: { p_likes_amount: number; p_user_id: string }
         Returns: number
@@ -874,6 +909,20 @@ export type Database = {
       }
       is_school_admin: {
         Args: { _school_id: string; _user_id: string }
+        Returns: boolean
+      }
+      log_security_event: {
+        Args: {
+          p_action: string
+          p_metadata?: Json
+          p_resource_id?: string
+          p_resource_type?: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
+      validate_strong_password: {
+        Args: { p_password: string }
         Returns: boolean
       }
     }
