@@ -1,0 +1,8 @@
+      - name: Upload AAB as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release
+          path: app/build/outputs/bundle/release/app-release.aab
+
+      - name: Notify success
+        run: echo "Build and AAB generation completed successfully!"
