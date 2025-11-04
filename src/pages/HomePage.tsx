@@ -10,9 +10,10 @@ import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { Phone } from 'lucide-react'
 
 export function HomePage() {
   const [posts, setPosts] = useState([])
@@ -22,6 +23,7 @@ export function HomePage() {
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchInitialData()
@@ -253,6 +255,15 @@ export function HomePage() {
           </p>
         </div>
       )}
+
+      {/* Floating Call Button */}
+      <button
+        onClick={() => navigate('/call')}
+        className="fixed bottom-20 right-4 z-40 w-14 h-14 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110"
+        aria-label={t('call.title')}
+      >
+        <Phone className="w-6 h-6" />
+      </button>
     </div>
   )
 }

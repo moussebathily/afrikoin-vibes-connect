@@ -11,6 +11,7 @@ import { CulturePage } from '@/pages/CulturePage'
 import { SportsPage } from '@/pages/SportsPage'
 import { RankingsPage } from '@/pages/RankingsPage'
 import { MarketsPage } from '@/pages/MarketsPage'
+import { CallPage } from '@/pages/CallPage'
 import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
 import './index.css'
@@ -91,6 +92,7 @@ function App() {
               <Route path="markets" element={<MarketsPage />} />
               <Route path="rankings" element={<RankingsPage />} />
               <Route path="wallet" element={<WalletPage />} />
+              <Route path="call" element={<CallPage />} />
               <Route path="ai-studio" element={
                 <div className="p-4">
                   <Suspense fallback={

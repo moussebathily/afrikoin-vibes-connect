@@ -176,6 +176,30 @@
       "return_wallet": "Retour au portefeuille"
     }
   },
+  "call": {
+    "title": "Appels Audio",
+    "subtitle": "Appelez l'IA ou un professeur pour obtenir de l'aide",
+    "aiAssistant": "Assistant IA",
+    "aiDescription": "Parlez avec l'assistant IA pour obtenir des réponses instantanées",
+    "teacher": "Professeur",
+    "teacherDescription": "Connectez-vous avec un professeur pour un apprentissage personnalisé",
+    "startAICall": "Appeler l'IA",
+    "startTeacherCall": "Appeler un professeur",
+    "endCall": "Raccrocher",
+    "connecting": "Connexion en cours...",
+    "connected": "Appel en cours",
+    "speaking": "En train de parler...",
+    "listening": "À l'écoute...",
+    "speakNaturally": "Parlez naturellement, l'assistant vous écoute",
+    "aiCallStarted": "Appel avec l'IA démarré",
+    "teacherCallStarted": "Appel avec le professeur démarré",
+    "callEnded": "Appel terminé",
+    "callError": "Erreur lors de l'appel. Vérifiez vos permissions microphone.",
+    "howItWorks": "Comment ça marche",
+    "step1": "Choisissez entre l'assistant IA ou un professeur",
+    "step2": "Cliquez sur le bouton d'appel et autorisez l'accès au microphone",
+    "step3": "Parlez naturellement et l'assistant vous répondra vocalement"
+  },
   "_meta": {
     "rtl": false
   }
