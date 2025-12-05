@@ -259,10 +259,11 @@ export function HomePage() {
       {/* Floating Call Button */}
       <button
         onClick={() => navigate('/call')}
-        className="fixed bottom-20 right-4 z-40 w-14 h-14 bg-primary hover:bg-primary/90 text-white rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110"
+        className="fixed bottom-20 right-4 z-40 w-16 h-16 bg-gradient-primary hover:shadow-glow text-primary-foreground rounded-full shadow-elegant flex items-center justify-center transition-all duration-300 hover:scale-110 animate-float"
         aria-label={t('call.title')}
       >
-        <Phone className="w-6 h-6" />
+        <Phone className="w-7 h-7" />
+        <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
       </button>
     </div>
   )
