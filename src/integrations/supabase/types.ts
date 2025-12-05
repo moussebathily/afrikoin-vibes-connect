@@ -14,6 +14,251 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_improvement_suggestions: {
+        Row: {
+          based_on_interactions: number | null
+          category: string
+          confidence_score: number | null
+          created_at: string | null
+          current_approach: string
+          id: string
+          implemented_at: string | null
+          metadata: Json | null
+          reasoning: string
+          status: string
+          suggested_approach: string
+          suggestion_type: string
+          updated_at: string | null
+          validated_at: string | null
+          validated_by: string | null
+        }
+        Insert: {
+          based_on_interactions?: number | null
+          category: string
+          confidence_score?: number | null
+          created_at?: string | null
+          current_approach: string
+          id?: string
+          implemented_at?: string | null
+          metadata?: Json | null
+          reasoning: string
+          status?: string
+          suggested_approach: string
+          suggestion_type: string
+          updated_at?: string | null
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Update: {
+          based_on_interactions?: number | null
+          category?: string
+          confidence_score?: number | null
+          created_at?: string | null
+          current_approach?: string
+          id?: string
+          implemented_at?: string | null
+          metadata?: Json | null
+          reasoning?: string
+          status?: string
+          suggested_approach?: string
+          suggestion_type?: string
+          updated_at?: string | null
+          validated_at?: string | null
+          validated_by?: string | null
+        }
+        Relationships: []
+      }
+      ai_knowledge_base: {
+        Row: {
+          content: string
+          created_at: string | null
+          difficulty_level: string
+          effectiveness_score: number | null
+          id: string
+          is_active: boolean | null
+          language: string
+          source: string | null
+          subtopic: string | null
+          success_rate: number | null
+          tags: string[] | null
+          topic: string
+          updated_at: string | null
+          usage_count: number | null
+          version: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          difficulty_level: string
+          effectiveness_score?: number | null
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          source?: string | null
+          subtopic?: string | null
+          success_rate?: number | null
+          tags?: string[] | null
+          topic: string
+          updated_at?: string | null
+          usage_count?: number | null
+          version?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          difficulty_level?: string
+          effectiveness_score?: number | null
+          id?: string
+          is_active?: boolean | null
+          language?: string
+          source?: string | null
+          subtopic?: string | null
+          success_rate?: number | null
+          tags?: string[] | null
+          topic?: string
+          updated_at?: string | null
+          usage_count?: number | null
+          version?: number | null
+        }
+        Relationships: []
+      }
+      ai_learning_interactions: {
+        Row: {
+          ai_response: string | null
+          context: Json
+          created_at: string | null
+          feedback_score: number | null
+          feedback_text: string | null
+          id: string
+          interaction_type: string
+          success_metrics: Json | null
+          user_id: string
+          user_input: string | null
+        }
+        Insert: {
+          ai_response?: string | null
+          context?: Json
+          created_at?: string | null
+          feedback_score?: number | null
+          feedback_text?: string | null
+          id?: string
+          interaction_type: string
+          success_metrics?: Json | null
+          user_id: string
+          user_input?: string | null
+        }
+        Update: {
+          ai_response?: string | null
+          context?: Json
+          created_at?: string | null
+          feedback_score?: number | null
+          feedback_text?: string | null
+          id?: string
+          interaction_type?: string
+          success_metrics?: Json | null
+          user_id?: string
+          user_input?: string | null
+        }
+        Relationships: []
+      }
+      ai_performance_metrics: {
+        Row: {
+          average_satisfaction: number | null
+          common_issues: Json | null
+          created_at: string | null
+          id: string
+          improvement_areas: Json | null
+          metric_date: string
+          metric_type: string
+          top_performing_topics: Json | null
+          total_interactions: number | null
+        }
+        Insert: {
+          average_satisfaction?: number | null
+          common_issues?: Json | null
+          created_at?: string | null
+          id?: string
+          improvement_areas?: Json | null
+          metric_date?: string
+          metric_type: string
+          top_performing_topics?: Json | null
+          total_interactions?: number | null
+        }
+        Update: {
+          average_satisfaction?: number | null
+          common_issues?: Json | null
+          created_at?: string | null
+          id?: string
+          improvement_areas?: Json | null
+          metric_date?: string
+          metric_type?: string
+          top_performing_topics?: Json | null
+          total_interactions?: number | null
+        }
+        Relationships: []
+      }
+      calls: {
+        Row: {
+          ai_teacher_id: string | null
+          caller_id: string
+          created_at: string | null
+          duration_seconds: number | null
+          end_time: string | null
+          id: string
+          metadata: Json | null
+          receiver_id: string | null
+          session_token: string | null
+          start_time: string | null
+          status: Database["public"]["Enums"]["call_status"]
+          summary: string | null
+          transcript: string | null
+          type: Database["public"]["Enums"]["call_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          ai_teacher_id?: string | null
+          caller_id: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          receiver_id?: string | null
+          session_token?: string | null
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["call_status"]
+          summary?: string | null
+          transcript?: string | null
+          type: Database["public"]["Enums"]["call_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          ai_teacher_id?: string | null
+          caller_id?: string
+          created_at?: string | null
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          metadata?: Json | null
+          receiver_id?: string | null
+          session_token?: string | null
+          start_time?: string | null
+          status?: Database["public"]["Enums"]["call_status"]
+          summary?: string | null
+          transcript?: string | null
+          type?: Database["public"]["Enums"]["call_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_ai_teacher_id_fkey"
+            columns: ["ai_teacher_id"]
+            isOneToOne: false
+            referencedRelation: "professeurs_ai"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenges: {
         Row: {
           category_slug: string
@@ -64,6 +309,45 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      child_parents: {
+        Row: {
+          can_pickup: boolean | null
+          child_id: string
+          is_primary: boolean | null
+          parent_id: string
+          relationship: string | null
+        }
+        Insert: {
+          can_pickup?: boolean | null
+          child_id: string
+          is_primary?: boolean | null
+          parent_id: string
+          relationship?: string | null
+        }
+        Update: {
+          can_pickup?: boolean | null
+          child_id?: string
+          is_primary?: boolean | null
+          parent_id?: string
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "child_parents_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "creche_children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_parents_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "creche_parents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       content_categories: {
         Row: {
@@ -308,6 +592,339 @@ export type Database = {
           },
         ]
       }
+      creche_children: {
+        Row: {
+          allergies: string[] | null
+          birthdate: string | null
+          created_at: string | null
+          creche_id: string
+          emergency_contact: Json | null
+          full_name: string
+          group_name: string | null
+          id: string
+          medical_notes: string | null
+          photo_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          allergies?: string[] | null
+          birthdate?: string | null
+          created_at?: string | null
+          creche_id: string
+          emergency_contact?: Json | null
+          full_name: string
+          group_name?: string | null
+          id?: string
+          medical_notes?: string | null
+          photo_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          allergies?: string[] | null
+          birthdate?: string | null
+          created_at?: string | null
+          creche_id?: string
+          emergency_contact?: Json | null
+          full_name?: string
+          group_name?: string | null
+          id?: string
+          medical_notes?: string | null
+          photo_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creche_children_creche_id_fkey"
+            columns: ["creche_id"]
+            isOneToOne: false
+            referencedRelation: "creches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creche_daily_tracking: {
+        Row: {
+          absence_reason: string | null
+          activities: string[] | null
+          arrival_time: string | null
+          child_id: string
+          created_at: string | null
+          created_by: string | null
+          departure_time: string | null
+          id: string
+          is_present: boolean | null
+          meals: Json | null
+          mood: string | null
+          naps: Json | null
+          notes: string | null
+          tracking_date: string
+          updated_at: string | null
+        }
+        Insert: {
+          absence_reason?: string | null
+          activities?: string[] | null
+          arrival_time?: string | null
+          child_id: string
+          created_at?: string | null
+          created_by?: string | null
+          departure_time?: string | null
+          id?: string
+          is_present?: boolean | null
+          meals?: Json | null
+          mood?: string | null
+          naps?: Json | null
+          notes?: string | null
+          tracking_date?: string
+          updated_at?: string | null
+        }
+        Update: {
+          absence_reason?: string | null
+          activities?: string[] | null
+          arrival_time?: string | null
+          child_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          departure_time?: string | null
+          id?: string
+          is_present?: boolean | null
+          meals?: Json | null
+          mood?: string | null
+          naps?: Json | null
+          notes?: string | null
+          tracking_date?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creche_daily_tracking_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "creche_children"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creche_invitations: {
+        Row: {
+          child_id: string | null
+          code: string
+          created_at: string | null
+          created_by: string | null
+          creche_id: string
+          expires_at: string | null
+          id: string
+          invited_email: string | null
+          is_used: boolean | null
+          qr_code_url: string | null
+        }
+        Insert: {
+          child_id?: string | null
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          creche_id: string
+          expires_at?: string | null
+          id?: string
+          invited_email?: string | null
+          is_used?: boolean | null
+          qr_code_url?: string | null
+        }
+        Update: {
+          child_id?: string | null
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          creche_id?: string
+          expires_at?: string | null
+          id?: string
+          invited_email?: string | null
+          is_used?: boolean | null
+          qr_code_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creche_invitations_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "creche_children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "creche_invitations_creche_id_fkey"
+            columns: ["creche_id"]
+            isOneToOne: false
+            referencedRelation: "creches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creche_parents: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      creche_posts: {
+        Row: {
+          author_id: string
+          category: string | null
+          child_id: string | null
+          content: string | null
+          created_at: string | null
+          creche_id: string
+          id: string
+          is_pinned: boolean | null
+          media: Json | null
+          title: string | null
+          updated_at: string | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id: string
+          category?: string | null
+          child_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          creche_id: string
+          id?: string
+          is_pinned?: boolean | null
+          media?: Json | null
+          title?: string | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string
+          category?: string | null
+          child_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          creche_id?: string
+          id?: string
+          is_pinned?: boolean | null
+          media?: Json | null
+          title?: string | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creche_posts_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "creche_children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "creche_posts_creche_id_fkey"
+            columns: ["creche_id"]
+            isOneToOne: false
+            referencedRelation: "creches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creche_staff: {
+        Row: {
+          created_at: string | null
+          creche_id: string
+          id: string
+          permissions: Json | null
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          creche_id: string
+          id?: string
+          permissions?: Json | null
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          creche_id?: string
+          id?: string
+          permissions?: Json | null
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creche_staff_creche_id_fkey"
+            columns: ["creche_id"]
+            isOneToOne: false
+            referencedRelation: "creches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creches: {
+        Row: {
+          address: string | null
+          admin_id: string | null
+          created_at: string | null
+          email: string | null
+          establishment_type: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          phone: string | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          establishment_type?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          email?: string | null
+          establishment_type?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       daily_news: {
         Row: {
           category_slug: string
@@ -414,21 +1031,21 @@ export type Database = {
           attempted_at: string | null
           email: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           user_agent: string | null
         }
         Insert: {
           attempted_at?: string | null
           email: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           user_agent?: string | null
         }
         Update: {
           attempted_at?: string | null
           email?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           user_agent?: string | null
         }
         Relationships: []
@@ -555,6 +1172,449 @@ export type Database = {
           },
         ]
       }
+      ml_alerts: {
+        Row: {
+          action_taken: string | null
+          anomaly_score: number
+          anomaly_type: string | null
+          confidence: number | null
+          created_at: string | null
+          event_id: string | null
+          id: string
+          is_false_positive: boolean | null
+          model_id: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          anomaly_score: number
+          anomaly_type?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          is_false_positive?: boolean | null
+          model_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          anomaly_score?: number
+          anomaly_type?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          event_id?: string | null
+          id?: string
+          is_false_positive?: boolean | null
+          model_id?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ml_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "security_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ml_alerts_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ml_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ml_models: {
+        Row: {
+          accuracy: number | null
+          created_at: string | null
+          false_positive_rate: number | null
+          features: Json | null
+          hyperparameters: Json | null
+          id: string
+          is_active: boolean | null
+          model_name: string
+          model_type: string | null
+          model_version: string
+          trained_at: string | null
+          training_data_size: number | null
+        }
+        Insert: {
+          accuracy?: number | null
+          created_at?: string | null
+          false_positive_rate?: number | null
+          features?: Json | null
+          hyperparameters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          model_name: string
+          model_type?: string | null
+          model_version: string
+          trained_at?: string | null
+          training_data_size?: number | null
+        }
+        Update: {
+          accuracy?: number | null
+          created_at?: string | null
+          false_positive_rate?: number | null
+          features?: Json | null
+          hyperparameters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          model_name?: string
+          model_type?: string | null
+          model_version?: string
+          trained_at?: string | null
+          training_data_size?: number | null
+        }
+        Relationships: []
+      }
+      ong: {
+        Row: {
+          address: string | null
+          admin_id: string | null
+          created_at: string | null
+          description: string | null
+          email: string | null
+          id: string
+          is_verified: boolean | null
+          logo_url: string | null
+          name: string
+          phone: string | null
+          settings: Json | null
+          type: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          is_verified?: boolean | null
+          logo_url?: string | null
+          name: string
+          phone?: string | null
+          settings?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          admin_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          is_verified?: boolean | null
+          logo_url?: string | null
+          name?: string
+          phone?: string | null
+          settings?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      ong_event_participants: {
+        Row: {
+          event_id: string
+          id: string
+          registered_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          event_id: string
+          id?: string
+          registered_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          event_id?: string
+          id?: string
+          registered_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_event_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "ong_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ong_events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          current_participants: number | null
+          description: string | null
+          end_time: string | null
+          event_type: string | null
+          id: string
+          is_online: boolean | null
+          is_public: boolean | null
+          location: string | null
+          max_participants: number | null
+          meeting_url: string | null
+          ong_id: string
+          start_time: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          current_participants?: number | null
+          description?: string | null
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          is_online?: boolean | null
+          is_public?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          meeting_url?: string | null
+          ong_id: string
+          start_time: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          current_participants?: number | null
+          description?: string | null
+          end_time?: string | null
+          event_type?: string | null
+          id?: string
+          is_online?: boolean | null
+          is_public?: boolean | null
+          location?: string | null
+          max_participants?: number | null
+          meeting_url?: string | null
+          ong_id?: string
+          start_time?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_events_ong_id_fkey"
+            columns: ["ong_id"]
+            isOneToOne: false
+            referencedRelation: "ong"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ong_invitations: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          invited_email: string | null
+          is_used: boolean | null
+          ong_id: string
+          qr_code_url: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          invited_email?: string | null
+          is_used?: boolean | null
+          ong_id: string
+          qr_code_url?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          invited_email?: string | null
+          is_used?: boolean | null
+          ong_id?: string
+          qr_code_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_invitations_ong_id_fkey"
+            columns: ["ong_id"]
+            isOneToOne: false
+            referencedRelation: "ong"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ong_members: {
+        Row: {
+          created_at: string | null
+          id: string
+          ong_id: string
+          permissions: Json | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          ong_id: string
+          permissions?: Json | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          ong_id?: string
+          permissions?: Json | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_members_ong_id_fkey"
+            columns: ["ong_id"]
+            isOneToOne: false
+            referencedRelation: "ong"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ong_partnerships: {
+        Row: {
+          created_at: string | null
+          creche_id: string | null
+          description: string | null
+          end_date: string | null
+          id: string
+          ong_id: string
+          partnership_type: string | null
+          school_id: string | null
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creche_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          ong_id: string
+          partnership_type?: string | null
+          school_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creche_id?: string | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          ong_id?: string
+          partnership_type?: string | null
+          school_id?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_partnerships_creche_id_fkey"
+            columns: ["creche_id"]
+            isOneToOne: false
+            referencedRelation: "creches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ong_partnerships_ong_id_fkey"
+            columns: ["ong_id"]
+            isOneToOne: false
+            referencedRelation: "ong"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ong_partnerships_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ong_posts: {
+        Row: {
+          author_id: string | null
+          category: string | null
+          content: string | null
+          created_at: string | null
+          id: string
+          is_pinned: boolean | null
+          media: Json | null
+          ong_id: string
+          title: string | null
+          updated_at: string | null
+          view_count: number | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          media?: Json | null
+          ong_id: string
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_pinned?: boolean | null
+          media?: Json | null
+          ong_id?: string
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ong_posts_ong_id_fkey"
+            columns: ["ong_id"]
+            isOneToOne: false
+            referencedRelation: "ong"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posts: {
         Row: {
           category_slug: string | null
@@ -621,6 +1681,48 @@ export type Database = {
         }
         Relationships: []
       }
+      professeurs_ai: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          description: string | null
+          genre: string
+          id: string
+          langues: string[] | null
+          matieres: string[] | null
+          nom: string
+          personnalite: string | null
+          style: string
+          voix_description: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          genre: string
+          id?: string
+          langues?: string[] | null
+          matieres?: string[] | null
+          nom: string
+          personnalite?: string | null
+          style: string
+          voix_description?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          genre?: string
+          id?: string
+          langues?: string[] | null
+          matieres?: string[] | null
+          nom?: string
+          personnalite?: string | null
+          style?: string
+          voix_description?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -631,6 +1733,7 @@ export type Database = {
           id: string
           is_verified: boolean | null
           name: string | null
+          professeur_ai_id: string | null
           updated_at: string
         }
         Insert: {
@@ -642,6 +1745,7 @@ export type Database = {
           id: string
           is_verified?: boolean | null
           name?: string | null
+          professeur_ai_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -653,7 +1757,309 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           name?: string | null
+          professeur_ai_id?: string | null
           updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_professeur_ai_id_fkey"
+            columns: ["professeur_ai_id"]
+            isOneToOne: false
+            referencedRelation: "professeurs_ai"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      religious_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      religious_course_enrollments: {
+        Row: {
+          certificate_issued: boolean | null
+          certificate_url: string | null
+          completed: boolean | null
+          completed_at: string | null
+          course_id: string
+          enrolled_at: string
+          id: string
+          last_accessed_at: string | null
+          progress: number | null
+          student_id: string
+        }
+        Insert: {
+          certificate_issued?: boolean | null
+          certificate_url?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          course_id: string
+          enrolled_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          progress?: number | null
+          student_id: string
+        }
+        Update: {
+          certificate_issued?: boolean | null
+          certificate_url?: string | null
+          completed?: boolean | null
+          completed_at?: string | null
+          course_id?: string
+          enrolled_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          progress?: number | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "religious_course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "religious_courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      religious_courses: {
+        Row: {
+          age_appropriate: boolean | null
+          category_id: string | null
+          completion_count: number | null
+          content: string | null
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          duration_minutes: number | null
+          ethical_validation_status: string | null
+          has_audio: boolean | null
+          has_pictograms: boolean | null
+          has_sign_language: boolean | null
+          has_video: boolean | null
+          id: string
+          is_active: boolean | null
+          is_ai_assisted: boolean | null
+          is_certified: boolean | null
+          languages: string[] | null
+          parent_control_required: boolean | null
+          rating: number | null
+          teacher_id: string | null
+          title: string
+          updated_at: string
+          validated_at: string | null
+          validated_by: string | null
+          view_count: number | null
+        }
+        Insert: {
+          age_appropriate?: boolean | null
+          category_id?: string | null
+          completion_count?: number | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          duration_minutes?: number | null
+          ethical_validation_status?: string | null
+          has_audio?: boolean | null
+          has_pictograms?: boolean | null
+          has_sign_language?: boolean | null
+          has_video?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_ai_assisted?: boolean | null
+          is_certified?: boolean | null
+          languages?: string[] | null
+          parent_control_required?: boolean | null
+          rating?: number | null
+          teacher_id?: string | null
+          title: string
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          age_appropriate?: boolean | null
+          category_id?: string | null
+          completion_count?: number | null
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          duration_minutes?: number | null
+          ethical_validation_status?: string | null
+          has_audio?: boolean | null
+          has_pictograms?: boolean | null
+          has_sign_language?: boolean | null
+          has_video?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_ai_assisted?: boolean | null
+          is_certified?: boolean | null
+          languages?: string[] | null
+          parent_control_required?: boolean | null
+          rating?: number | null
+          teacher_id?: string | null
+          title?: string
+          updated_at?: string
+          validated_at?: string | null
+          validated_by?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "religious_courses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "religious_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_post_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string | null
+          id: string
+          post_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string | null
+          id?: string
+          post_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string | null
+          id?: string
+          post_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "school_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_post_reactions: {
+        Row: {
+          created_at: string | null
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "school_post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "school_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      school_posts: {
+        Row: {
+          author_id: string | null
+          content: string | null
+          created_at: string | null
+          id: string
+          is_flagged: boolean | null
+          language: string | null
+          media: Json | null
+          metadata: Json | null
+          moderation_status: string | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string | null
+          view_count: number | null
+          visibility: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          language?: string | null
+          media?: Json | null
+          metadata?: Json | null
+          moderation_status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+          visibility?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_flagged?: boolean | null
+          language?: string | null
+          media?: Json | null
+          metadata?: Json | null
+          moderation_status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          view_count?: number | null
+          visibility?: string | null
         }
         Relationships: []
       }
@@ -701,12 +2107,48 @@ export type Database = {
           },
         ]
       }
+      screen_share_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          expires_at: string
+          id: string
+          is_active: boolean
+          session_code: string
+          title: string
+          user_id: string
+          viewer_count: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          session_code: string
+          title: string
+          user_id: string
+          viewer_count?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          session_code?: string
+          title?: string
+          user_id?: string
+          viewer_count?: number
+        }
+        Relationships: []
+      }
       security_audit_logs: {
         Row: {
           action: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           metadata: Json | null
           resource_id: string | null
           resource_type: string | null
@@ -717,7 +2159,7 @@ export type Database = {
           action: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           resource_id?: string | null
           resource_type?: string | null
@@ -728,12 +2170,105 @@ export type Database = {
           action?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           metadata?: Json | null
           resource_id?: string | null
           resource_type?: string | null
           user_agent?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      security_events: {
+        Row: {
+          anomaly_score: number | null
+          created_at: string | null
+          endpoint: string | null
+          event_type: string
+          http_method: string | null
+          id: string
+          is_blocked: boolean | null
+          payload: Json | null
+          response_time_ms: number | null
+          source_ip: unknown
+          status_code: number | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          anomaly_score?: number | null
+          created_at?: string | null
+          endpoint?: string | null
+          event_type: string
+          http_method?: string | null
+          id?: string
+          is_blocked?: boolean | null
+          payload?: Json | null
+          response_time_ms?: number | null
+          source_ip?: unknown
+          status_code?: number | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          anomaly_score?: number | null
+          created_at?: string | null
+          endpoint?: string | null
+          event_type?: string
+          http_method?: string | null
+          id?: string
+          is_blocked?: boolean | null
+          payload?: Json | null
+          response_time_ms?: number | null
+          source_ip?: unknown
+          status_code?: number | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      security_playbooks: {
+        Row: {
+          actions: Json | null
+          auto_execute: boolean | null
+          created_at: string | null
+          description: string | null
+          execution_count: number | null
+          id: string
+          is_active: boolean | null
+          last_executed_at: string | null
+          name: string
+          severity_threshold: string | null
+          trigger_conditions: Json | null
+        }
+        Insert: {
+          actions?: Json | null
+          auto_execute?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          execution_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_executed_at?: string | null
+          name: string
+          severity_threshold?: string | null
+          trigger_conditions?: Json | null
+        }
+        Update: {
+          actions?: Json | null
+          auto_execute?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          execution_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_executed_at?: string | null
+          name?: string
+          severity_threshold?: string | null
+          trigger_conditions?: Json | null
         }
         Relationships: []
       }
@@ -880,14 +2415,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      check_and_block_account: {
-        Args: { p_email: string }
-        Returns: Json
-      }
-      cleanup_security_data: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      check_and_block_account: { Args: { p_email: string }; Returns: Json }
+      cleanup_security_data: { Args: never; Returns: undefined }
       credit_likes: {
         Args: { p_likes_amount: number; p_user_id: string }
         Returns: number
@@ -896,10 +2425,7 @@ export type Database = {
         Args: { p_post_id: string; p_user_id: string }
         Returns: Json
       }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      get_current_user_role: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -927,7 +2453,17 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "teacher" | "student"
+      app_role:
+        | "admin"
+        | "teacher"
+        | "student"
+        | "creche_admin"
+        | "creche_staff"
+        | "parent"
+        | "ong_admin"
+        | "ong_member"
+      call_status: "pending" | "active" | "ended" | "missed" | "rejected"
+      call_type: "ai" | "human"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1055,7 +2591,18 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "teacher", "student"],
+      app_role: [
+        "admin",
+        "teacher",
+        "student",
+        "creche_admin",
+        "creche_staff",
+        "parent",
+        "ong_admin",
+        "ong_member",
+      ],
+      call_status: ["pending", "active", "ended", "missed", "rejected"],
+      call_type: ["ai", "human"],
     },
   },
 } as const
