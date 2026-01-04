@@ -1026,6 +1026,841 @@ export type Database = {
           },
         ]
       }
+      driving_categories: {
+        Row: {
+          code: string
+          color: string | null
+          country_codes: string[] | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          requirements: string | null
+        }
+        Insert: {
+          code: string
+          color?: string | null
+          country_codes?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requirements?: string | null
+        }
+        Update: {
+          code?: string
+          color?: string | null
+          country_codes?: string[] | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requirements?: string | null
+        }
+        Relationships: []
+      }
+      driving_exam_sessions: {
+        Row: {
+          answers_detail: Json | null
+          category_id: string
+          completed_at: string | null
+          correct_answers: number | null
+          country_code: string | null
+          exam_type: string | null
+          feedback: Json | null
+          id: string
+          passed: boolean | null
+          score_percent: number | null
+          started_at: string | null
+          time_taken_seconds: number | null
+          total_questions: number
+          user_id: string
+          wrong_answers: number | null
+        }
+        Insert: {
+          answers_detail?: Json | null
+          category_id: string
+          completed_at?: string | null
+          correct_answers?: number | null
+          country_code?: string | null
+          exam_type?: string | null
+          feedback?: Json | null
+          id?: string
+          passed?: boolean | null
+          score_percent?: number | null
+          started_at?: string | null
+          time_taken_seconds?: number | null
+          total_questions: number
+          user_id: string
+          wrong_answers?: number | null
+        }
+        Update: {
+          answers_detail?: Json | null
+          category_id?: string
+          completed_at?: string | null
+          correct_answers?: number | null
+          country_code?: string | null
+          exam_type?: string | null
+          feedback?: Json | null
+          id?: string
+          passed?: boolean | null
+          score_percent?: number | null
+          started_at?: string | null
+          time_taken_seconds?: number | null
+          total_questions?: number
+          user_id?: string
+          wrong_answers?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_exam_sessions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "driving_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driving_lesson_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          lesson_id: string
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          lesson_id: string
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          lesson_id?: string
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "driving_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driving_lessons: {
+        Row: {
+          category_id: string
+          content: string
+          country_code: string | null
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          images: Json | null
+          is_active: boolean | null
+          language: string | null
+          order_position: number | null
+          title: string
+          topic: string
+          video_url: string | null
+        }
+        Insert: {
+          category_id: string
+          content: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          images?: Json | null
+          is_active?: boolean | null
+          language?: string | null
+          order_position?: number | null
+          title: string
+          topic: string
+          video_url?: string | null
+        }
+        Update: {
+          category_id?: string
+          content?: string
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          images?: Json | null
+          is_active?: boolean | null
+          language?: string | null
+          order_position?: number | null
+          title?: string
+          topic?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_lessons_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "driving_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driving_questions: {
+        Row: {
+          answers: Json
+          category_id: string
+          country_code: string | null
+          created_at: string | null
+          difficulty_level: string | null
+          explanation: string | null
+          id: string
+          is_active: boolean | null
+          language: string | null
+          points: number | null
+          question_image_url: string | null
+          question_text: string
+          time_limit_seconds: number | null
+          topic: string | null
+        }
+        Insert: {
+          answers: Json
+          category_id: string
+          country_code?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          points?: number | null
+          question_image_url?: string | null
+          question_text: string
+          time_limit_seconds?: number | null
+          topic?: string | null
+        }
+        Update: {
+          answers?: Json
+          category_id?: string
+          country_code?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          explanation?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          points?: number | null
+          question_image_url?: string | null
+          question_text?: string
+          time_limit_seconds?: number | null
+          topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_questions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "driving_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      driving_user_progress: {
+        Row: {
+          average_score: number | null
+          best_score: number | null
+          category_id: string
+          correct_answers: number | null
+          created_at: string | null
+          id: string
+          last_practice_at: string | null
+          strong_topics: string[] | null
+          study_time_seconds: number | null
+          total_practice_sessions: number | null
+          total_questions_answered: number | null
+          updated_at: string | null
+          user_id: string
+          weak_topics: string[] | null
+        }
+        Insert: {
+          average_score?: number | null
+          best_score?: number | null
+          category_id: string
+          correct_answers?: number | null
+          created_at?: string | null
+          id?: string
+          last_practice_at?: string | null
+          strong_topics?: string[] | null
+          study_time_seconds?: number | null
+          total_practice_sessions?: number | null
+          total_questions_answered?: number | null
+          updated_at?: string | null
+          user_id: string
+          weak_topics?: string[] | null
+        }
+        Update: {
+          average_score?: number | null
+          best_score?: number | null
+          category_id?: string
+          correct_answers?: number | null
+          created_at?: string | null
+          id?: string
+          last_practice_at?: string | null
+          strong_topics?: string[] | null
+          study_time_seconds?: number | null
+          total_practice_sessions?: number | null
+          total_questions_answered?: number | null
+          updated_at?: string | null
+          user_id?: string
+          weak_topics?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driving_user_progress_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "driving_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employability_cover_letters: {
+        Row: {
+          ai_generated: boolean | null
+          company_name: string | null
+          content: string
+          created_at: string | null
+          cv_id: string | null
+          id: string
+          job_title: string | null
+          language: string | null
+          title: string
+          tone: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_generated?: boolean | null
+          company_name?: string | null
+          content: string
+          created_at?: string | null
+          cv_id?: string | null
+          id?: string
+          job_title?: string | null
+          language?: string | null
+          title: string
+          tone?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_generated?: boolean | null
+          company_name?: string | null
+          content?: string
+          created_at?: string | null
+          cv_id?: string | null
+          id?: string
+          job_title?: string | null
+          language?: string | null
+          title?: string
+          tone?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employability_cover_letters_cv_id_fkey"
+            columns: ["cv_id"]
+            isOneToOne: false
+            referencedRelation: "employability_cvs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employability_cvs: {
+        Row: {
+          ai_score: number | null
+          ai_suggestions: Json | null
+          content: Json
+          created_at: string | null
+          cv_type: string
+          file_url: string | null
+          format: string | null
+          id: string
+          is_primary: boolean | null
+          language: string | null
+          profile_id: string | null
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_score?: number | null
+          ai_suggestions?: Json | null
+          content?: Json
+          created_at?: string | null
+          cv_type: string
+          file_url?: string | null
+          format?: string | null
+          id?: string
+          is_primary?: boolean | null
+          language?: string | null
+          profile_id?: string | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_score?: number | null
+          ai_suggestions?: Json | null
+          content?: Json
+          created_at?: string | null
+          cv_type?: string
+          file_url?: string | null
+          format?: string | null
+          id?: string
+          is_primary?: boolean | null
+          language?: string | null
+          profile_id?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employability_cvs_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "employability_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employability_interviews: {
+        Row: {
+          answers: Json | null
+          company_type: string | null
+          created_at: string | null
+          difficulty_level: string | null
+          duration_seconds: number | null
+          feedback: Json | null
+          id: string
+          improvements: string[] | null
+          industry: string | null
+          interview_type: string | null
+          job_title: string
+          questions: Json | null
+          score: number | null
+          status: string | null
+          strengths: string[] | null
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          company_type?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          duration_seconds?: number | null
+          feedback?: Json | null
+          id?: string
+          improvements?: string[] | null
+          industry?: string | null
+          interview_type?: string | null
+          job_title: string
+          questions?: Json | null
+          score?: number | null
+          status?: string | null
+          strengths?: string[] | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          company_type?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          duration_seconds?: number | null
+          feedback?: Json | null
+          id?: string
+          improvements?: string[] | null
+          industry?: string | null
+          interview_type?: string | null
+          job_title?: string
+          questions?: Json | null
+          score?: number | null
+          status?: string | null
+          strengths?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      employability_job_searches: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string | null
+          id: string
+          query: string | null
+          results_count: number | null
+          saved_jobs: Json | null
+          sector: string | null
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          query?: string | null
+          results_count?: number | null
+          saved_jobs?: Json | null
+          sector?: string | null
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          query?: string | null
+          results_count?: number | null
+          saved_jobs?: Json | null
+          sector?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      employability_profiles: {
+        Row: {
+          availability: string | null
+          certifications: string[] | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          education_level: string | null
+          experience_description: string | null
+          experience_years: number | null
+          id: string
+          informal_experience: string | null
+          languages: string[] | null
+          preferences: Json | null
+          profile_type: string | null
+          skills: string[] | null
+          target_job: string | null
+          target_sector: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          availability?: string | null
+          certifications?: string[] | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          education_level?: string | null
+          experience_description?: string | null
+          experience_years?: number | null
+          id?: string
+          informal_experience?: string | null
+          languages?: string[] | null
+          preferences?: Json | null
+          profile_type?: string | null
+          skills?: string[] | null
+          target_job?: string | null
+          target_sector?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          availability?: string | null
+          certifications?: string[] | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          education_level?: string | null
+          experience_description?: string | null
+          experience_years?: number | null
+          id?: string
+          informal_experience?: string | null
+          languages?: string[] | null
+          preferences?: Json | null
+          profile_type?: string | null
+          skills?: string[] | null
+          target_job?: string | null
+          target_sector?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      employability_soft_skills: {
+        Row: {
+          completed_lessons: string[] | null
+          created_at: string | null
+          id: string
+          progress: number | null
+          quiz_scores: Json | null
+          skill_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_lessons?: string[] | null
+          created_at?: string | null
+          id?: string
+          progress?: number | null
+          quiz_scores?: Json | null
+          skill_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_lessons?: string[] | null
+          created_at?: string | null
+          id?: string
+          progress?: number | null
+          quiz_scores?: Json | null
+          skill_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exam_achievements: {
+        Row: {
+          achievement_name: string
+          achievement_type: string
+          description: string | null
+          earned_at: string | null
+          icon: string | null
+          id: string
+          metadata: Json | null
+          points: number | null
+          user_id: string
+        }
+        Insert: {
+          achievement_name: string
+          achievement_type: string
+          description?: string | null
+          earned_at?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          user_id: string
+        }
+        Update: {
+          achievement_name?: string
+          achievement_type?: string
+          description?: string | null
+          earned_at?: string | null
+          icon?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exam_prep_progress: {
+        Row: {
+          average_score: number | null
+          best_score: number | null
+          cards_reviewed: number | null
+          created_at: string | null
+          exam_type_id: string | null
+          id: string
+          last_activity_at: string | null
+          predicted_success_rate: number | null
+          sessions_completed: number | null
+          strong_topics: string[] | null
+          total_study_time_seconds: number | null
+          updated_at: string | null
+          user_id: string
+          weak_topics: string[] | null
+        }
+        Insert: {
+          average_score?: number | null
+          best_score?: number | null
+          cards_reviewed?: number | null
+          created_at?: string | null
+          exam_type_id?: string | null
+          id?: string
+          last_activity_at?: string | null
+          predicted_success_rate?: number | null
+          sessions_completed?: number | null
+          strong_topics?: string[] | null
+          total_study_time_seconds?: number | null
+          updated_at?: string | null
+          user_id: string
+          weak_topics?: string[] | null
+        }
+        Update: {
+          average_score?: number | null
+          best_score?: number | null
+          cards_reviewed?: number | null
+          created_at?: string | null
+          exam_type_id?: string | null
+          id?: string
+          last_activity_at?: string | null
+          predicted_success_rate?: number | null
+          sessions_completed?: number | null
+          strong_topics?: string[] | null
+          total_study_time_seconds?: number | null
+          updated_at?: string | null
+          user_id?: string
+          weak_topics?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_prep_progress_exam_type_id_fkey"
+            columns: ["exam_type_id"]
+            isOneToOne: false
+            referencedRelation: "exam_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_sessions: {
+        Row: {
+          answers: Json | null
+          completed_at: string | null
+          exam_type_id: string | null
+          feedback: Json | null
+          id: string
+          mock_exam_id: string | null
+          passed: boolean | null
+          score: number | null
+          score_percent: number | null
+          started_at: string | null
+          status: string | null
+          strong_areas: string[] | null
+          time_spent_seconds: number | null
+          user_id: string
+          weak_areas: string[] | null
+        }
+        Insert: {
+          answers?: Json | null
+          completed_at?: string | null
+          exam_type_id?: string | null
+          feedback?: Json | null
+          id?: string
+          mock_exam_id?: string | null
+          passed?: boolean | null
+          score?: number | null
+          score_percent?: number | null
+          started_at?: string | null
+          status?: string | null
+          strong_areas?: string[] | null
+          time_spent_seconds?: number | null
+          user_id: string
+          weak_areas?: string[] | null
+        }
+        Update: {
+          answers?: Json | null
+          completed_at?: string | null
+          exam_type_id?: string | null
+          feedback?: Json | null
+          id?: string
+          mock_exam_id?: string | null
+          passed?: boolean | null
+          score?: number | null
+          score_percent?: number | null
+          started_at?: string | null
+          status?: string | null
+          strong_areas?: string[] | null
+          time_spent_seconds?: number | null
+          user_id?: string
+          weak_areas?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_sessions_exam_type_id_fkey"
+            columns: ["exam_type_id"]
+            isOneToOne: false
+            referencedRelation: "exam_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exam_sessions_mock_exam_id_fkey"
+            columns: ["mock_exam_id"]
+            isOneToOne: false
+            referencedRelation: "mock_exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exam_types: {
+        Row: {
+          category: Database["public"]["Enums"]["exam_category"]
+          color: string | null
+          country_code: string | null
+          created_at: string | null
+          description: string | null
+          difficulty: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          name: string
+          passing_score: number | null
+          total_questions: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["exam_category"]
+          color?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          name: string
+          passing_score?: number | null
+          total_questions?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["exam_category"]
+          color?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          name?: string
+          passing_score?: number | null
+          total_questions?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       failed_login_attempts: {
         Row: {
           attempted_at: string | null
@@ -1047,6 +1882,238 @@ export type Database = {
           id?: string
           ip_address?: unknown
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      library_collection_items: {
+        Row: {
+          added_by: string | null
+          collection_id: string
+          created_at: string | null
+          id: string
+          order_position: number | null
+          resource_id: string
+        }
+        Insert: {
+          added_by?: string | null
+          collection_id: string
+          created_at?: string | null
+          id?: string
+          order_position?: number | null
+          resource_id: string
+        }
+        Update: {
+          added_by?: string | null
+          collection_id?: string
+          created_at?: string | null
+          id?: string
+          order_position?: number | null
+          resource_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_collection_items_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "library_collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "library_collection_items_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_collections: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          owner_id: string
+          owner_type: string
+          qr_code_url: string | null
+          share_code: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          owner_id: string
+          owner_type: string
+          qr_code_url?: string | null
+          share_code?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          owner_id?: string
+          owner_type?: string
+          qr_code_url?: string | null
+          share_code?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      library_favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          resource_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          resource_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          resource_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_favorites_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_reading_progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          last_position: string | null
+          notes: string | null
+          progress_percent: number | null
+          resource_id: string
+          started_at: string | null
+          time_spent_seconds: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          last_position?: string | null
+          notes?: string | null
+          progress_percent?: number | null
+          resource_id: string
+          started_at?: string | null
+          time_spent_seconds?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          last_position?: string | null
+          notes?: string | null
+          progress_percent?: number | null
+          resource_id?: string
+          started_at?: string | null
+          time_spent_seconds?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "library_reading_progress_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "library_resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      library_resources: {
+        Row: {
+          author: string | null
+          category: string
+          content: string | null
+          country_code: string | null
+          cover_image_url: string | null
+          created_at: string | null
+          description: string | null
+          difficulty_level: string | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          is_free: boolean | null
+          language: string | null
+          license: string | null
+          resource_type: string
+          source: string | null
+          source_url: string | null
+          tags: string[] | null
+          target_audience: string[] | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          author?: string | null
+          category: string
+          content?: string | null
+          country_code?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_free?: boolean | null
+          language?: string | null
+          license?: string | null
+          resource_type: string
+          source?: string | null
+          source_url?: string | null
+          tags?: string[] | null
+          target_audience?: string[] | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          author?: string | null
+          category?: string
+          content?: string | null
+          country_code?: string | null
+          cover_image_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_free?: boolean | null
+          language?: string | null
+          license?: string | null
+          resource_type?: string
+          source?: string | null
+          source_url?: string | null
+          tags?: string[] | null
+          target_audience?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
         }
         Relationships: []
       }
@@ -1273,6 +2340,62 @@ export type Database = {
           training_data_size?: number | null
         }
         Relationships: []
+      }
+      mock_exams: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          difficulty: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes: number
+          exam_type_id: string | null
+          id: string
+          is_active: boolean | null
+          is_randomized: boolean | null
+          is_timed: boolean | null
+          passing_score: number | null
+          questions: Json
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes: number
+          exam_type_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_randomized?: boolean | null
+          is_timed?: boolean | null
+          passing_score?: number | null
+          questions?: Json
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          duration_minutes?: number
+          exam_type_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_randomized?: boolean | null
+          is_timed?: boolean | null
+          passing_score?: number | null
+          questions?: Json
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mock_exams_exam_type_id_fkey"
+            columns: ["exam_type_id"]
+            isOneToOne: false
+            referencedRelation: "exam_types"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ong: {
         Row: {
@@ -1948,6 +3071,65 @@ export type Database = {
           },
         ]
       }
+      revision_cards: {
+        Row: {
+          answer: string
+          created_at: string | null
+          difficulty: Database["public"]["Enums"]["exam_difficulty"] | null
+          exam_type_id: string | null
+          explanation: string | null
+          id: string
+          is_public: boolean | null
+          last_reviewed_at: string | null
+          media: Json | null
+          question: string
+          tags: string[] | null
+          times_reviewed: number | null
+          topic: string
+          user_id: string | null
+        }
+        Insert: {
+          answer: string
+          created_at?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          exam_type_id?: string | null
+          explanation?: string | null
+          id?: string
+          is_public?: boolean | null
+          last_reviewed_at?: string | null
+          media?: Json | null
+          question: string
+          tags?: string[] | null
+          times_reviewed?: number | null
+          topic: string
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string
+          created_at?: string | null
+          difficulty?: Database["public"]["Enums"]["exam_difficulty"] | null
+          exam_type_id?: string | null
+          explanation?: string | null
+          id?: string
+          is_public?: boolean | null
+          last_reviewed_at?: string | null
+          media?: Json | null
+          question?: string
+          tags?: string[] | null
+          times_reviewed?: number | null
+          topic?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revision_cards_exam_type_id_fkey"
+            columns: ["exam_type_id"]
+            isOneToOne: false
+            referencedRelation: "exam_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       school_post_comments: {
         Row: {
           author_id: string
@@ -2272,6 +3454,109 @@ export type Database = {
         }
         Relationships: []
       }
+      study_plans: {
+        Row: {
+          ai_recommendations: Json | null
+          created_at: string | null
+          daily_hours: number | null
+          description: string | null
+          exam_type_id: string | null
+          id: string
+          is_active: boolean | null
+          progress_percent: number | null
+          schedule: Json | null
+          target_date: string | null
+          title: string
+          topics: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_recommendations?: Json | null
+          created_at?: string | null
+          daily_hours?: number | null
+          description?: string | null
+          exam_type_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          progress_percent?: number | null
+          schedule?: Json | null
+          target_date?: string | null
+          title: string
+          topics?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_recommendations?: Json | null
+          created_at?: string | null
+          daily_hours?: number | null
+          description?: string | null
+          exam_type_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          progress_percent?: number | null
+          schedule?: Json | null
+          target_date?: string | null
+          title?: string
+          topics?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_plans_exam_type_id_fkey"
+            columns: ["exam_type_id"]
+            isOneToOne: false
+            referencedRelation: "exam_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_reminders: {
+        Row: {
+          created_at: string | null
+          days_of_week: string[] | null
+          id: string
+          is_active: boolean | null
+          last_sent_at: string | null
+          message: string | null
+          reminder_time: string
+          study_plan_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          last_sent_at?: string | null
+          message?: string | null
+          reminder_time: string
+          study_plan_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          days_of_week?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          last_sent_at?: string | null
+          message?: string | null
+          reminder_time?: string
+          study_plan_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_reminders_study_plan_id_fkey"
+            columns: ["study_plan_id"]
+            isOneToOne: false
+            referencedRelation: "study_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           amount: number
@@ -2464,6 +3749,13 @@ export type Database = {
         | "ong_member"
       call_status: "pending" | "active" | "ended" | "missed" | "rejected"
       call_type: "ai" | "human"
+      exam_category:
+        | "school"
+        | "university"
+        | "international"
+        | "professional"
+        | "driving"
+      exam_difficulty: "beginner" | "intermediate" | "advanced" | "expert"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2603,6 +3895,14 @@ export const Constants = {
       ],
       call_status: ["pending", "active", "ended", "missed", "rejected"],
       call_type: ["ai", "human"],
+      exam_category: [
+        "school",
+        "university",
+        "international",
+        "professional",
+        "driving",
+      ],
+      exam_difficulty: ["beginner", "intermediate", "advanced", "expert"],
     },
   },
 } as const
