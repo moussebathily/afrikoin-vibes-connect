@@ -1,5 +1,5 @@
 import React from 'react'
-import { Home, Heart, Wallet, User, Calendar, Trophy, Building2, Package } from 'lucide-react'
+import { Home, Heart, Wallet, User, Calendar, Trophy, Building2, Package, ShoppingBag } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -11,10 +11,10 @@ export function BottomNavigation() {
 
   const navigationItems = [
     { icon: Home, label: t('navigation.home'), path: '/' },
-    { icon: Trophy, label: t('navigation.culture'), path: '/culture' },
+    { icon: ShoppingBag, label: 'Boutique', path: '/marketplace' },
     { icon: Package, label: 'Colis', path: '/tracking' },
     { icon: Building2, label: 'Marchés', path: '/markets' },
-    { icon: Calendar, label: t('navigation.rankings'), path: '/rankings' },
+    { icon: Wallet, label: 'Wallet', path: '/wallet' },
   ]
 
   return (

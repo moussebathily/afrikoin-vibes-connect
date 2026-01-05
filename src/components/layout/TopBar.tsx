@@ -3,6 +3,7 @@ import { Bell, Search, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { LanguageSelector } from '@/components/ui/language-selector'
+import { CartButton } from '@/components/cart/CartButton'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -64,8 +65,10 @@ export function TopBar() {
             aria-label={t('navigation.create')}
             className="hover:bg-primary/10 hover:text-primary rounded-xl"
           >
-            <Plus className="h-5 w-5" />
+          <Plus className="h-5 w-5" />
           </Button>
+
+          <CartButton />
 
           <LanguageSelector />
 

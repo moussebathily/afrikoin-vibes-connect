@@ -259,6 +259,75 @@ export type Database = {
           },
         ]
       }
+      cart_items: {
+        Row: {
+          added_at: string | null
+          cart_id: string
+          currency_snapshot: string
+          id: string
+          price_snapshot: number
+          product_id: string
+          quantity: number
+        }
+        Insert: {
+          added_at?: string | null
+          cart_id: string
+          currency_snapshot?: string
+          id?: string
+          price_snapshot: number
+          product_id: string
+          quantity?: number
+        }
+        Update: {
+          added_at?: string | null
+          cart_id?: string
+          currency_snapshot?: string
+          id?: string
+          price_snapshot?: number
+          product_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carts: {
+        Row: {
+          created_at: string | null
+          id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenges: {
         Row: {
           category_slug: string
@@ -2804,6 +2873,102 @@ export type Database = {
         }
         Relationships: []
       }
+      product_recommendations: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          recommendation_type: string | null
+          recommended_product_id: string
+          score: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          recommendation_type?: string | null
+          recommended_product_id: string
+          score?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          recommendation_type?: string | null
+          recommended_product_id?: string
+          score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_recommendations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_recommendations_recommended_product_id_fkey"
+            columns: ["recommended_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          country: string | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          price: number
+          seller_id: string | null
+          stock: number | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          country?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price: number
+          seller_id?: string | null
+          stock?: number | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          country?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price?: number
+          seller_id?: string | null
+          stock?: number | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       professeurs_ai: {
         Row: {
           avatar_url: string | null
@@ -3619,6 +3784,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
