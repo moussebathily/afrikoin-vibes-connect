@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { CartProvider } from '@/contexts/CartContext'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
@@ -19,10 +20,11 @@ import './index.css'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 
-// Lazy load AI Studio Demo
+// Lazy load components
 const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(module => ({
   default: module.AIStudioDemo
 })))
+const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -78,45 +80,56 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-background">
-          <Routes>
-            <Route path="/auth" element={<AuthPage />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<HomePage />} />
-              <Route path="culture" element={<CulturePage />} />
-              <Route path="sports" element={<SportsPage />} />
-              <Route path="markets" element={<MarketsPage />} />
-              <Route path="rankings" element={<RankingsPage />} />
-              <Route path="wallet" element={<WalletPage />} />
-              <Route path="call" element={<CallPage />} />
-              <Route path="tracking" element={<TrackingPage />} />
-              <Route path="ai-studio" element={
-                <div className="p-4">
+      <CartProvider>
+        <Router>
+          <div className="min-h-screen bg-background">
+            <Routes>
+              <Route path="/auth" element={<AuthPage />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <AppLayout />
+                </ProtectedRoute>
+              }>
+                <Route index element={<HomePage />} />
+                <Route path="culture" element={<CulturePage />} />
+                <Route path="sports" element={<SportsPage />} />
+                <Route path="markets" element={<MarketsPage />} />
+                <Route path="rankings" element={<RankingsPage />} />
+                <Route path="wallet" element={<WalletPage />} />
+                <Route path="call" element={<CallPage />} />
+                <Route path="tracking" element={<TrackingPage />} />
+                <Route path="marketplace" element={
                   <Suspense fallback={
                     <div className="flex items-center justify-center min-h-32">
                       <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
                     </div>
                   }>
-                    <AIStudioDemo />
+                    <MarketplacePage />
                   </Suspense>
-                </div>
-              } />
-              <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
-              <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
-              <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
-              <Route path="about" element={<AboutPage />} />
-              <Route path="payment-success" element={<PaymentSuccessPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-          <Toaster />
-        </div>
-      </Router>
+                } />
+                <Route path="ai-studio" element={
+                  <div className="p-4">
+                    <Suspense fallback={
+                      <div className="flex items-center justify-center min-h-32">
+                        <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                      </div>
+                    }>
+                      <AIStudioDemo />
+                    </Suspense>
+                  </div>
+                } />
+                <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
+                <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
+                <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="payment-success" element={<PaymentSuccessPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Route>
+            </Routes>
+            <Toaster />
+          </div>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   )
 }
