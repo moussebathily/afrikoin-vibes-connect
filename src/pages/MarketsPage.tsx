@@ -26,9 +26,9 @@ export function MarketsPage() {
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select('*, media_files(*)')
-        .eq('category_slug', 'marches-panafricains')
+        .eq('category', 'marches-panafricains')
         .eq('status', 'published')
-        .order('trending_score', { ascending: false })
+        .order('like_count', { ascending: false })
         .limit(10)
 
       if (postsError) {
@@ -36,17 +36,17 @@ export function MarketsPage() {
         setPosts([])
       } else if (postsData && postsData.length > 0) {
         // Fetch profiles separately
-        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const userIds = (postsData as any[]).map(p => p.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, country, is_verified')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, country, is_verified')
+          .in('user_id', userIds)
         
-        const postsWithProfiles = postsData.map(post => ({
+        const postsWithProfiles = (postsData as any[]).map(post => ({
           ...post,
-          profiles: profilesData?.find(p => p.id === post.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === post.user_id) || null
         }))
-        setPosts(postsWithProfiles)
+        setPosts(postsWithProfiles as EnhancedPost[])
       } else {
         setPosts([])
       }
@@ -55,22 +55,21 @@ export function MarketsPage() {
       const { data: newsData } = await supabase
         .from('daily_news')
         .select('*')
-        .eq('category_slug', 'marches-panafricains')
+        .eq('category', 'marches-panafricains')
         .order('published_at', { ascending: false })
         .limit(5)
 
-      setNews(newsData || [])
+      setNews((newsData || []) as DailyNews[])
 
       // Fetch market challenges
       const { data: challengesData } = await supabase
         .from('challenges')
         .select('*')
-        .eq('category_slug', 'marches-panafricains')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(3)
 
-      setChallenges(challengesData || [])
+      setChallenges((challengesData || []) as Challenge[])
     } catch (error) {
       console.error('Error fetching markets data:', error)
     } finally {

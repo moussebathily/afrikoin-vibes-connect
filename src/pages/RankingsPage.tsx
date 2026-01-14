@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
 import { supabase } from '@/integrations/supabase/client'
@@ -49,7 +48,7 @@ export function RankingsPage() {
         .order('name')
 
       if (error) throw error
-      setCategories(data || [])
+      setCategories((data || []) as ContentCategory[])
     } catch (error) {
       console.error('Error fetching categories:', error)
     }
@@ -61,10 +60,10 @@ export function RankingsPage() {
       let query = supabase
         .from('weekly_rankings')
         .select('*')
-        .order('rank_position')
+        .order('rank')
 
       if (selectedCategory !== 'all') {
-        query = query.eq('category_slug', selectedCategory)
+        query = query.eq('category', selectedCategory)
       }
 
       if (selectedCountry !== 'all') {
@@ -78,17 +77,17 @@ export function RankingsPage() {
         setRankings([])
       } else if (rankingsData && rankingsData.length > 0) {
         // Fetch profiles separately
-        const userIds = rankingsData.map(r => r.user_id).filter(Boolean)
+        const userIds = (rankingsData as any[]).map(r => r.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, avatar_url, is_verified')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, avatar_url, is_verified')
+          .in('user_id', userIds)
         
-        const rankingsWithProfiles = rankingsData.map(ranking => ({
+        const rankingsWithProfiles = (rankingsData as any[]).map(ranking => ({
           ...ranking,
-          profiles: profilesData?.find(p => p.id === ranking.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === ranking.user_id) || null
         }))
-        setRankings(rankingsWithProfiles)
+        setRankings(rankingsWithProfiles as WeeklyRanking[])
       } else {
         setRankings([])
       }
@@ -103,10 +102,6 @@ export function RankingsPage() {
 
   const getTopPerformers = () => {
     return rankings.slice(0, 3)
-  }
-
-  const getRemainingRankings = () => {
-    return rankings.slice(3)
   }
 
   if (loading) {
@@ -180,7 +175,7 @@ export function RankingsPage() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {getTopPerformers().map((ranking, index) => {
-                    const position = ranking.rank_position || index + 1
+                    const position = ranking.rank || ranking.rank_position || index + 1
                     const colors = [
                       'bg-gradient-to-br from-yellow-400 to-yellow-600',
                       'bg-gradient-to-br from-gray-300 to-gray-500', 
@@ -210,7 +205,7 @@ export function RankingsPage() {
                             </div>
                           )}
                           <div className="text-2xl font-bold mt-3">
-                            {ranking.total_score.toLocaleString()}
+                            {(ranking.total_score || ranking.score || 0).toLocaleString()}
                           </div>
                           <div className="text-sm opacity-90">points</div>
                         </div>

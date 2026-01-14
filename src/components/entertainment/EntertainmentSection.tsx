@@ -23,17 +23,17 @@ export const EntertainmentSection = () => {
 
       if (postsData && postsData.length > 0) {
         // Fetch profiles separately
-        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const userIds = (postsData as any[]).map(p => p.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, is_verified')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, is_verified')
+          .in('user_id', userIds)
         
-        const videosWithProfiles = postsData.map(video => ({
+        const videosWithProfiles = (postsData as any[]).map(video => ({
           ...video,
-          profiles: profilesData?.find(p => p.id === video.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === video.user_id) || null
         }))
-        setVideos(videosWithProfiles)
+        setVideos(videosWithProfiles as Post[])
       }
     }
     fetchVideos()
