@@ -1,0 +1,14 @@
+-- Insert sample products for marketplace testing
+INSERT INTO public.products (title, description, price, currency, country, images, stock, category, is_active, is_featured) VALUES
+('Boubou Africain Premium', 'Magnifique boubou traditionnel brodé à la main, tissu bazin riche de qualité supérieure', 45000, 'XOF', 'SN', ARRAY['https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=400'], 15, 'mode', true, true),
+('Masque Africain Décoratif', 'Masque en bois sculpté à la main par des artisans locaux, pièce unique', 25000, 'XOF', 'CI', ARRAY['https://images.unsplash.com/photo-1582582621959-48d27397dc69?w=400'], 8, 'artisanat', true, true),
+('Panier Tressé Traditionnel', 'Panier fait main en osier naturel, idéal pour la décoration ou le rangement', 12000, 'XOF', 'MA', ARRAY['https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400'], 25, 'artisanat', true, false),
+('Bijoux en Perles Africaines', 'Collier et bracelet en perles de verre colorées, design traditionnel', 8500, 'XOF', 'GH', ARRAY['https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400'], 30, 'bijoux', true, true),
+('Huile de Karité Bio', 'Huile de karité pure et naturelle du Burkina Faso, 250ml', 6500, 'XOF', 'BF', ARRAY['https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400'], 50, 'beaute', true, false),
+('Café Éthiopien Premium', 'Grains de café arabica de haute altitude, torréfaction artisanale, 500g', 15000, 'XOF', 'ET', ARRAY['https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400'], 40, 'alimentaire', true, true),
+('Tissu Wax Hollandais', 'Tissu wax authentique 6 yards, motifs exclusifs', 18000, 'XOF', 'NG', ARRAY['https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400'], 20, 'tissus', true, false),
+('Sac en Cuir Artisanal', 'Sac à main en cuir véritable tanné naturellement, fait main', 35000, 'XOF', 'ML', ARRAY['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400'], 10, 'accessoires', true, true),
+('Djembé Traditionnel', 'Djembé sculpté en bois massif avec peau de chèvre, son authentique', 85000, 'XOF', 'GN', ARRAY['https://images.unsplash.com/photo-1516924962500-2b4b3b99ea02?w=400'], 5, 'musique', true, true),
+('Thé à la Menthe Marocain', 'Thé vert de qualité avec menthe fraîche séchée, 200g', 4500, 'XOF', 'MA', ARRAY['https://images.unsplash.com/photo-1571934811356-5cc061b6821f?w=400'], 60, 'alimentaire', true, false),
+('Sandales en Cuir', 'Sandales artisanales en cuir naturel, confortables et durables', 22000, 'XOF', 'KE', ARRAY['https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400'], 18, 'chaussures', true, false),
+('Tableau Art Africain', 'Peinture originale sur toile représentant une scène de village, 60x80cm', 55000, 'XOF', 'TZ', ARRAY['https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=400'], 3, 'art', true, true);
