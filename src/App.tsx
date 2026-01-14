@@ -25,6 +25,7 @@ const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(modu
   default: module.AIStudioDemo
 })))
 const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
+const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -105,6 +106,15 @@ function App() {
                     </div>
                   }>
                     <MarketplacePage />
+                  </Suspense>
+                } />
+                <Route path="product/:id" element={
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <ProductDetailPage />
                   </Suspense>
                 } />
                 <Route path="ai-studio" element={
