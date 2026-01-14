@@ -31,63 +31,58 @@ export function SportsPage() {
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select('*, media_files(*)')
-        .eq('category_slug', 'sport')
+        .eq('category', 'sport')
         .eq('status', 'published')
-        .order('trending_score', { ascending: false })
+        .order('like_count', { ascending: false })
         .limit(20)
 
       if (postsError) {
         console.error('Error fetching posts:', postsError)
         setPosts([])
       } else if (postsData && postsData.length > 0) {
-        // Fetch profiles separately
-        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const userIds = (postsData as any[]).map(p => p.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, avatar_url, is_verified, country')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, avatar_url, is_verified, country')
+          .in('user_id', userIds)
         
-        const postsWithProfiles = postsData.map(post => ({
+        const postsWithProfiles = (postsData as any[]).map(post => ({
           ...post,
-          profiles: profilesData?.find(p => p.id === post.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === post.user_id) || null
         }))
-        setPosts(postsWithProfiles)
+        setPosts(postsWithProfiles as EnhancedPost[])
       } else {
         setPosts([])
       }
 
       // Fetch weekly rankings for sports
-      const { data: rankingsData, error: rankingsError } = await supabase
+      const { data: rankingsData } = await supabase
         .from('weekly_rankings')
         .select('*')
-        .eq('category_slug', 'sport')
-        .order('rank_position')
+        .eq('category', 'sport')
+        .order('rank')
         .limit(10)
 
-      if (rankingsError) throw rankingsError
-      setRankings(rankingsData || [])
+      setRankings((rankingsData || []) as WeeklyRanking[])
 
       // Fetch sports news
-      const { data: newsData, error: newsError } = await supabase
+      const { data: newsData } = await supabase
         .from('daily_news')
         .select('*')
-        .eq('category_slug', 'sport')
+        .eq('category', 'sport')
         .order('published_at', { ascending: false })
         .limit(5)
 
-      if (newsError) throw newsError
-      setNews(newsData || [])
+      setNews((newsData || []) as DailyNews[])
 
       // Fetch sports challenges
-      const { data: challengesData, error: challengesError } = await supabase
+      const { data: challengesData } = await supabase
         .from('challenges')
         .select('*')
-        .eq('category_slug', 'sport')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
 
-      if (challengesError) throw challengesError
-      setChallenges(challengesData || [])
+      setChallenges((challengesData || []) as Challenge[])
 
     } catch (error) {
       console.error('Error fetching sports content:', error)
@@ -99,27 +94,15 @@ export function SportsPage() {
 
   const handleLikePost = async (postId: string) => {
     if (!user) return
-
     try {
       const { data, error } = await supabase.functions.invoke('like-post', {
         body: { postId }
       })
-
-      if (error) {
-        console.error('Error liking post:', error)
-        return
+      if (!error && data?.success) {
+        setPosts(prev => prev.map(post => 
+          post.id === postId ? { ...post, like_count: data.like_count } : post
+        ))
       }
-      
-      if (!data?.success) {
-        console.error('Error liking post:', data)
-        return
-      }
-
-      setPosts(prev => prev.map(post => 
-        post.id === postId 
-          ? { ...post, like_count: data.like_count }
-          : post
-      ))
     } catch (error) {
       console.error('Error liking post:', error)
     }
@@ -139,7 +122,6 @@ export function SportsPage() {
 
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6">
-      {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
           <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600">
@@ -154,120 +136,51 @@ export function SportsPage() {
 
       <Tabs defaultValue="posts" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="posts" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Contenus
-          </TabsTrigger>
-          <TabsTrigger value="rankings" className="flex items-center gap-2">
-            <Trophy className="h-4 w-4" />
-            Classements
-          </TabsTrigger>
-          <TabsTrigger value="news" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
-            Actualités
-          </TabsTrigger>
-          <TabsTrigger value="challenges" className="flex items-center gap-2">
-            <Goal className="h-4 w-4" />
-            Défis
-          </TabsTrigger>
+          <TabsTrigger value="posts"><TrendingUp className="h-4 w-4 mr-2" />Contenus</TabsTrigger>
+          <TabsTrigger value="rankings"><Trophy className="h-4 w-4 mr-2" />Classements</TabsTrigger>
+          <TabsTrigger value="news"><Calendar className="h-4 w-4 mr-2" />Actualités</TabsTrigger>
+          <TabsTrigger value="challenges"><Goal className="h-4 w-4 mr-2" />Défis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="posts" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              {posts.length > 0 ? (
-                <div className="space-y-6">
-                  {posts.map((post) => (
-                    <PostCard
-                      key={post.id}
-                      post={post as any}
-                      onLike={() => handleLikePost(post.id)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">Aucun contenu sportif</h3>
-                    <p className="text-muted-foreground">
-                      Soyez le premier à partager quelque chose de sportif !
-                    </p>
-                  </CardContent>
-                </Card>
+              {posts.length > 0 ? posts.map((post) => (
+                <PostCard key={post.id} post={post as any} onLike={() => handleLikePost(post.id)} />
+              )) : (
+                <Card><CardContent className="text-center py-12">
+                  <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">Aucun contenu sportif</h3>
+                </CardContent></Card>
               )}
             </div>
-
             <div className="space-y-6">
-              <WeeklyRankingsCard 
-                rankings={rankings.slice(0, 5)} 
-                category="Sport"
-              />
-              
+              <WeeklyRankingsCard rankings={rankings.slice(0, 5)} category="Sport" />
               {challenges.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Défis Sportifs</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ChallengeCard 
-                      challenge={challenges[0]}
-                    />
-                  </CardContent>
+                <Card><CardHeader><CardTitle className="text-lg">Défis Sportifs</CardTitle></CardHeader>
+                  <CardContent><ChallengeCard challenge={challenges[0]} /></CardContent>
                 </Card>
               )}
             </div>
           </div>
         </TabsContent>
 
-        <TabsContent value="rankings">
-          <WeeklyRankingsCard 
-            rankings={rankings} 
-            category="Sport"
-          />
-        </TabsContent>
+        <TabsContent value="rankings"><WeeklyRankingsCard rankings={rankings} category="Sport" /></TabsContent>
 
         <TabsContent value="news" className="space-y-4">
           {news.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {news.map((article) => (
-                <DailyNewsCard key={article.id} news={article} />
-              ))}
+              {news.map((article) => <DailyNewsCard key={article.id} news={article} />)}
             </div>
-          ) : (
-            <Card>
-              <CardContent className="text-center py-12">
-                <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Aucune actualité</h3>
-                <p className="text-muted-foreground">
-                  Les actualités sportives apparaîtront ici.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          ) : <Card><CardContent className="text-center py-12"><Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" /><h3>Aucune actualité</h3></CardContent></Card>}
         </TabsContent>
 
         <TabsContent value="challenges" className="space-y-6">
           {challenges.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {challenges.map((challenge) => (
-                <ChallengeCard 
-                  key={challenge.id} 
-                  challenge={challenge}
-                />
-              ))}
+              {challenges.map((challenge) => <ChallengeCard key={challenge.id} challenge={challenge} />)}
             </div>
-          ) : (
-            <Card>
-              <CardContent className="text-center py-12">
-                <Goal className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Aucun défi</h3>
-                <p className="text-muted-foreground">
-                  Les défis sportifs apparaîtront ici prochainement.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+          ) : <Card><CardContent className="text-center py-12"><Goal className="h-12 w-12 mx-auto text-muted-foreground mb-4" /><h3>Aucun défi</h3></CardContent></Card>}
         </TabsContent>
       </Tabs>
     </div>

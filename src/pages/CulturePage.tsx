@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PostCard } from '@/components/posts/PostCard'
 import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
@@ -33,9 +31,9 @@ export function CulturePage() {
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select('*, media_files(*)')
-        .eq('category_slug', 'culture')
+        .eq('category', 'culture')
         .eq('status', 'published')
-        .order('trending_score', { ascending: false })
+        .order('like_count', { ascending: false })
         .limit(20)
 
       if (postsError) {
@@ -43,17 +41,17 @@ export function CulturePage() {
         setPosts([])
       } else if (postsData && postsData.length > 0) {
         // Fetch profiles separately
-        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const userIds = (postsData as any[]).map(p => p.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, avatar_url, is_verified, country')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, avatar_url, is_verified, country')
+          .in('user_id', userIds)
         
-        const postsWithProfiles = postsData.map(post => ({
+        const postsWithProfiles = (postsData as any[]).map(post => ({
           ...post,
-          profiles: profilesData?.find(p => p.id === post.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === post.user_id) || null
         }))
-        setPosts(postsWithProfiles)
+        setPosts(postsWithProfiles as EnhancedPost[])
       } else {
         setPosts([])
       }
@@ -62,34 +60,39 @@ export function CulturePage() {
       const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
         .select('*')
-        .eq('category_slug', 'culture')
-        .order('rank_position')
+        .eq('category', 'culture')
+        .order('rank')
         .limit(10)
 
-      if (rankingsError) throw rankingsError
-      setRankings(rankingsData || [])
+      if (rankingsError) {
+        console.error('Error fetching rankings:', rankingsError)
+      }
+      setRankings((rankingsData || []) as WeeklyRanking[])
 
       // Fetch cultural news
       const { data: newsData, error: newsError } = await supabase
         .from('daily_news')
         .select('*')
-        .eq('category_slug', 'culture')
+        .eq('category', 'culture')
         .order('published_at', { ascending: false })
         .limit(5)
 
-      if (newsError) throw newsError
-      setNews(newsData || [])
+      if (newsError) {
+        console.error('Error fetching news:', newsError)
+      }
+      setNews((newsData || []) as DailyNews[])
 
       // Fetch cultural challenges
       const { data: challengesData, error: challengesError } = await supabase
         .from('challenges')
         .select('*')
-        .eq('category_slug', 'culture')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
 
-      if (challengesError) throw challengesError
-      setChallenges(challengesData || [])
+      if (challengesError) {
+        console.error('Error fetching challenges:', challengesError)
+      }
+      setChallenges((challengesData || []) as Challenge[])
 
     } catch (error) {
       console.error('Error fetching cultural content:', error)

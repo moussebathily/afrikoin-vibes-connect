@@ -5,12 +5,16 @@ import { useToast } from '@/hooks/use-toast'
 
 interface Profile {
   id: string
-  name: string
+  user_id?: string
+  name?: string
+  display_name?: string
+  username?: string
   avatar_url?: string
-  is_verified: boolean
+  is_verified?: boolean
   country?: string
-  created_at: string
-  updated_at: string
+  bio?: string
+  created_at?: string
+  updated_at?: string
 }
 
 interface AuthContextType {
@@ -38,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('user_id', userId)
         .single()
 
       if (error && error.code !== 'PGRST116') {
@@ -46,7 +50,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      setProfile(data)
+      if (data) {
+        setProfile(data as Profile)
+      }
     } catch (err) {
       console.error('Profile fetch error:', err)
     }
@@ -114,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: "Connexion réussie",
         description: "Bienvenue sur AfriKoin !",
-        variant: "success",
+        variant: "default",
       })
 
       return { error: null }
@@ -151,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast({
         title: "Inscription réussie",
         description: "Vérifiez votre email pour confirmer votre compte.",
-        variant: "success",
+        variant: "default",
       })
 
       return { error: null }

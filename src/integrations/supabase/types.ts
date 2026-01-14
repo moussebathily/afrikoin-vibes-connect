@@ -14,7 +14,553 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cart_items: {
+        Row: {
+          added_at: string | null
+          cart_id: string
+          currency_snapshot: string
+          id: string
+          price_snapshot: number
+          product_id: string
+          quantity: number
+        }
+        Insert: {
+          added_at?: string | null
+          cart_id: string
+          currency_snapshot?: string
+          id?: string
+          price_snapshot: number
+          product_id: string
+          quantity?: number
+        }
+        Update: {
+          added_at?: string | null
+          cart_id?: string
+          currency_snapshot?: string
+          id?: string
+          price_snapshot?: number
+          product_id?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_cart_id_fkey"
+            columns: ["cart_id"]
+            isOneToOne: false
+            referencedRelation: "carts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      carts: {
+        Row: {
+          created_at: string | null
+          id: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          category_slug: string | null
+          challenge_type: string | null
+          created_at: string | null
+          current_participants: number | null
+          description: string | null
+          end_date: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          participants_count: number | null
+          prize: string | null
+          reward_points: number | null
+          start_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category_slug?: string | null
+          challenge_type?: string | null
+          created_at?: string | null
+          current_participants?: number | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          participants_count?: number | null
+          prize?: string | null
+          reward_points?: number | null
+          start_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category_slug?: string | null
+          challenge_type?: string | null
+          created_at?: string | null
+          current_participants?: number | null
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          participants_count?: number | null
+          prize?: string | null
+          reward_points?: number | null
+          start_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      content_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          order_index: number | null
+          posts_count: number | null
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          order_index?: number | null
+          posts_count?: number | null
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          order_index?: number | null
+          posts_count?: number | null
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      daily_news: {
+        Row: {
+          category: string | null
+          category_slug: string | null
+          content: string | null
+          country: string | null
+          country_codes: string[] | null
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_breaking: boolean | null
+          is_featured: boolean | null
+          published_at: string | null
+          source: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          category_slug?: string | null
+          content?: string | null
+          country?: string | null
+          country_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          source?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          category_slug?: string | null
+          content?: string | null
+          country?: string | null
+          country_codes?: string[] | null
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          source?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      media_files: {
+        Row: {
+          created_at: string | null
+          duration: number | null
+          id: string
+          post_id: string | null
+          thumbnail_url: string | null
+          type: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          post_id?: string | null
+          thumbnail_url?: string | null
+          type?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          duration?: number | null
+          id?: string
+          post_id?: string | null
+          thumbnail_url?: string | null
+          type?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_files_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          category: string | null
+          comment_count: number | null
+          comments_count: number | null
+          content: string | null
+          content_type: string | null
+          country: string | null
+          created_at: string | null
+          id: string
+          is_featured: boolean | null
+          is_monetized: boolean | null
+          like_count: number | null
+          likes_count: number | null
+          media_type: string | null
+          media_url: string | null
+          save_count: number | null
+          share_count: number | null
+          shares_count: number | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+          view_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          comment_count?: number | null
+          comments_count?: number | null
+          content?: string | null
+          content_type?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_monetized?: boolean | null
+          like_count?: number | null
+          likes_count?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          save_count?: number | null
+          share_count?: number | null
+          shares_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          comment_count?: number | null
+          comments_count?: number | null
+          content?: string | null
+          content_type?: string | null
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_monetized?: boolean | null
+          like_count?: number | null
+          likes_count?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          save_count?: number | null
+          share_count?: number | null
+          shares_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
+      product_recommendations: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string | null
+          recommendation_type: string | null
+          recommended_product_id: string | null
+          score: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          recommendation_type?: string | null
+          recommended_product_id?: string | null
+          score?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string | null
+          recommendation_type?: string | null
+          recommended_product_id?: string | null
+          score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_recommendations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_recommendations_recommended_product_id_fkey"
+            columns: ["recommended_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          country: string | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          id: string
+          images: string[] | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          price: number
+          seller_id: string | null
+          stock: number | null
+          title: string
+          updated_at: string | null
+          views_count: number | null
+        }
+        Insert: {
+          category?: string | null
+          country?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price?: number
+          seller_id?: string | null
+          stock?: number | null
+          title: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          category?: string | null
+          country?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price?: number
+          seller_id?: string | null
+          stock?: number | null
+          title?: string
+          updated_at?: string | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          country: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          is_verified: boolean | null
+          name: string | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          country?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          is_verified?: boolean | null
+          name?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      user_favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_rankings: {
+        Row: {
+          category: string | null
+          category_slug: string | null
+          change_count: number | null
+          country_code: string | null
+          created_at: string | null
+          id: string
+          previous_rank: number | null
+          rank: number
+          score: number | null
+          total_score: number | null
+          trend: string | null
+          updated_at: string | null
+          user_id: string | null
+          week_end: string | null
+          week_start: string
+        }
+        Insert: {
+          category?: string | null
+          category_slug?: string | null
+          change_count?: number | null
+          country_code?: string | null
+          created_at?: string | null
+          id?: string
+          previous_rank?: number | null
+          rank: number
+          score?: number | null
+          total_score?: number | null
+          trend?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_end?: string | null
+          week_start: string
+        }
+        Update: {
+          category?: string | null
+          category_slug?: string | null
+          change_count?: number | null
+          country_code?: string | null
+          created_at?: string | null
+          id?: string
+          previous_rank?: number | null
+          rank?: number
+          score?: number | null
+          total_score?: number | null
+          trend?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          week_end?: string | null
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

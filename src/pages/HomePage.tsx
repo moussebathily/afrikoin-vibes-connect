@@ -14,11 +14,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Phone } from 'lucide-react'
+import { Post } from '@/types/post'
+import { ContentCategory, WeeklyRanking } from '@/types/content'
 
 export function HomePage() {
-  const [posts, setPosts] = useState([])
-  const [categories, setCategories] = useState([])
-  const [rankings, setRankings] = useState([])
+  const [posts, setPosts] = useState<Post[]>([])
+  const [categories, setCategories] = useState<ContentCategory[]>([])
+  const [rankings, setRankings] = useState<WeeklyRanking[]>([])
   const [activeCategory, setActiveCategory] = useState('general')
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
@@ -45,14 +47,14 @@ export function HomePage() {
       if (categoriesError) {
         console.error('Error fetching categories:', categoriesError)
       } else {
-        setCategories(categoriesData || [])
+        setCategories((categoriesData || []) as ContentCategory[])
       }
 
       // Fetch rankings safely without foreign key dependency
       const { data: rankingsData, error: rankingsError } = await supabase
         .from('weekly_rankings')
         .select('*')
-        .order('rank_position')
+        .order('rank')
         .limit(5)
 
       if (rankingsError) {
@@ -60,17 +62,17 @@ export function HomePage() {
       } else {
         // Fetch profiles separately for rankings
         if (rankingsData && rankingsData.length > 0) {
-          const userIds = rankingsData.map(r => r.user_id).filter(Boolean)
+          const userIds = (rankingsData as any[]).map(r => r.user_id).filter(Boolean)
           const { data: profilesData } = await supabase
             .from('profiles')
-            .select('id, name, avatar_url, is_verified')
-            .in('id', userIds)
+            .select('id, user_id, name, display_name, avatar_url, is_verified')
+            .in('user_id', userIds)
           
-          const rankingsWithProfiles = rankingsData.map(ranking => ({
+          const rankingsWithProfiles = (rankingsData as any[]).map(ranking => ({
             ...ranking,
-            profiles: profilesData?.find(p => p.id === ranking.user_id) || null
+            profiles: profilesData?.find(p => p.user_id === ranking.user_id) || null
           }))
-          setRankings(rankingsWithProfiles)
+          setRankings(rankingsWithProfiles as WeeklyRanking[])
         } else {
           setRankings([])
         }
@@ -97,11 +99,11 @@ export function HomePage() {
         .eq('status', 'published')
 
       if (activeCategory !== 'general') {
-        query = query.eq('category_slug', activeCategory)
+        query = query.eq('category', activeCategory)
       }
 
       const { data: postsData, error } = await query
-        .order('trending_score', { ascending: false })
+        .order('like_count', { ascending: false })
         .limit(20)
 
       if (error) {
@@ -112,17 +114,17 @@ export function HomePage() {
 
       // Fetch profiles separately to avoid foreign key issues
       if (postsData && postsData.length > 0) {
-        const userIds = postsData.map(p => p.user_id).filter(Boolean)
+        const userIds = (postsData as any[]).map(p => p.user_id).filter(Boolean)
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('id, name, country, is_verified')
-          .in('id', userIds)
+          .select('id, user_id, name, display_name, country, is_verified')
+          .in('user_id', userIds)
         
-        const postsWithProfiles = postsData.map(post => ({
+        const postsWithProfiles = (postsData as any[]).map(post => ({
           ...post,
-          profiles: profilesData?.find(p => p.id === post.user_id) || null
+          profiles: profilesData?.find(p => p.user_id === post.user_id) || null
         }))
-        setPosts(postsWithProfiles)
+        setPosts(postsWithProfiles as Post[])
       } else {
         setPosts([])
       }
@@ -228,7 +230,7 @@ export function HomePage() {
           {posts.map((post) => (
             <PostCard
               key={post.id}
-              post={post as any}
+              post={post}
               onLike={() => handleLikePost(post.id)}
             />
           ))}
