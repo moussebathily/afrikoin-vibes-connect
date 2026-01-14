@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, SlidersHorizontal, Package, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, SlidersHorizontal, Package, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -109,11 +110,16 @@ const SAMPLE_PRODUCTS: Product[] = [
 const CATEGORIES = ['Tous', 'Mode', 'Accessoires', 'Bijoux', 'Art', 'Alimentation', 'Beauté'];
 
 export const ProductGrid: React.FC = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(SAMPLE_PRODUCTS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleViewProduct = (product: Product) => {
+    navigate(`/product/${product.id}`);
+  };
 
   // Load products from Supabase (with fallback to sample data)
   useEffect(() => {
@@ -229,7 +235,11 @@ export const ProductGrid: React.FC = () => {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              onView={handleViewProduct}
+            />
           ))}
         </div>
       )}
