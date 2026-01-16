@@ -9,6 +9,7 @@ import { SellerProducts } from "@/components/seller/SellerProducts";
 import { SellerOrders } from "@/components/seller/SellerOrders";
 import { SalesChart } from "@/components/seller/SalesChart";
 import { CreateStoreForm } from "@/components/seller/CreateStoreForm";
+import { AddProductForm } from "@/components/seller/AddProductForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -79,6 +80,7 @@ export default function SellerPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeTab, setActiveTab] = useState("boutique");
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showAddProductForm, setShowAddProductForm] = useState(false);
 
   // Determine if viewing own profile or another seller's
   const targetSellerId = sellerId || user?.id;
@@ -265,7 +267,7 @@ export default function SellerPage() {
             <SellerProducts 
               products={products}
               isOwner={isOwner}
-              onAddProduct={() => {/* TODO: Add product modal */}}
+              onAddProduct={() => setShowAddProductForm(true)}
               onEditProduct={(id) => {/* TODO: Edit product */}}
             />
           </TabsContent>
@@ -310,6 +312,13 @@ export default function SellerPage() {
           )}
         </Tabs>
       </div>
+
+      {/* Add Product Form */}
+      <AddProductForm
+        open={showAddProductForm}
+        onOpenChange={setShowAddProductForm}
+        onSuccess={() => fetchSellerData()}
+      />
     </div>
   );
 }
