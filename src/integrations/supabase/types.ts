@@ -268,6 +268,104 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string
+          product_id: string
+          product_image: string | null
+          product_title: string
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id: string
+          product_id: string
+          product_image?: string | null
+          product_title: string
+          quantity?: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string
+          product_id?: string
+          product_image?: string | null
+          product_title?: string
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_id: string
+          created_at: string | null
+          currency: string | null
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string | null
+          payment_status: string | null
+          seller_id: string
+          shipping_address: Json | null
+          shipping_fee: number | null
+          status: string | null
+          subtotal: number
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          notes?: string | null
+          order_number: string
+          payment_method?: string | null
+          payment_status?: string | null
+          seller_id: string
+          shipping_address?: Json | null
+          shipping_fee?: number | null
+          status?: string | null
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          notes?: string | null
+          order_number?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          seller_id?: string
+          shipping_address?: Json | null
+          shipping_fee?: number | null
+          status?: string | null
+          subtotal?: number
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           category: string | null
@@ -528,6 +626,81 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
           username?: string | null
+        }
+        Relationships: []
+      }
+      seller_profiles: {
+        Row: {
+          address: string | null
+          banner_url: string | null
+          business_type: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          joined_at: string | null
+          logo_url: string | null
+          phone: string | null
+          rating: number | null
+          store_description: string | null
+          store_name: string
+          total_revenue: number | null
+          total_reviews: number | null
+          total_sales: number | null
+          updated_at: string | null
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          banner_url?: string | null
+          business_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          joined_at?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          rating?: number | null
+          store_description?: string | null
+          store_name: string
+          total_revenue?: number | null
+          total_reviews?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          banner_url?: string | null
+          business_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          joined_at?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          rating?: number | null
+          store_description?: string | null
+          store_name?: string
+          total_revenue?: number | null
+          total_reviews?: number | null
+          total_sales?: number | null
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
         }
         Relationships: []
       }
