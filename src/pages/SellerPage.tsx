@@ -8,6 +8,7 @@ import { SellerStats } from "@/components/seller/SellerStats";
 import { SellerProducts } from "@/components/seller/SellerProducts";
 import { SellerOrders } from "@/components/seller/SellerOrders";
 import { SalesChart } from "@/components/seller/SalesChart";
+import { CreateStoreForm } from "@/components/seller/CreateStoreForm";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -16,7 +17,8 @@ import {
   BarChart3, 
   ShoppingCart,
   ArrowLeft,
-  Loader2
+  Loader2,
+  Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -76,6 +78,7 @@ export default function SellerPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeTab, setActiveTab] = useState("boutique");
+  const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Determine if viewing own profile or another seller's
   const targetSellerId = sellerId || user?.id;
@@ -173,7 +176,8 @@ export default function SellerPage() {
           Ce profil vendeur n'existe pas encore.
         </p>
         {user && !sellerId && (
-          <Button onClick={() => {/* TODO: Create seller profile modal */}}>
+          <Button onClick={() => setShowCreateForm(true)}>
+            <Plus className="h-4 w-4 mr-2" />
             Créer ma boutique
           </Button>
         )}
@@ -181,6 +185,12 @@ export default function SellerPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Retour
         </Button>
+        
+        <CreateStoreForm 
+          open={showCreateForm} 
+          onOpenChange={setShowCreateForm}
+          onSuccess={() => fetchSellerData()}
+        />
       </div>
     );
   }
