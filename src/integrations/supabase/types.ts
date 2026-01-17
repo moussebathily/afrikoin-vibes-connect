@@ -318,9 +318,11 @@ export type Database = {
           created_at: string | null
           currency: string | null
           id: string
+          mobile_money_provider: string | null
           notes: string | null
           order_number: string
           payment_method: string | null
+          payment_reference: string | null
           payment_status: string | null
           seller_id: string
           shipping_address: Json | null
@@ -335,9 +337,11 @@ export type Database = {
           created_at?: string | null
           currency?: string | null
           id?: string
+          mobile_money_provider?: string | null
           notes?: string | null
           order_number: string
           payment_method?: string | null
+          payment_reference?: string | null
           payment_status?: string | null
           seller_id: string
           shipping_address?: Json | null
@@ -352,9 +356,11 @@ export type Database = {
           created_at?: string | null
           currency?: string | null
           id?: string
+          mobile_money_provider?: string | null
           notes?: string | null
           order_number?: string
           payment_method?: string | null
+          payment_reference?: string | null
           payment_status?: string | null
           seller_id?: string
           shipping_address?: Json | null
@@ -701,6 +707,54 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           website?: string | null
+        }
+        Relationships: []
+      }
+      shipping_addresses: {
+        Row: {
+          address_line1: string
+          address_line2: string | null
+          city: string
+          country: string
+          created_at: string
+          full_name: string
+          id: string
+          is_default: boolean | null
+          phone: string
+          postal_code: string | null
+          state: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_line1: string
+          address_line2?: string | null
+          city: string
+          country?: string
+          created_at?: string
+          full_name: string
+          id?: string
+          is_default?: boolean | null
+          phone: string
+          postal_code?: string | null
+          state?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_line1?: string
+          address_line2?: string | null
+          city?: string
+          country?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          is_default?: boolean | null
+          phone?: string
+          postal_code?: string | null
+          state?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
