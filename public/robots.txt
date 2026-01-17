@@ -4,16 +4,17 @@
 User-agent: *
 Allow: /
 
-# Pages spécifiques autorisées
-Allow: /dashboard
-Allow: /trading
-Allow: /wallet
+# Pages principales autorisées
+Allow: /marketplace
+Allow: /culture
+Allow: /sports
 Allow: /markets
+Allow: /rankings
+Allow: /wallet
+Allow: /tracking
 Allow: /about
-Allow: /contact
-Allow: /help
-Allow: /security
-Allow: /api-docs
+Allow: /auth
+Allow: /seller
 
 # Fichiers statiques autorisés
 Allow: /*.css$
@@ -24,9 +25,10 @@ Allow: /*.jpeg$
 Allow: /*.gif$
 Allow: /*.svg$
 Allow: /*.ico$
+Allow: /*.webp$
 
 # Répertoires à exclure
-Disallow: /api/private/
+Disallow: /api/
 Disallow: /admin/
 Disallow: /_next/
 Disallow: /node_modules/
@@ -34,9 +36,10 @@ Disallow: /.git/
 Disallow: /dist/
 Disallow: /android/
 Disallow: /.github/
+Disallow: /supabase/
 
 # Sitemap
 Sitemap: https://www.afrikoin.online/sitemap.xml
 
-# Délai entre les requêtes (en secondes)
+# Crawl rate
 Crawl-delay: 1
