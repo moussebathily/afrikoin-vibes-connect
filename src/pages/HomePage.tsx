@@ -7,6 +7,8 @@ import { IndependenceBanner } from '@/components/holidays/IndependenceBanner'
 import { EntertainmentSection } from '@/components/entertainment/EntertainmentSection'
 import { CategoryTabs } from '@/components/categories/CategoryTabs'
 import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
+import { NewsSection } from '@/components/news/NewsSection'
+import { JobsSection } from '@/components/jobs/JobsSection'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
@@ -220,6 +222,12 @@ export function HomePage() {
       
       {/* Stories Carousel */}
       <StoryCarousel />
+      
+      {/* Info du jour - Actualités, Sport, Culture */}
+      <NewsSection limit={4} showTabs={true} />
+      
+      {/* Offres d'emploi */}
+      <JobsSection limit={4} />
       
       {/* Cultural & Entertainment */}
       <EntertainmentSection />

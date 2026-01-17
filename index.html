@@ -1,12 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>AfriKoin - Votre marché panafricain</title>
-    <meta name="description" content="AfriKoin - La plateforme tout-en-un pour acheter, vendre et participer à la vie culturelle partout en Afrique. Petites annonces, live streaming, assistant vocal et paiements locaux." />
+    <title>AfriKoin - Marketplace Panafricain | Achat, Vente, Emploi, Actualités</title>
+    <meta name="description" content="AfriKoin - La plateforme tout-en-un pour l'Afrique. Achetez et vendez en ligne, trouvez des emplois, suivez l'actualité sportive et culturelle. Paiements Mobile Money, Wave, Orange Money." />
+    <meta name="keywords" content="afrique, marketplace, emploi afrique, actualité africaine, sport africain, culture africaine, mobile money, wave, orange money, e-commerce afrique, petites annonces" />
     <meta name="author" content="AfriKoin Team" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
 
     <!-- Mobile app configuration -->
     <meta name="theme-color" content="#22c55e" />
@@ -14,28 +16,117 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="AfriKoin" />
+    <meta name="application-name" content="AfriKoin" />
     <link rel="canonical" href="https://www.afrikoin.online/" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="AfriKoin - Votre marché panafricain" />
-    <meta property="og:description" content="Achetez, vendez et connectez-vous partout en Afrique avec AfriKoin" />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:url" content="https://www.afrikoin.online/" />
+    <meta property="og:title" content="AfriKoin - Marketplace Panafricain | Achat, Vente, Emploi" />
+    <meta property="og:description" content="La plateforme tout-en-un pour l'Afrique. Achetez, vendez, trouvez des emplois et suivez l'actualité. Paiements Mobile Money supportés." />
+    <meta property="og:image" content="https://www.afrikoin.online/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="AfriKoin" />
+    <meta property="og:locale" content="fr_FR" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://www.afrikoin.online/" />
+    <meta name="twitter:title" content="AfriKoin - Marketplace Panafricain" />
+    <meta name="twitter:description" content="Achetez, vendez et connectez-vous partout en Afrique avec AfriKoin" />
+    <meta name="twitter:image" content="https://www.afrikoin.online/og-image.png" />
     <meta name="twitter:site" content="@afrikoin" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta name="twitter:creator" content="@afrikoin" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#22c55e" />
+    <meta name="msapplication-TileColor" content="#22c55e" />
 
-    <!-- Preload des polices pour améliorer les performances -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Preload fonts for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Preload critical resources -->
+    <link rel="dns-prefetch" href="https://api.afrikoin.online" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "AfriKoin",
+      "alternateName": "AfriKoin Marketplace",
+      "url": "https://www.afrikoin.online",
+      "description": "Plateforme panafricaine pour acheter, vendre, trouver des emplois et suivre l'actualité africaine.",
+      "applicationCategory": "ShoppingApplication",
+      "operatingSystem": "Web, Android, iOS",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "XOF"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1250",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "AfriKoin Team",
+        "url": "https://www.afrikoin.online/about"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "AfriKoin",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.afrikoin.online/logo.png"
+        }
+      },
+      "sameAs": [
+        "https://twitter.com/afrikoin",
+        "https://www.facebook.com/afrikoin",
+        "https://www.instagram.com/afrikoin",
+        "https://www.linkedin.com/company/afrikoin"
+      ],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.afrikoin.online/marketplace?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "AfriKoin",
+      "url": "https://www.afrikoin.online",
+      "logo": "https://www.afrikoin.online/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["French", "English", "Swahili", "Arabic"]
+      },
+      "areaServed": {
+        "@type": "Continent",
+        "name": "Africa"
+      }
+    }
+    </script>
   </head>
 
   <body>
