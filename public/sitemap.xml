@@ -60,6 +60,22 @@
     <priority>0.8</priority>
   </url>
   
+  <!-- Offres d'emploi -->
+  <url>
+    <loc>https://www.afrikoin.online/jobs</loc>
+    <lastmod>2025-01-17</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Actualités -->
+  <url>
+    <loc>https://www.afrikoin.online/news</loc>
+    <lastmod>2025-01-17</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
   <!-- Suivi de colis -->
   <url>
     <loc>https://www.afrikoin.online/tracking</loc>
