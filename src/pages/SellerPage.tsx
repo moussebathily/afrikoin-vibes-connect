@@ -7,6 +7,7 @@ import { SellerProfile } from "@/components/seller/SellerProfile";
 import { SellerStats } from "@/components/seller/SellerStats";
 import { SellerProducts } from "@/components/seller/SellerProducts";
 import { SellerOrders } from "@/components/seller/SellerOrders";
+import { SellerOrdersManager } from "@/components/seller/SellerOrdersManager";
 import { SalesChart } from "@/components/seller/SalesChart";
 import { CreateStoreForm } from "@/components/seller/CreateStoreForm";
 import { AddProductForm } from "@/components/seller/AddProductForm";
@@ -275,10 +276,7 @@ export default function SellerPage() {
           {isOwner && (
             <>
               <TabsContent value="commandes" className="mt-4">
-                <SellerOrders 
-                  orders={orders}
-                  onViewOrder={(id) => {/* TODO: View order detail */}}
-                />
+                <SellerOrdersManager sellerId={sellerProfile.user_id} />
               </TabsContent>
 
               <TabsContent value="stats" className="mt-4 space-y-4">
