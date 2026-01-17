@@ -223,6 +223,14 @@ const CheckoutPage: React.FC = () => {
 
         if (itemsError) throw itemsError;
 
+        // Send order notification email (fire and forget)
+        supabase.functions.invoke('send-order-notification', {
+          body: {
+            order_id: order.id,
+            notification_type: 'order_created',
+          }
+        }).catch(err => console.error('Notification error:', err));
+
         orderNumbers.push(orderNumber);
       }
 
