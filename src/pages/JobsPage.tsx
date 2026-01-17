@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -12,7 +12,6 @@ import {
   DollarSign,
   Search,
   Filter,
-  Plus,
   Users,
   Globe,
   Laptop,
@@ -20,6 +19,8 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { supabase } from '@/integrations/supabase/client'
+import { JobPostForm } from '@/components/jobs/JobPostForm'
 
 interface Job {
   id: string
@@ -139,10 +140,59 @@ const demoJobs: Job[] = [
 ]
 
 export function JobsPage() {
-  const [jobs] = useState<Job[]>(demoJobs)
+  const [jobs, setJobs] = useState<Job[]>(demoJobs)
+  const [dbJobs, setDbJobs] = useState<Job[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [activeType, setActiveType] = useState('all')
+  const [loading, setLoading] = useState(true)
   const { t } = useTranslation()
+
+  const fetchJobs = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching jobs:', error)
+        return
+      }
+
+      if (data && data.length > 0) {
+        const formattedJobs: Job[] = data.map((job: any) => ({
+          id: job.id,
+          title: job.title,
+          company: job.company,
+          location: job.location,
+          type: job.job_type as Job['type'],
+          salary: job.salary_min && job.salary_max 
+            ? `${(job.salary_min / 1000).toFixed(0)}K - ${(job.salary_max / 1000).toFixed(0)}K ${job.salary_currency}`
+            : job.salary_min 
+              ? `${(job.salary_min / 1000).toFixed(0)}K+ ${job.salary_currency}`
+              : undefined,
+          posted_at: job.created_at,
+          is_featured: job.is_featured,
+          category: job.category,
+          applicants: job.applicants_count,
+          description: job.description
+        }))
+        setDbJobs(formattedJobs)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchJobs()
+  }, [fetchJobs])
+
+  // Combine demo jobs with DB jobs (DB jobs first)
+  const allJobs = [...dbJobs, ...demoJobs]
 
   const getTypeLabel = (type: Job['type']) => {
     const labels = {
@@ -172,7 +222,7 @@ export function JobsPage() {
     return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
   }
 
-  const filteredJobs = jobs.filter(job => {
+  const filteredJobs = allJobs.filter(job => {
     const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.location.toLowerCase().includes(searchQuery.toLowerCase())
@@ -186,10 +236,10 @@ export function JobsPage() {
   const regularJobs = filteredJobs.filter(job => !job.is_featured)
 
   const stats = {
-    total: jobs.length,
-    remote: jobs.filter(j => j.type === 'remote').length,
-    internships: jobs.filter(j => j.type === 'internship').length,
-    featured: jobs.filter(j => j.is_featured).length
+    total: allJobs.length,
+    remote: allJobs.filter(j => j.type === 'remote').length,
+    internships: allJobs.filter(j => j.type === 'internship').length,
+    featured: allJobs.filter(j => j.is_featured).length
   }
 
   return (
@@ -254,10 +304,7 @@ export function JobsPage() {
               <Filter className="h-4 w-4" />
               Filtres
             </Button>
-            <Button className="gap-2 bg-gradient-primary">
-              <Plus className="h-4 w-4" />
-              Publier
-            </Button>
+            <JobPostForm onSuccess={fetchJobs} />
           </div>
         </CardContent>
       </Card>

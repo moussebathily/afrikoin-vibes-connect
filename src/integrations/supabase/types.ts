@@ -230,6 +230,131 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          cover_letter: string | null
+          created_at: string | null
+          id: string
+          job_id: string
+          resume_url: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          job_id: string
+          resume_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cover_letter?: string | null
+          created_at?: string | null
+          id?: string
+          job_id?: string
+          resume_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          applicants_count: number | null
+          benefits: string | null
+          category: string | null
+          company: string
+          company_logo_url: string | null
+          company_website: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string
+          experience_level: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          job_type: string
+          location: string
+          requirements: string | null
+          salary_currency: string | null
+          salary_max: number | null
+          salary_min: number | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          applicants_count?: number | null
+          benefits?: string | null
+          category?: string | null
+          company: string
+          company_logo_url?: string | null
+          company_website?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          job_type?: string
+          location: string
+          requirements?: string | null
+          salary_currency?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          applicants_count?: number | null
+          benefits?: string | null
+          category?: string | null
+          company?: string
+          company_logo_url?: string | null
+          company_website?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string
+          experience_level?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          job_type?: string
+          location?: string
+          requirements?: string | null
+          salary_currency?: string | null
+          salary_max?: number | null
+          salary_min?: number | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       media_files: {
         Row: {
           created_at: string | null
