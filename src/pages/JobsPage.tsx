@@ -23,6 +23,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { JobPostForm } from '@/components/jobs/JobPostForm'
 import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
 import { RecruiterDashboard } from '@/components/jobs/RecruiterDashboard'
+import { MyApplications } from '@/components/jobs/MyApplications'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
@@ -331,6 +332,7 @@ export function JobsPage() {
                   <Filter className="h-4 w-4" />
                   Filtres
                 </Button>
+                {user && <MyApplications />}
                 <JobPostForm onSuccess={fetchJobs} />
               </div>
             </CardContent>
