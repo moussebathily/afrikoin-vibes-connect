@@ -22,10 +22,12 @@ import {
   Building2,
   MapPin,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Trash2
 } from 'lucide-react'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/hooks/use-toast'
 
 interface Application {
   id: string
@@ -47,7 +49,9 @@ export function MyApplications() {
   const [open, setOpen] = useState(false)
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
+  const [withdrawing, setWithdrawing] = useState<string | null>(null)
   const { user } = useAuth()
+  const { toast } = useToast()
 
   const fetchApplications = useCallback(async () => {
     if (!user) return
@@ -94,6 +98,51 @@ export function MyApplications() {
       fetchApplications()
     }
   }, [open, fetchApplications])
+
+  const withdrawApplication = async (applicationId: string, jobTitle: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir retirer votre candidature pour "${jobTitle}" ?`)) {
+      return
+    }
+
+    setWithdrawing(applicationId)
+    try {
+      // Delete the resume from storage if exists
+      const application = applications.find(a => a.id === applicationId)
+      if (application?.resume_url) {
+        const urlParts = application.resume_url.split('/')
+        const fileName = urlParts[urlParts.length - 1]
+        if (user) {
+          await supabase.storage
+            .from('resumes')
+            .remove([`${user.id}/${fileName}`])
+        }
+      }
+
+      // Delete the application
+      const { error } = await supabase
+        .from('job_applications')
+        .delete()
+        .eq('id', applicationId)
+
+      if (error) throw error
+
+      setApplications(prev => prev.filter(a => a.id !== applicationId))
+      
+      toast({
+        title: "Candidature retirée",
+        description: `Votre candidature pour "${jobTitle}" a été retirée avec succès.`
+      })
+    } catch (error) {
+      console.error('Error withdrawing application:', error)
+      toast({
+        title: "Erreur",
+        description: "Impossible de retirer la candidature",
+        variant: "destructive"
+      })
+    } finally {
+      setWithdrawing(null)
+    }
+  }
 
   const getStatusLabel = (status: Application['status']) => {
     const labels = {
@@ -306,6 +355,22 @@ export function MyApplications() {
                                   <FileText className="h-3.5 w-3.5" />
                                   Voir mon CV
                                 </a>
+                              </Button>
+                            )}
+                            {app.status === 'pending' && (
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="h-7 text-xs gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => withdrawApplication(app.id, app.job?.title || 'ce poste')}
+                                disabled={withdrawing === app.id}
+                              >
+                                {withdrawing === app.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                )}
+                                Retirer
                               </Button>
                             )}
                           </div>
