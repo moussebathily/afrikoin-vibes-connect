@@ -15,6 +15,7 @@ import { MarketsPage } from '@/pages/MarketsPage'
 import { CallPage } from '@/pages/CallPage'
 import { TrackingPage } from '@/pages/TrackingPage'
 import { JobsPage } from '@/pages/JobsPage'
+import { JobDetailPage } from '@/pages/JobDetailPage'
 import { NewsPage } from '@/pages/NewsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { setupI18n } from '@/i18n/config'
@@ -104,6 +105,7 @@ function App() {
                 <Route path="call" element={<CallPage />} />
                 <Route path="tracking" element={<TrackingPage />} />
                 <Route path="jobs" element={<JobsPage />} />
+                <Route path="jobs/:id" element={<JobDetailPage />} />
                 <Route path="news" element={<NewsPage />} />
                 <Route path="marketplace" element={
                   <Suspense fallback={
