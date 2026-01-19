@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -408,10 +409,22 @@ function JobCard({
   getTypeLabel: (type: Job['type']) => string
   getTypeVariant: (type: Job['type']) => 'default' | 'secondary' | 'outline'
 }) {
+  const navigate = useNavigate()
+
+  const handleCardClick = () => {
+    // Only navigate to detail for DB jobs (UUID format)
+    if (job.id.includes('-')) {
+      navigate(`/jobs/${job.id}`)
+    }
+  }
+
   return (
-    <Card className={`transition-all hover:shadow-md cursor-pointer group ${
-      job.is_featured ? 'border-primary/50 bg-primary/5' : ''
-    }`}>
+    <Card 
+      className={`transition-all hover:shadow-md cursor-pointer group ${
+        job.is_featured ? 'border-primary/50 bg-primary/5' : ''
+      }`}
+      onClick={handleCardClick}
+    >
       <CardContent className="p-4">
         <div className="flex gap-4">
           <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
@@ -476,11 +489,13 @@ function JobCard({
                   </span>
                 )}
               </div>
-              <JobApplicationForm 
-                jobId={job.id}
-                jobTitle={job.title}
-                company={job.company}
-              />
+              <div onClick={(e) => e.stopPropagation()}>
+                <JobApplicationForm 
+                  jobId={job.id}
+                  jobTitle={job.title}
+                  company={job.company}
+                />
+              </div>
             </div>
           </div>
         </div>
