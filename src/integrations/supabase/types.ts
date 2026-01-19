@@ -271,6 +271,35 @@ export type Database = {
           },
         ]
       }
+      job_views: {
+        Row: {
+          id: string
+          job_id: string
+          user_id: string
+          viewed_at: string | null
+        }
+        Insert: {
+          id?: string
+          job_id: string
+          user_id: string
+          viewed_at?: string | null
+        }
+        Update: {
+          id?: string
+          job_id?: string
+          user_id?: string
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_views_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jobs: {
         Row: {
           applicants_count: number | null
@@ -911,6 +940,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_job_preferences: {
+        Row: {
+          created_at: string | null
+          experience_level: string | null
+          id: string
+          max_salary: number | null
+          min_salary: number | null
+          preferred_categories: string[] | null
+          preferred_job_types: string[] | null
+          preferred_locations: string[] | null
+          remote_only: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          experience_level?: string | null
+          id?: string
+          max_salary?: number | null
+          min_salary?: number | null
+          preferred_categories?: string[] | null
+          preferred_job_types?: string[] | null
+          preferred_locations?: string[] | null
+          remote_only?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          experience_level?: string | null
+          id?: string
+          max_salary?: number | null
+          min_salary?: number | null
+          preferred_categories?: string[] | null
+          preferred_job_types?: string[] | null
+          preferred_locations?: string[] | null
+          remote_only?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       weekly_rankings: {
         Row: {
