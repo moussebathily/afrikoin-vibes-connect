@@ -56,6 +56,7 @@ interface Application {
   profile?: {
     display_name: string | null
     avatar_url: string | null
+    email?: string | null
   }
 }
 
@@ -131,6 +132,8 @@ export function RecruiterDashboard() {
   const updateApplicationStatus = async (appId: string, newStatus: Application['status']) => {
     setUpdating(appId)
     try {
+      const application = applications.find(a => a.id === appId)
+      
       const { error } = await supabase
         .from('job_applications')
         .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -141,6 +144,25 @@ export function RecruiterDashboard() {
       setApplications(prev => 
         prev.map(app => app.id === appId ? { ...app, status: newStatus } : app)
       )
+
+      // Send email notification
+      if (application && newStatus !== 'pending') {
+        try {
+          await supabase.functions.invoke('send-application-notification', {
+            body: {
+              application_id: appId,
+              new_status: newStatus,
+              job_title: application.job?.title || 'Poste',
+              company: application.job?.company || 'Entreprise',
+              user_id: application.user_id,
+              applicant_name: application.profile?.display_name || 'Candidat'
+            }
+          })
+        } catch (notifError) {
+          console.error('Error sending notification:', notifError)
+          // Don't fail the status update if notification fails
+        }
+      }
 
       toast({
         title: "Statut mis à jour",
