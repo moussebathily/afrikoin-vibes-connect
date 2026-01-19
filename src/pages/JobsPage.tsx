@@ -25,6 +25,7 @@ import { JobPostForm } from '@/components/jobs/JobPostForm'
 import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
 import { RecruiterDashboard } from '@/components/jobs/RecruiterDashboard'
 import { MyApplications } from '@/components/jobs/MyApplications'
+import { JobRecommendations } from '@/components/jobs/JobRecommendations'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
@@ -284,6 +285,9 @@ export function JobsPage() {
         <RecruiterDashboard />
       ) : (
         <>
+          {/* Job Recommendations */}
+          {user && <JobRecommendations />}
+
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Card>
