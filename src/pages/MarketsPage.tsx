@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { PostCard } from '@/components/posts/PostCard'
 import { DailyNewsCard } from '@/components/news/DailyNewsCard'
 import { ChallengeCard } from '@/components/challenges/ChallengeCard'
+import { AfricanLocalMarkets } from '@/components/markets/AfricanLocalMarkets'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { EnhancedPost, DailyNews, Challenge } from '@/types/content'
-import { Briefcase, TrendingUp, Globe, Building2 } from 'lucide-react'
+import { Briefcase, TrendingUp, Globe, Building2, Store } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 export function MarketsPage() {
   const [posts, setPosts] = useState<EnhancedPost[]>([])
@@ -125,93 +127,113 @@ export function MarketsPage() {
           <h1 className="text-3xl font-bold">Marchés Panafricains</h1>
         </div>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Découvrez les opportunités commerciales, les échanges économiques et les marchés émergents à travers l'Afrique
+          Découvrez les opportunités commerciales, les marchés locaux et les échanges économiques à travers l'Afrique
         </p>
       </header>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card border rounded-lg p-6 text-center">
-          <Briefcase className="h-8 w-8 text-primary mx-auto mb-3" />
-          <h3 className="font-semibold text-lg">Opportunités</h3>
-          <p className="text-2xl font-bold text-primary">{posts.length}</p>
-          <p className="text-sm text-muted-foreground">Contenus disponibles</p>
-        </div>
-        
-        <div className="bg-card border rounded-lg p-6 text-center">
-          <TrendingUp className="h-8 w-8 text-green-500 mx-auto mb-3" />
-          <h3 className="font-semibold text-lg">Actualités</h3>
-          <p className="text-2xl font-bold text-green-500">{news.length}</p>
-          <p className="text-sm text-muted-foreground">Infos du jour</p>
-        </div>
-        
-        <div className="bg-card border rounded-lg p-6 text-center">
-          <Globe className="h-8 w-8 text-blue-500 mx-auto mb-3" />
-          <h3 className="font-semibold text-lg">Défis</h3>
-          <p className="text-2xl font-bold text-blue-500">{challenges.length}</p>
-          <p className="text-sm text-muted-foreground">Challenges actifs</p>
-        </div>
-      </div>
+      {/* Main Tabs */}
+      <Tabs defaultValue="local-markets" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="local-markets" className="gap-2">
+            <Store className="h-4 w-4" />
+            Marchés Locaux
+          </TabsTrigger>
+          <TabsTrigger value="opportunities" className="gap-2">
+            <Briefcase className="h-4 w-4" />
+            Opportunités
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Posts Feed */}
-        <div className="lg:col-span-2 space-y-6">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
-            Opportunités Commerciales
-          </h2>
-          
-          {posts.length > 0 ? (
-            posts.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post as any}
-                onLike={() => handleLikePost(post.id)}
-              />
-            ))
-          ) : (
-            <div className="text-center py-12 bg-muted/50 rounded-lg">
-              <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-muted-foreground mb-2">
-                Aucune opportunité pour le moment
-              </h3>
-              <p className="text-muted-foreground">
-                Soyez le premier à partager une opportunité commerciale !
-              </p>
+        <TabsContent value="local-markets" className="mt-6">
+          <AfricanLocalMarkets />
+        </TabsContent>
+
+        <TabsContent value="opportunities" className="mt-6 space-y-6">
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-card border rounded-lg p-6 text-center">
+              <Briefcase className="h-8 w-8 text-primary mx-auto mb-3" />
+              <h3 className="font-semibold text-lg">Opportunités</h3>
+              <p className="text-2xl font-bold text-primary">{posts.length}</p>
+              <p className="text-sm text-muted-foreground">Contenus disponibles</p>
             </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Daily News */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Actualités Marchés
-            </h3>
-            <div className="space-y-4">
-              {news.map((article) => (
-                <DailyNewsCard key={article.id} news={article} />
-              ))}
+            
+            <div className="bg-card border rounded-lg p-6 text-center">
+              <TrendingUp className="h-8 w-8 text-green-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-lg">Actualités</h3>
+              <p className="text-2xl font-bold text-green-500">{news.length}</p>
+              <p className="text-sm text-muted-foreground">Infos du jour</p>
+            </div>
+            
+            <div className="bg-card border rounded-lg p-6 text-center">
+              <Globe className="h-8 w-8 text-blue-500 mx-auto mb-3" />
+              <h3 className="font-semibold text-lg">Défis</h3>
+              <p className="text-2xl font-bold text-blue-500">{challenges.length}</p>
+              <p className="text-sm text-muted-foreground">Challenges actifs</p>
             </div>
           </div>
 
-          {/* Active Challenges */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Défis Commerciaux
-            </h3>
-            <div className="space-y-4">
-              {challenges.map((challenge) => (
-                <ChallengeCard key={challenge.id} challenge={challenge} />
-              ))}
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Posts Feed */}
+            <div className="lg:col-span-2 space-y-6">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                Opportunités Commerciales
+              </h2>
+              
+              {posts.length > 0 ? (
+                posts.map((post) => (
+                  <PostCard
+                    key={post.id}
+                    post={post as any}
+                    onLike={() => handleLikePost(post.id)}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-12 bg-muted/50 rounded-lg">
+                  <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                    Aucune opportunité pour le moment
+                  </h3>
+                  <p className="text-muted-foreground">
+                    Soyez le premier à partager une opportunité commerciale !
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Daily News */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Actualités Marchés
+                </h3>
+                <div className="space-y-4">
+                  {news.map((article) => (
+                    <DailyNewsCard key={article.id} news={article} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Challenges */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Défis Commerciaux
+                </h3>
+                <div className="space-y-4">
+                  {challenges.map((challenge) => (
+                    <ChallengeCard key={challenge.id} challenge={challenge} />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
