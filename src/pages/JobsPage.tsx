@@ -21,6 +21,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { supabase } from '@/integrations/supabase/client'
 import { JobPostForm } from '@/components/jobs/JobPostForm'
+import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
 
 interface Job {
   id: string
@@ -445,9 +446,11 @@ function JobCard({
                   </span>
                 )}
               </div>
-              <Button size="sm" variant="outline" className="h-8">
-                Postuler
-              </Button>
+              <JobApplicationForm 
+                jobId={job.id}
+                jobTitle={job.title}
+                company={job.company}
+              />
             </div>
           </div>
         </div>
