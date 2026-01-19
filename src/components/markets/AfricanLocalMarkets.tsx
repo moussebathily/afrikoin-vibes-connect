@@ -16,9 +16,11 @@ import {
   Sparkles,
   ExternalLink,
   Phone,
-  Navigation
+  Navigation,
+  Map
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { AfricanMarketsMap } from '@/components/maps/AfricanMarketsMap'
 
 // Types
 interface LocalMarket {
@@ -449,6 +451,7 @@ function MarketCard({ market, onNavigate }: MarketCardProps) {
 export function AfricanLocalMarkets() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeRegion, setActiveRegion] = useState('all')
+  const [showMap, setShowMap] = useState(true)
   const { t } = useTranslation()
 
   // Filter markets
@@ -512,16 +515,31 @@ export function AfricanLocalMarkets() {
         </Card>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder={t('markets.searchMarkets', 'Rechercher un marché, ville, pays, produit...')}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
+      {/* Search and Map Toggle */}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t('markets.searchMarkets', 'Rechercher un marché, ville, pays, produit...')}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Button
+          variant={showMap ? 'default' : 'outline'}
+          onClick={() => setShowMap(!showMap)}
+          className="gap-2"
+        >
+          <Map className="h-4 w-4" />
+          {t('markets.map', 'Carte')}
+        </Button>
       </div>
+
+      {/* Interactive Map */}
+      {showMap && (
+        <AfricanMarketsMap />
+      )}
 
       {/* Region Tabs */}
       <Tabs value={activeRegion} onValueChange={setActiveRegion}>
