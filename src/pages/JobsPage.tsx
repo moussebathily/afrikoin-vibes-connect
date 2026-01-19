@@ -29,6 +29,7 @@ import { MyApplications } from '@/components/jobs/MyApplications'
 import { JobRecommendations } from '@/components/jobs/JobRecommendations'
 import { JobLocationMap } from '@/components/maps/JobLocationMap'
 import { LocationFilter } from '@/components/maps/LocationFilter'
+import { AutoTranslateButton } from '@/components/translation/AutoTranslateButton'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
@@ -457,6 +458,9 @@ function JobCard({
   getTypeVariant: (type: Job['type']) => 'default' | 'secondary' | 'outline'
 }) {
   const navigate = useNavigate()
+  const { t } = useTranslation()
+  const [translatedTitle, setTranslatedTitle] = useState<string | null>(null)
+  const [translatedDescription, setTranslatedDescription] = useState<string | null>(null)
 
   const handleCardClick = () => {
     // Only navigate to detail for DB jobs (UUID format)
@@ -464,6 +468,25 @@ function JobCard({
       navigate(`/jobs/${job.id}`)
     }
   }
+
+  const handleTranslation = (translatedText: string, targetLang: string) => {
+    // If the translated text contains the title pattern, split it
+    if (translatedText.includes('\n')) {
+      const parts = translatedText.split('\n')
+      setTranslatedTitle(parts[0])
+      if (parts[1]) setTranslatedDescription(parts[1])
+    } else {
+      // Single translation - determine if it's title or description based on length
+      if (translatedText.length < 100) {
+        setTranslatedTitle(translatedText)
+      } else {
+        setTranslatedDescription(translatedText)
+      }
+    }
+  }
+
+  // Text to translate (title + description)
+  const textToTranslate = `${job.title}${job.description ? '\n' + job.description : ''}`
 
   return (
     <Card 
@@ -488,23 +511,45 @@ function JobCard({
           
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold leading-tight group-hover:text-primary transition-colors">
-                  {job.title}
+                  {translatedTitle || job.title}
                 </h3>
+                {translatedTitle && (
+                  <p className="text-xs text-muted-foreground/70 italic">{job.title}</p>
+                )}
                 <p className="text-sm text-muted-foreground">{job.company}</p>
               </div>
-              {job.is_featured && (
-                <Badge className="text-xs bg-gradient-primary text-primary-foreground flex-shrink-0">
-                  Featured
-                </Badge>
-              )}
+              <div className="flex items-center gap-1 flex-shrink-0">
+                {job.is_featured && (
+                  <Badge className="text-xs bg-gradient-primary text-primary-foreground">
+                    Featured
+                  </Badge>
+                )}
+                <div onClick={(e) => e.stopPropagation()}>
+                  <AutoTranslateButton
+                    text={textToTranslate}
+                    onTranslated={handleTranslation}
+                    context="job"
+                    size="icon"
+                    variant="ghost"
+                    className="h-7 w-7"
+                  />
+                </div>
+              </div>
             </div>
             
-            {job.description && (
-              <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
-                {job.description}
-              </p>
+            {(job.description || translatedDescription) && (
+              <div className="mt-1">
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {translatedDescription || job.description}
+                </p>
+                {translatedDescription && job.description && (
+                  <p className="text-xs text-muted-foreground/60 italic line-clamp-1 mt-0.5">
+                    {job.description}
+                  </p>
+                )}
+              </div>
             )}
             
             <div className="flex flex-wrap items-center gap-2 mt-3 text-sm">
@@ -532,7 +577,7 @@ function JobCard({
                 {job.applicants && (
                   <span className="flex items-center gap-1">
                     <Users className="h-3.5 w-3.5" />
-                    {job.applicants} candidats
+                    {job.applicants} {t('jobs.applicants', 'candidats')}
                   </span>
                 )}
               </div>
