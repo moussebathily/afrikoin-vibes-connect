@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '@/integrations/supabase/client'
 import { JobPostForm } from '@/components/jobs/JobPostForm'
 import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
+import { RecruiterDashboard } from '@/components/jobs/RecruiterDashboard'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
   id: string
@@ -145,8 +147,10 @@ export function JobsPage() {
   const [dbJobs, setDbJobs] = useState<Job[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [activeType, setActiveType] = useState('all')
+  const [activeTab, setActiveTab] = useState('jobs')
   const [loading, setLoading] = useState(true)
   const { t } = useTranslation()
+  const { user } = useAuth()
 
   const fetchJobs = useCallback(async () => {
     try {
@@ -246,122 +250,146 @@ export function JobsPage() {
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Briefcase className="h-6 w-6 text-primary" />
-          Offres d'emploi
-        </h1>
-        <p className="text-muted-foreground">
-          Trouvez votre prochain emploi en Afrique
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Briefcase className="h-6 w-6 text-primary" />
+            Offres d'emploi
+          </h1>
+          <p className="text-muted-foreground">
+            Trouvez votre prochain emploi en Afrique
+          </p>
+        </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <TrendingUp className="h-5 w-5 mx-auto mb-1 text-primary" />
-            <p className="text-2xl font-bold">{stats.total}</p>
-            <p className="text-xs text-muted-foreground">Offres actives</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Laptop className="h-5 w-5 mx-auto mb-1 text-blue-500" />
-            <p className="text-2xl font-bold">{stats.remote}</p>
-            <p className="text-xs text-muted-foreground">Télétravail</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <GraduationCap className="h-5 w-5 mx-auto mb-1 text-amber-500" />
-            <p className="text-2xl font-bold">{stats.internships}</p>
-            <p className="text-xs text-muted-foreground">Stages</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <Globe className="h-5 w-5 mx-auto mb-1 text-green-500" />
-            <p className="text-2xl font-bold">15+</p>
-            <p className="text-xs text-muted-foreground">Pays</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Search and Filters */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Rechercher un poste, entreprise, lieu..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9"
-              />
-            </div>
-            <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Filtres
-            </Button>
-            <JobPostForm onSuccess={fetchJobs} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Type Tabs */}
-      <Tabs value={activeType} onValueChange={setActiveType}>
-        <TabsList className="grid w-full grid-cols-5 sm:grid-cols-6">
-          <TabsTrigger value="all" className="text-xs">Tout</TabsTrigger>
-          <TabsTrigger value="full-time" className="text-xs">CDI</TabsTrigger>
-          <TabsTrigger value="remote" className="text-xs">Remote</TabsTrigger>
-          <TabsTrigger value="contract" className="text-xs">CDD</TabsTrigger>
-          <TabsTrigger value="internship" className="text-xs">Stage</TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      {/* Featured Jobs */}
-      {featuredJobs.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            Offres à la une
-          </h2>
-          <div className="space-y-3">
-            {featuredJobs.map(job => (
-              <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
-            ))}
-          </div>
-        </section>
+      {/* Main Tabs: Jobs / Recruiter Dashboard */}
+      {user && (
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="jobs" className="gap-2">
+              <Search className="h-4 w-4" />
+              Offres d'emploi
+            </TabsTrigger>
+            <TabsTrigger value="recruiter" className="gap-2">
+              <Users className="h-4 w-4" />
+              Tableau de bord recruteur
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       )}
 
-      {/* Regular Jobs */}
-      <section>
-        <h2 className="text-lg font-semibold mb-3">
-          {activeType === 'all' ? 'Toutes les offres' : `Offres ${getTypeLabel(activeType as Job['type'])}`}
-        </h2>
-        <div className="space-y-3">
-          {regularJobs.length > 0 ? (
-            regularJobs.map(job => (
-              <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
-            ))
-          ) : (
-            <Card className="border-dashed">
-              <CardContent className="py-12 text-center">
-                <Briefcase className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <h3 className="font-semibold mb-2">Aucune offre trouvée</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Essayez de modifier vos critères de recherche
-                </p>
-                <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); }}>
-                  Réinitialiser les filtres
-                </Button>
+      {activeTab === 'recruiter' && user ? (
+        <RecruiterDashboard />
+      ) : (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <Card>
+              <CardContent className="p-4 text-center">
+                <TrendingUp className="h-5 w-5 mx-auto mb-1 text-primary" />
+                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-xs text-muted-foreground">Offres actives</p>
               </CardContent>
             </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Laptop className="h-5 w-5 mx-auto mb-1 text-blue-500" />
+                <p className="text-2xl font-bold">{stats.remote}</p>
+                <p className="text-xs text-muted-foreground">Télétravail</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <GraduationCap className="h-5 w-5 mx-auto mb-1 text-amber-500" />
+                <p className="text-2xl font-bold">{stats.internships}</p>
+                <p className="text-xs text-muted-foreground">Stages</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 text-center">
+                <Globe className="h-5 w-5 mx-auto mb-1 text-green-500" />
+                <p className="text-2xl font-bold">15+</p>
+                <p className="text-xs text-muted-foreground">Pays</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Search and Filters */}
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un poste, entreprise, lieu..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                <Button variant="outline" className="gap-2">
+                  <Filter className="h-4 w-4" />
+                  Filtres
+                </Button>
+                <JobPostForm onSuccess={fetchJobs} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Type Tabs */}
+          <Tabs value={activeType} onValueChange={setActiveType}>
+            <TabsList className="grid w-full grid-cols-5 sm:grid-cols-6">
+              <TabsTrigger value="all" className="text-xs">Tout</TabsTrigger>
+              <TabsTrigger value="full-time" className="text-xs">CDI</TabsTrigger>
+              <TabsTrigger value="remote" className="text-xs">Remote</TabsTrigger>
+              <TabsTrigger value="contract" className="text-xs">CDD</TabsTrigger>
+              <TabsTrigger value="internship" className="text-xs">Stage</TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {/* Featured Jobs */}
+          {featuredJobs.length > 0 && (
+            <section>
+              <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Offres à la une
+              </h2>
+              <div className="space-y-3">
+                {featuredJobs.map(job => (
+                  <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
+                ))}
+              </div>
+            </section>
           )}
-        </div>
-      </section>
+
+          {/* Regular Jobs */}
+          <section>
+            <h2 className="text-lg font-semibold mb-3">
+              {activeType === 'all' ? 'Toutes les offres' : `Offres ${getTypeLabel(activeType as Job['type'])}`}
+            </h2>
+            <div className="space-y-3">
+              {regularJobs.length > 0 ? (
+                regularJobs.map(job => (
+                  <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
+                ))
+              ) : (
+                <Card className="border-dashed">
+                  <CardContent className="py-12 text-center">
+                    <Briefcase className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                    <h3 className="font-semibold mb-2">Aucune offre trouvée</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Essayez de modifier vos critères de recherche
+                    </p>
+                    <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); }}>
+                      Réinitialiser les filtres
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          </section>
+        </>
+      )}
     </div>
   )
 }
