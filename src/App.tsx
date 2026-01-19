@@ -31,6 +31,7 @@ const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
 const SellerPage = lazy(() => import('@/pages/SellerPage'))
 const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
+const TransportPage = lazy(() => import('@/pages/TransportPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -107,6 +108,15 @@ function App() {
                 <Route path="jobs" element={<JobsPage />} />
                 <Route path="jobs/:id" element={<JobDetailPage />} />
                 <Route path="news" element={<NewsPage />} />
+                <Route path="transport" element={
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <TransportPage />
+                  </Suspense>
+                } />
                 <Route path="marketplace" element={
                   <Suspense fallback={
                     <div className="flex items-center justify-center min-h-32">
