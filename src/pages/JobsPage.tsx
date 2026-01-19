@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,7 +17,8 @@ import {
   Globe,
   Laptop,
   GraduationCap,
-  TrendingUp
+  TrendingUp,
+  Map
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '@/integrations/supabase/client'
@@ -26,6 +27,8 @@ import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
 import { RecruiterDashboard } from '@/components/jobs/RecruiterDashboard'
 import { MyApplications } from '@/components/jobs/MyApplications'
 import { JobRecommendations } from '@/components/jobs/JobRecommendations'
+import { JobLocationMap } from '@/components/maps/JobLocationMap'
+import { LocationFilter } from '@/components/maps/LocationFilter'
 import { useAuth } from '@/contexts/AuthContext'
 
 interface Job {
@@ -152,8 +155,11 @@ export function JobsPage() {
   const [activeType, setActiveType] = useState('all')
   const [activeTab, setActiveTab] = useState('jobs')
   const [loading, setLoading] = useState(true)
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([])
+  const [showMap, setShowMap] = useState(false)
   const { t } = useTranslation()
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const fetchJobs = useCallback(async () => {
     try {
@@ -230,15 +236,22 @@ export function JobsPage() {
     return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
   }
 
-  const filteredJobs = allJobs.filter(job => {
-    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchQuery.toLowerCase())
-    
-    const matchesType = activeType === 'all' || job.type === activeType
-    
-    return matchesSearch && matchesType
-  })
+  const filteredJobs = useMemo(() => {
+    return allJobs.filter(job => {
+      const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        job.location.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      const matchesType = activeType === 'all' || job.type === activeType
+      
+      const matchesLocation = selectedLocations.length === 0 || 
+        selectedLocations.some(loc => 
+          job.location.toLowerCase().includes(loc.toLowerCase())
+        )
+      
+      return matchesSearch && matchesType && matchesLocation
+    })
+  }, [allJobs, searchQuery, activeType, selectedLocations])
 
   const featuredJobs = filteredJobs.filter(job => job.is_featured)
   const regularJobs = filteredJobs.filter(job => !job.is_featured)
@@ -327,15 +340,23 @@ export function JobsPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher un poste, entreprise, lieu..."
+                    placeholder={t('jobs.searchPlaceholder', 'Rechercher un poste, entreprise, lieu...')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9"
                   />
                 </div>
-                <Button variant="outline" className="gap-2">
-                  <Filter className="h-4 w-4" />
-                  Filtres
+                <LocationFilter
+                  selectedLocations={selectedLocations}
+                  onLocationsChange={setSelectedLocations}
+                />
+                <Button 
+                  variant={showMap ? 'default' : 'outline'} 
+                  className="gap-2"
+                  onClick={() => setShowMap(!showMap)}
+                >
+                  <Map className="h-4 w-4" />
+                  {t('jobs.map', 'Carte')}
                 </Button>
                 {user && <MyApplications />}
                 <JobPostForm onSuccess={fetchJobs} />
@@ -343,14 +364,36 @@ export function JobsPage() {
             </CardContent>
           </Card>
 
+          {/* Interactive Map */}
+          {showMap && (
+            <JobLocationMap
+              jobs={allJobs.map(job => ({
+                id: job.id,
+                title: job.title,
+                company: job.company,
+                location: job.location,
+                type: job.type,
+                salary: job.salary
+              }))}
+              selectedLocation={selectedLocations[0]}
+              onLocationSelect={(location) => {
+                if (location) {
+                  setSelectedLocations([location])
+                } else {
+                  setSelectedLocations([])
+                }
+              }}
+            />
+          )}
+
           {/* Type Tabs */}
           <Tabs value={activeType} onValueChange={setActiveType}>
             <TabsList className="grid w-full grid-cols-5 sm:grid-cols-6">
-              <TabsTrigger value="all" className="text-xs">Tout</TabsTrigger>
-              <TabsTrigger value="full-time" className="text-xs">CDI</TabsTrigger>
-              <TabsTrigger value="remote" className="text-xs">Remote</TabsTrigger>
-              <TabsTrigger value="contract" className="text-xs">CDD</TabsTrigger>
-              <TabsTrigger value="internship" className="text-xs">Stage</TabsTrigger>
+              <TabsTrigger value="all" className="text-xs">{t('jobs.all', 'Tout')}</TabsTrigger>
+              <TabsTrigger value="full-time" className="text-xs">{t('jobs.fullTime', 'CDI')}</TabsTrigger>
+              <TabsTrigger value="remote" className="text-xs">{t('jobs.remote', 'Remote')}</TabsTrigger>
+              <TabsTrigger value="contract" className="text-xs">{t('jobs.contract', 'CDD')}</TabsTrigger>
+              <TabsTrigger value="internship" className="text-xs">{t('jobs.internship', 'Stage')}</TabsTrigger>
             </TabsList>
           </Tabs>
 

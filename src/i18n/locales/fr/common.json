@@ -75,6 +75,38 @@
     "community": "Communauté",
     "createFirstPost": "Créer mon premier post"
   },
+  "jobs": {
+    "title": "Offres d'emploi",
+    "subtitle": "Trouvez votre prochain emploi en Afrique",
+    "searchPlaceholder": "Rechercher un poste, entreprise, lieu...",
+    "map": "Carte",
+    "all": "Tout",
+    "fullTime": "CDI",
+    "remote": "Télétravail",
+    "contract": "CDD",
+    "internship": "Stage",
+    "featured": "À la une",
+    "allOffers": "Toutes les offres",
+    "noResults": "Aucune offre trouvée",
+    "resetFilters": "Réinitialiser les filtres",
+    "activeOffers": "Offres actives",
+    "countries": "Pays",
+    "applicants": "candidats",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "daysAgo": "Il y a {{days}} jours",
+    "apply": "Postuler",
+    "viewDetails": "Voir les détails",
+    "translate": "Traduire",
+    "location": "Localisation"
+  },
+  "translation": {
+    "translateTo": "Traduire vers",
+    "selectLanguage": "Sélectionnez une langue cible",
+    "success": "Traduction réussie",
+    "error": "Erreur de traduction",
+    "noText": "Aucun texte à traduire"
+  },
   "common": {
     "loading": "Chargement...",
     "error": "Erreur",

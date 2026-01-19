@@ -75,6 +75,38 @@
     "community": "Community",
     "createFirstPost": "Create my first post"
   },
+  "jobs": {
+    "title": "Job Offers",
+    "subtitle": "Find your next job in Africa",
+    "searchPlaceholder": "Search for a position, company, location...",
+    "map": "Map",
+    "all": "All",
+    "fullTime": "Full-time",
+    "remote": "Remote",
+    "contract": "Contract",
+    "internship": "Internship",
+    "featured": "Featured",
+    "allOffers": "All offers",
+    "noResults": "No offers found",
+    "resetFilters": "Reset filters",
+    "activeOffers": "Active offers",
+    "countries": "Countries",
+    "applicants": "applicants",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{days}} days ago",
+    "apply": "Apply",
+    "viewDetails": "View details",
+    "translate": "Translate",
+    "location": "Location"
+  },
+  "translation": {
+    "translateTo": "Translate to",
+    "selectLanguage": "Select a target language",
+    "success": "Translation successful",
+    "error": "Translation error",
+    "noText": "No text to translate"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
