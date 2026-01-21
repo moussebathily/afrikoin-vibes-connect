@@ -24,6 +24,7 @@ import type { Ride, Rental, RideStatus, RentalStatus } from "@/types/transport";
 import RideMap from "./RideMap";
 import RideChat from "./RideChat";
 import LiveRideMap from "./LiveRideMap";
+import RideRating from "./RideRating";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500',
@@ -353,12 +354,14 @@ const MyRides = () => {
                       </div>
                     )}
 
-                    {ride.status === 'completed' && (
+                    {ride.status === 'completed' && ride.driver_id && (
                       <div className="mt-3">
-                        <Button variant="outline" size="sm">
-                          <Star className="h-4 w-4 mr-1" />
-                          Noter le chauffeur
-                        </Button>
+                        <RideRating
+                          rideId={ride.id}
+                          rideNumber={ride.ride_number}
+                          driverId={ride.driver_id}
+                          onRatingSubmitted={() => fetchRides()}
+                        />
                       </div>
                     )}
                   </CardContent>
