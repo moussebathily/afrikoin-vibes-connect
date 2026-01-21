@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useDriverRideRealtime } from "@/hooks/useRideRealtime";
 import type { Driver, Ride, RideStatus, DriverStatus } from "@/types/transport";
 
 const DriverDashboard = () => {
@@ -45,6 +46,19 @@ const DriverDashboard = () => {
     phone: '',
     email: ''
   });
+
+  // Callback pour rafraîchir les courses
+  const handleNewRide = useCallback((ride: any) => {
+    setPendingRides(prev => [ride, ...prev.filter(r => r.id !== ride.id)]);
+  }, []);
+
+  const handleRideUpdate = useCallback((ride: any) => {
+    setMyRides(prev => prev.map(r => r.id === ride.id ? ride : r));
+    setPendingRides(prev => prev.filter(r => r.id !== ride.id));
+  }, []);
+
+  // Notifications temps réel pour les chauffeurs
+  useDriverRideRealtime(driver?.id || null, handleNewRide, handleRideUpdate);
 
   useEffect(() => {
     if (user) {

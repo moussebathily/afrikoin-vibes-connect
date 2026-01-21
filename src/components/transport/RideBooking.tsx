@@ -25,6 +25,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useRideRealtime } from "@/hooks/useRideRealtime";
 import type { VehicleType, ServiceOption, LocationPoint } from "@/types/transport";
 import RideMap from "./RideMap";
 
@@ -82,7 +83,9 @@ const RideBooking = () => {
   const [estimatedDistance, setEstimatedDistance] = useState(0);
   const [estimatedDuration, setEstimatedDuration] = useState(0);
 
-  // Géolocalisation automatique
+  // Notifications temps réel pour les courses
+  useRideRealtime();
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
