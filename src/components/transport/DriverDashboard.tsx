@@ -29,8 +29,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useDriverRideRealtime } from "@/hooks/useRideRealtime";
+import { useDriverLocationBroadcast } from "@/hooks/useDriverLocation";
 import type { Driver, Ride, RideStatus, DriverStatus } from "@/types/transport";
 import RideChat from "./RideChat";
+
 const DriverDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -61,6 +63,15 @@ const DriverDashboard = () => {
 
   // Notifications temps réel pour les chauffeurs
   useDriverRideRealtime(driver?.id || null, handleNewRide, handleRideUpdate);
+
+  // Déterminer si le chauffeur a une course active
+  const activeRide = myRides.find(r => r.status === 'accepted' || r.status === 'in_progress');
+  
+  // Broadcast GPS position when driver has an active ride
+  useDriverLocationBroadcast(
+    driver?.id || null,
+    !!activeRide && (driver?.status === 'busy' || driver?.status === 'available')
+  );
 
   useEffect(() => {
     if (user) {
@@ -423,8 +434,7 @@ const DriverDashboard = () => {
     );
   }
 
-  // Dashboard chauffeur
-  const activeRide = myRides.find(r => r.status === 'accepted' || r.status === 'in_progress');
+  // Dashboard chauffeur - activeRide already defined above for GPS broadcast
 
   return (
     <div className="space-y-6">

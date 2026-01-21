@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Ride, Rental, RideStatus, RentalStatus } from "@/types/transport";
 import RideMap from "./RideMap";
 import RideChat from "./RideChat";
+import LiveRideMap from "./LiveRideMap";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500',
@@ -186,7 +187,9 @@ const MyRides = () => {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <RideMap
+                <LiveRideMap
+                  rideId={activeRide.id}
+                  driverId={activeRide.driver_id}
                   pickup={{ 
                     address: activeRide.pickup_address, 
                     lat: Number(activeRide.pickup_lat), 
@@ -197,6 +200,7 @@ const MyRides = () => {
                     lat: Number(activeRide.dropoff_lat), 
                     lng: Number(activeRide.dropoff_lng) 
                   }}
+                  rideStatus={activeRide.status}
                 />
               </div>
               <div className="space-y-4">
