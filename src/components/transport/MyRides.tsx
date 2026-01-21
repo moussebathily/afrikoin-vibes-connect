@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import type { Ride, Rental, RideStatus, RentalStatus } from "@/types/transport";
 import RideMap from "./RideMap";
+import RideChat from "./RideChat";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500',
@@ -58,6 +59,7 @@ const MyRides = () => {
   const [rentals, setRentals] = useState<Rental[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeRide, setActiveRide] = useState<Ride | null>(null);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -224,9 +226,14 @@ const MyRides = () => {
                     <Phone className="h-4 w-4 mr-2" />
                     Appeler
                   </Button>
-                  <Button size="sm" variant="outline" className="flex-1">
+                  <Button 
+                    size="sm" 
+                    variant={showChat ? "default" : "outline"} 
+                    className="flex-1"
+                    onClick={() => setShowChat(!showChat)}
+                  >
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    Message
+                    {showChat ? 'Fermer' : 'Message'}
                   </Button>
                 </div>
 
@@ -238,6 +245,18 @@ const MyRides = () => {
                 </div>
               </div>
             </div>
+
+            {/* Chat en temps réel */}
+            {showChat && (
+              <div className="mt-4 border-t pt-4">
+                <RideChat
+                  rideId={activeRide.id}
+                  rideNumber={activeRide.ride_number}
+                  userType="customer"
+                  onClose={() => setShowChat(false)}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
