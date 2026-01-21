@@ -25,6 +25,7 @@ import RideMap from "./RideMap";
 import RideChat from "./RideChat";
 import LiveRideMap from "./LiveRideMap";
 import RideRating from "./RideRating";
+import RidePayment from "./RidePayment";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500',
@@ -62,6 +63,8 @@ const MyRides = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [activeRide, setActiveRide] = useState<Ride | null>(null);
   const [showChat, setShowChat] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [paymentRide, setPaymentRide] = useState<Ride | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -355,7 +358,19 @@ const MyRides = () => {
                     )}
 
                     {ride.status === 'completed' && ride.driver_id && (
-                      <div className="mt-3">
+                      <div className="mt-3 flex gap-2">
+                        {ride.payment_status !== 'paid' && (
+                          <Button 
+                            variant="default" 
+                            size="sm"
+                            onClick={() => {
+                              setPaymentRide(ride);
+                              setShowPayment(true);
+                            }}
+                          >
+                            💳 Payer
+                          </Button>
+                        )}
                         <RideRating
                           rideId={ride.id}
                           rideNumber={ride.ride_number}
@@ -415,6 +430,26 @@ const MyRides = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Payment Modal */}
+      {paymentRide && (
+        <RidePayment
+          isOpen={showPayment}
+          onClose={() => {
+            setShowPayment(false);
+            setPaymentRide(null);
+          }}
+          rideId={paymentRide.id}
+          rideNumber={paymentRide.ride_number}
+          amount={Number(paymentRide.final_price || paymentRide.estimated_price)}
+          currency={paymentRide.currency || 'XOF'}
+          onPaymentSuccess={() => {
+            fetchRides();
+            setShowPayment(false);
+            setPaymentRide(null);
+          }}
+        />
+      )}
     </div>
   );
 };
