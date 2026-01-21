@@ -22,14 +22,15 @@ import {
   PowerOff,
   Loader2,
   TrendingUp,
-  AlertCircle
+  AlertCircle,
+  MessageCircle
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useDriverRideRealtime } from "@/hooks/useRideRealtime";
 import type { Driver, Ride, RideStatus, DriverStatus } from "@/types/transport";
-
+import RideChat from "./RideChat";
 const DriverDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -39,6 +40,7 @@ const DriverDashboard = () => {
   const [myRides, setMyRides] = useState<Ride[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   
   // Formulaire d'inscription
   const [registerForm, setRegisterForm] = useState({
@@ -552,7 +554,27 @@ const DriverDashboard = () => {
                   <Phone className="h-4 w-4 mr-2" />
                   Appeler
                 </Button>
+                <Button 
+                  variant={showChat ? "default" : "outline"}
+                  onClick={() => setShowChat(!showChat)}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  {showChat ? 'Fermer' : 'Message'}
+                </Button>
               </div>
+
+              {/* Chat en temps réel pour chauffeur */}
+              {showChat && (
+                <div className="mt-4 border-t pt-4">
+                  <RideChat
+                    rideId={activeRide.id}
+                    rideNumber={activeRide.ride_number}
+                    userType="driver"
+                    driverId={driver.id}
+                    onClose={() => setShowChat(false)}
+                  />
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
