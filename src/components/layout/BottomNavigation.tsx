@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X } from 'lucide-react'
+import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -18,6 +18,7 @@ export function BottomNavigation() {
   ]
 
   const moreItems = [
+    { icon: Car, label: 'Transport', path: '/transport' },
     { icon: Package, label: 'Colis', path: '/tracking' },
     { icon: TrendingUp, label: 'Marchés', path: '/markets' },
     { icon: Trophy, label: 'Sport', path: '/sports' },
