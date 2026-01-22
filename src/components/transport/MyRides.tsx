@@ -26,6 +26,7 @@ import RideChat from "./RideChat";
 import LiveRideMap from "./LiveRideMap";
 import RideRating from "./RideRating";
 import RidePayment from "./RidePayment";
+import { SOSButton } from "./SOSButton";
 
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-500',
@@ -243,6 +244,7 @@ const MyRides = () => {
                     <MessageCircle className="h-4 w-4 mr-2" />
                     {showChat ? 'Fermer' : 'Message'}
                   </Button>
+                  <SOSButton ride={activeRide} />
                 </div>
 
                 <div className="flex items-center justify-between pt-2 border-t">
