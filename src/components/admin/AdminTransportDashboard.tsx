@@ -13,6 +13,7 @@ import {
   DollarSign, Star, Truck
 } from 'lucide-react'
 import type { Driver, Vehicle, Ride, RideStatus, DriverStatus } from '@/types/transport'
+import { AdminVehicleManagement } from './AdminVehicleManagement'
 
 interface AdminStats {
   totalDrivers: number
@@ -356,7 +357,7 @@ export function AdminTransportDashboard() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview" className="gap-2">
             <TrendingUp className="h-4 w-4" />
             <span className="hidden sm:inline">Aperçu</span>
@@ -364,6 +365,10 @@ export function AdminTransportDashboard() {
           <TabsTrigger value="drivers" className="gap-2">
             <Users className="h-4 w-4" />
             <span className="hidden sm:inline">Chauffeurs</span>
+          </TabsTrigger>
+          <TabsTrigger value="vehicles" className="gap-2">
+            <Car className="h-4 w-4" />
+            <span className="hidden sm:inline">Véhicules</span>
           </TabsTrigger>
           <TabsTrigger value="rides" className="gap-2">
             <MapPin className="h-4 w-4" />
@@ -481,6 +486,15 @@ export function AdminTransportDashboard() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* Vehicles Tab */}
+        <TabsContent value="vehicles">
+          <AdminVehicleManagement 
+            vehicles={vehicles} 
+            drivers={drivers} 
+            onRefresh={fetchStats} 
+          />
         </TabsContent>
 
         {/* Rides Tab */}
