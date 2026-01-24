@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car } from 'lucide-react'
+import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { useAdminRole } from '@/hooks/useAdminRole'
 
 export function BottomNavigation() {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useTranslation()
   const [showMore, setShowMore] = useState(false)
+  const { isAdmin } = useAdminRole()
 
   const mainItems = [
     { icon: Home, label: t('navigation.home'), path: '/' },
@@ -24,6 +26,7 @@ export function BottomNavigation() {
     { icon: Trophy, label: 'Sport', path: '/sports' },
     { icon: Palette, label: 'Culture', path: '/culture' },
     { icon: Wallet, label: 'Wallet', path: '/wallet' },
+    ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: '/admin/transport' }] : []),
   ]
 
   const isMoreActive = moreItems.some(item => location.pathname === item.path)
