@@ -10,11 +10,12 @@ import { Input } from '@/components/ui/input'
 import { 
   Users, Car, MapPin, TrendingUp, AlertTriangle, CheckCircle, 
   Clock, Ban, Search, RefreshCw, Eye, Shield, Activity,
-  DollarSign, Star, Truck
+  DollarSign, Star, Truck, Calendar
 } from 'lucide-react'
 import type { Driver, Vehicle, Ride, RideStatus, DriverStatus } from '@/types/transport'
 import { AdminVehicleManagement } from './AdminVehicleManagement'
 import { AdminTransportCharts } from './AdminTransportCharts'
+import { AdminRentalManagement } from './AdminRentalManagement'
 
 interface AdminStats {
   totalDrivers: number
@@ -358,7 +359,7 @@ export function AdminTransportDashboard() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview" className="gap-2">
             <TrendingUp className="h-4 w-4" />
             <span className="hidden sm:inline">Aperçu</span>
@@ -374,6 +375,10 @@ export function AdminTransportDashboard() {
           <TabsTrigger value="rides" className="gap-2">
             <MapPin className="h-4 w-4" />
             <span className="hidden sm:inline">Courses</span>
+          </TabsTrigger>
+          <TabsTrigger value="rentals" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            <span className="hidden sm:inline">Locations</span>
           </TabsTrigger>
         </TabsList>
 
@@ -567,6 +572,11 @@ export function AdminTransportDashboard() {
               </CardContent>
             </Card>
           )}
+        </TabsContent>
+
+        {/* Rentals Tab */}
+        <TabsContent value="rentals" className="space-y-4">
+          <AdminRentalManagement />
         </TabsContent>
       </Tabs>
     </div>
