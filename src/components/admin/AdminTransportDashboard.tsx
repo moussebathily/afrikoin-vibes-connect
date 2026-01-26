@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import type { Driver, Vehicle, Ride, RideStatus, DriverStatus } from '@/types/transport'
 import { AdminVehicleManagement } from './AdminVehicleManagement'
+import { AdminTransportCharts } from './AdminTransportCharts'
 
 interface AdminStats {
   totalDrivers: number
@@ -389,6 +390,10 @@ export function AdminTransportDashboard() {
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
+          {/* Charts */}
+          <AdminTransportCharts rides={rides} vehicles={vehicles} drivers={drivers} />
+          
+          {/* Recent Rides */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
