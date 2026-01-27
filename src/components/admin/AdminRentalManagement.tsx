@@ -138,6 +138,21 @@ export function AdminRentalManagement() {
     return <Badge className={className}>{label}</Badge>;
   };
 
+  const sendRentalNotification = async (
+    rentalId: string, 
+    type: 'new_rental' | 'status_change' | 'driver_assigned' | 'payment_update',
+    options?: { new_status?: string; driver_name?: string }
+  ) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-rental-notification', {
+        body: { rental_id: rentalId, notification_type: type, ...options }
+      });
+      if (error) console.error('Notification error:', error);
+    } catch (err) {
+      console.error('Failed to send notification:', err);
+    }
+  };
+
   const handleAssignDriver = async () => {
     if (!selectedRental || !selectedDriverId) return;
 
@@ -148,6 +163,11 @@ export function AdminRentalManagement() {
         .eq('id', selectedRental.id);
 
       if (error) throw error;
+
+      const driver = drivers.find(d => d.id === selectedDriverId);
+      await sendRentalNotification(selectedRental.id, 'driver_assigned', { 
+        driver_name: driver?.full_name 
+      });
 
       toast({ title: 'Succès', description: 'Chauffeur assigné à la location' });
       setIsAssignDriverOpen(false);
@@ -175,6 +195,10 @@ export function AdminRentalManagement() {
 
       if (error) throw error;
 
+      await sendRentalNotification(selectedRental.id, 'status_change', { 
+        new_status: newStatus 
+      });
+
       toast({ title: 'Succès', description: 'Statut de la location mis à jour' });
       setIsUpdateStatusOpen(false);
       fetchRentals();
@@ -193,6 +217,8 @@ export function AdminRentalManagement() {
         .eq('id', selectedRental.id);
 
       if (error) throw error;
+
+      await sendRentalNotification(selectedRental.id, 'payment_update');
 
       toast({ title: 'Succès', description: 'Statut de paiement mis à jour' });
       setIsUpdatePaymentOpen(false);
