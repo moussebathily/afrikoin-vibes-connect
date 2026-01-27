@@ -12,10 +12,11 @@ import {
   Clock, Ban, Search, RefreshCw, Eye, Shield, Activity,
   DollarSign, Star, Truck, Calendar
 } from 'lucide-react'
-import type { Driver, Vehicle, Ride, RideStatus, DriverStatus } from '@/types/transport'
+import type { Driver, Vehicle, Ride, Rental, RideStatus, DriverStatus } from '@/types/transport'
 import { AdminVehicleManagement } from './AdminVehicleManagement'
 import { AdminTransportCharts } from './AdminTransportCharts'
 import { AdminRentalManagement } from './AdminRentalManagement'
+import { AdminExportButtons } from './AdminExportButtons'
 
 interface AdminStats {
   totalDrivers: number
@@ -45,6 +46,7 @@ export function AdminTransportDashboard() {
   const [drivers, setDrivers] = useState<Driver[]>([])
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [rides, setRides] = useState<Ride[]>([])
+  const [rentals, setRentals] = useState<Rental[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -65,6 +67,14 @@ export function AdminTransportDashboard() {
         .order('created_at', { ascending: false })
         .limit(100)
       const ridesList = ridesData || []
+
+      // Fetch rentals
+      const { data: rentalsData } = await supabase
+        .from('rentals')
+        .select('*, vehicle:vehicles(*), driver:drivers(*)')
+        .order('created_at', { ascending: false })
+        .limit(100)
+      const rentalsList = rentalsData || []
 
       // Calculate stats
       const activeDrivers = driversList.filter(d => d.status === 'available' || d.status === 'busy').length
@@ -98,6 +108,7 @@ export function AdminTransportDashboard() {
       setDrivers(driversList as Driver[])
       setVehicles(vehiclesList as Vehicle[])
       setRides(ridesList as Ride[])
+      setRentals(rentalsList as Rental[])
     } catch (error) {
       console.error('Error fetching admin stats:', error)
       toast({ title: 'Erreur', description: 'Impossible de charger les statistiques', variant: 'destructive' })
@@ -245,10 +256,13 @@ export function AdminTransportDashboard() {
           </h2>
           <p className="text-muted-foreground">Gestion des chauffeurs, véhicules et courses</p>
         </div>
-        <Button onClick={fetchStats} variant="outline" size="sm" disabled={isLoading}>
-          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Actualiser
-        </Button>
+        <div className="flex gap-2">
+          <AdminExportButtons rides={rides} drivers={drivers} vehicles={vehicles} rentals={rentals} />
+          <Button onClick={fetchStats} variant="outline" size="sm" disabled={isLoading}>
+            <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Stats Overview */}
