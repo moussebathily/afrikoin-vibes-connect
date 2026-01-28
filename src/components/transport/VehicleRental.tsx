@@ -193,9 +193,22 @@ const VehicleRental = () => {
 
       if (error) throw error;
 
+      // Envoyer la notification email automatiquement
+      try {
+        await supabase.functions.invoke('send-rental-notification', {
+          body: {
+            rental_id: data.id,
+            notification_type: 'new_rental'
+          }
+        });
+      } catch (emailError) {
+        console.error('Erreur envoi email:', emailError);
+        // Ne pas bloquer la réservation si l'email échoue
+      }
+
       toast({
         title: "🚗 Réservation confirmée !",
-        description: `${selectedVehicle.brand} ${selectedVehicle.model} réservé pour ${days} jour(s)`,
+        description: `${selectedVehicle.brand} ${selectedVehicle.model} réservé pour ${days} jour(s). Un email de confirmation vous a été envoyé.`,
       });
 
       // Reset form
