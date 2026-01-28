@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 import { useAdminRole } from '@/hooks/useAdminRole'
@@ -10,13 +10,14 @@ import { Input } from '@/components/ui/input'
 import { 
   Users, Car, MapPin, TrendingUp, AlertTriangle, CheckCircle, 
   Clock, Ban, Search, RefreshCw, Eye, Shield, Activity,
-  DollarSign, Star, Truck, Calendar
+  DollarSign, Star, Truck, Calendar, Filter
 } from 'lucide-react'
 import type { Driver, Vehicle, Ride, Rental, RideStatus, DriverStatus } from '@/types/transport'
 import { AdminVehicleManagement } from './AdminVehicleManagement'
 import { AdminTransportCharts } from './AdminTransportCharts'
 import { AdminRentalManagement } from './AdminRentalManagement'
 import { AdminExportButtons } from './AdminExportButtons'
+import { AdminTransportFilters, FilterState } from './AdminTransportFilters'
 
 interface AdminStats {
   totalDrivers: number
@@ -32,6 +33,15 @@ interface AdminStats {
   totalRevenue: number
   averageRating: number
 }
+
+const defaultFilters: FilterState = {
+  dateFrom: '',
+  dateTo: '',
+  vehicleType: 'all',
+  rideStatus: 'all',
+  rentalStatus: 'all',
+  paymentStatus: 'all',
+};
 
 export function AdminTransportDashboard() {
   const { isAdmin, loading: adminLoading } = useAdminRole()
@@ -49,6 +59,8 @@ export function AdminTransportDashboard() {
   const [rentals, setRentals] = useState<Rental[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [filters, setFilters] = useState<FilterState>(defaultFilters)
+  const [showFilters, setShowFilters] = useState(false)
 
   const fetchStats = useCallback(async () => {
     try {
@@ -213,15 +225,85 @@ export function AdminTransportDashboard() {
     return <Badge className={className}>{label}</Badge>
   }
 
-  const filteredDrivers = drivers.filter(d => 
-    d.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    d.phone.includes(searchTerm)
-  )
+  // Apply filters to data
+  const applyDateFilter = useCallback((date: string, dateFrom: string, dateTo: string) => {
+    if (!dateFrom && !dateTo) return true;
+    const itemDate = new Date(date).toISOString().split('T')[0];
+    if (dateFrom && itemDate < dateFrom) return false;
+    if (dateTo && itemDate > dateTo) return false;
+    return true;
+  }, []);
 
-  const filteredRides = rides.filter(r => 
-    r.ride_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    r.pickup_address.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredDrivers = useMemo(() => {
+    return drivers.filter(d => 
+      d.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.phone.includes(searchTerm)
+    );
+  }, [drivers, searchTerm]);
+
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter(v => {
+      // Search filter
+      const matchesSearch = 
+        v.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.plate_number.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Vehicle type filter
+      const matchesType = filters.vehicleType === 'all' || v.vehicle_type === filters.vehicleType;
+      
+      return matchesSearch && matchesType;
+    });
+  }, [vehicles, searchTerm, filters.vehicleType]);
+
+  const filteredRides = useMemo(() => {
+    return rides.filter(r => {
+      // Search filter
+      const matchesSearch = 
+        r.ride_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        r.pickup_address.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Date filter
+      const matchesDate = applyDateFilter(r.created_at, filters.dateFrom, filters.dateTo);
+      
+      // Vehicle type filter
+      const matchesVehicleType = filters.vehicleType === 'all' || r.service_type === filters.vehicleType;
+      
+      // Ride status filter
+      const matchesStatus = filters.rideStatus === 'all' || r.status === filters.rideStatus;
+      
+      // Payment status filter
+      const matchesPayment = filters.paymentStatus === 'all' || r.payment_status === filters.paymentStatus;
+      
+      return matchesSearch && matchesDate && matchesVehicleType && matchesStatus && matchesPayment;
+    });
+  }, [rides, searchTerm, filters, applyDateFilter]);
+
+  const filteredRentals = useMemo(() => {
+    return rentals.filter(r => {
+      // Date filter
+      const matchesDate = applyDateFilter(r.created_at, filters.dateFrom, filters.dateTo);
+      
+      // Rental status filter
+      const matchesStatus = filters.rentalStatus === 'all' || r.status === filters.rentalStatus;
+      
+      // Payment status filter
+      const matchesPayment = filters.paymentStatus === 'all' || r.payment_status === filters.paymentStatus;
+      
+      return matchesDate && matchesStatus && matchesPayment;
+    });
+  }, [rentals, filters, applyDateFilter]);
+
+  // Count active filters
+  const activeFiltersCount = useMemo(() => {
+    return [
+      filters.dateFrom || filters.dateTo,
+      filters.vehicleType !== 'all',
+      filters.rideStatus !== 'all',
+      filters.rentalStatus !== 'all',
+      filters.paymentStatus !== 'all',
+    ].filter(Boolean).length;
+  }, [filters]);
 
   if (adminLoading) {
     return (
@@ -256,8 +338,21 @@ export function AdminTransportDashboard() {
           </h2>
           <p className="text-muted-foreground">Gestion des chauffeurs, véhicules et courses</p>
         </div>
-        <div className="flex gap-2">
-          <AdminExportButtons rides={rides} drivers={drivers} vehicles={vehicles} rentals={rentals} />
+        <div className="flex gap-2 flex-wrap">
+          <Button 
+            variant={showFilters ? "default" : "outline"} 
+            size="sm" 
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filtres
+            {activeFiltersCount > 0 && (
+              <Badge variant="secondary" className="ml-2 h-5 px-1.5">
+                {activeFiltersCount}
+              </Badge>
+            )}
+          </Button>
+          <AdminExportButtons rides={filteredRides} drivers={filteredDrivers} vehicles={filteredVehicles} rentals={filteredRentals} />
           <Button onClick={fetchStats} variant="outline" size="sm" disabled={isLoading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Actualiser
@@ -406,6 +501,17 @@ export function AdminTransportDashboard() {
             className="pl-10"
           />
         </div>
+
+        {/* Advanced Filters */}
+        {showFilters && (
+          <AdminTransportFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            showRideStatus={activeTab === 'rides' || activeTab === 'overview'}
+            showRentalStatus={activeTab === 'rentals'}
+            showPaymentStatus={activeTab === 'rides' || activeTab === 'rentals'}
+          />
+        )}
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
