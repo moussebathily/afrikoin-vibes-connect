@@ -15,6 +15,7 @@ import {
 import type { Driver, Vehicle, Ride, Rental, RideStatus, DriverStatus } from '@/types/transport'
 import { AdminVehicleManagement } from './AdminVehicleManagement'
 import { AdminTransportCharts } from './AdminTransportCharts'
+import { AdminTrendCharts } from './AdminTrendCharts'
 import { AdminRentalManagement } from './AdminRentalManagement'
 import { AdminExportButtons } from './AdminExportButtons'
 import { AdminTransportFilters, FilterState } from './AdminTransportFilters'
@@ -514,8 +515,11 @@ export function AdminTransportDashboard() {
         )}
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          {/* Charts */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Trend Charts */}
+          <AdminTrendCharts rides={rides} rentals={rentals} />
+          
+          {/* Distribution Charts */}
           <AdminTransportCharts rides={rides} vehicles={vehicles} drivers={drivers} />
           
           {/* Recent Rides */}
