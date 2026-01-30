@@ -33,6 +33,7 @@ const SellerPage = lazy(() => import('@/pages/SellerPage'))
 const CheckoutPage = lazy(() => import('@/pages/CheckoutPage'))
 const TransportPage = lazy(() => import('@/pages/TransportPage'))
 const AdminTransportPage = lazy(() => import('@/pages/AdminTransportPage'))
+const MyRentalsPage = lazy(() => import('@/pages/MyRentalsPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -125,6 +126,15 @@ function App() {
                     </div>
                   }>
                     <AdminTransportPage />
+                  </Suspense>
+                } />
+                <Route path="my-rentals" element={
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <MyRentalsPage />
                   </Suspense>
                 } />
                 <Route path="marketplace" element={
