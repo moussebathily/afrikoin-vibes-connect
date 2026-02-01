@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PostCard } from '@/components/posts/PostCard'
+import { DemoPostsSection } from '@/components/posts/DemoPostsSection'
 import { StoryCarousel } from '@/components/stories/StoryCarousel'
 import { WelcomeCard } from '@/components/home/WelcomeCard'
 import { FestivalBanner } from '@/components/holidays/FestivalBanner'
@@ -7,7 +8,7 @@ import { IndependenceBanner } from '@/components/holidays/IndependenceBanner'
 import { EntertainmentSection } from '@/components/entertainment/EntertainmentSection'
 import { CategoryTabs } from '@/components/categories/CategoryTabs'
 import { WeeklyRankingsCard } from '@/components/rankings/WeeklyRankingsCard'
-import { NewsSection } from '@/components/news/NewsSection'
+import { EnhancedNewsSection } from '@/components/news/EnhancedNewsSection'
 import { JobsSection } from '@/components/jobs/JobsSection'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
@@ -224,7 +225,7 @@ export function HomePage() {
       <StoryCarousel />
       
       {/* Info du jour - Actualités, Sport, Culture */}
-      <NewsSection limit={4} showTabs={true} />
+      <EnhancedNewsSection limit={6} />
       
       {/* Offres d'emploi */}
       <JobsSection limit={4} />
@@ -235,13 +236,18 @@ export function HomePage() {
       {/* Posts Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onLike={() => handleLikePost(post.id)}
-            />
-          ))}
+          {/* Show demo posts if no real posts */}
+          {posts.length === 0 ? (
+            <DemoPostsSection />
+          ) : (
+            posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onLike={() => handleLikePost(post.id)}
+              />
+            ))
+          )}
         </div>
         
         {/* Sidebar */}
