@@ -19,6 +19,7 @@ import { AdminTrendCharts } from './AdminTrendCharts'
 import { AdminRentalManagement } from './AdminRentalManagement'
 import { AdminExportButtons } from './AdminExportButtons'
 import { AdminTransportFilters, FilterState } from './AdminTransportFilters'
+import { AdminDriverPerformance } from './AdminDriverPerformance'
 
 interface AdminStats {
   totalDrivers: number
@@ -469,10 +470,14 @@ export function AdminTransportDashboard() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview" className="gap-2">
             <TrendingUp className="h-4 w-4" />
             <span className="hidden sm:inline">Aperçu</span>
+          </TabsTrigger>
+          <TabsTrigger value="performance" className="gap-2">
+            <Star className="h-4 w-4" />
+            <span className="hidden sm:inline">Performance</span>
           </TabsTrigger>
           <TabsTrigger value="drivers" className="gap-2">
             <Users className="h-4 w-4" />
@@ -550,6 +555,11 @@ export function AdminTransportDashboard() {
               ))}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Performance Tab */}
+        <TabsContent value="performance" className="space-y-4">
+          <AdminDriverPerformance drivers={drivers} rides={rides} />
         </TabsContent>
 
         {/* Drivers Tab */}
