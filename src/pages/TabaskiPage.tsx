@@ -10,8 +10,7 @@ import {
   Shield,
   Clock,
   Heart,
-  Check,
-  X
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,11 +20,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Types
 interface LivestockItem {
@@ -187,18 +187,29 @@ const LIVESTOCK_CATEGORIES = [
 // Tabaski 2025 date (approximate - Eid al-Adha)
 const TABASKI_DATE = new Date(2025, 5, 7); // June 7, 2025
 
+// Generate unique reservation number
+const generateReservationNumber = () => {
+  const prefix = 'TAB';
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `${prefix}-${timestamp}-${random}`;
+};
+
 export default function TabaskiPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedItem, setSelectedItem] = useState<LivestockItem | null>(null);
   const [deliveryDate, setDeliveryDate] = useState<Date | undefined>(undefined);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState({
     fullName: '',
     phone: '',
+    email: '',
     address: '',
     notes: ''
   });
@@ -220,7 +231,7 @@ export default function TabaskiPage() {
     setIsReservationOpen(true);
   };
 
-  const submitReservation = () => {
+  const submitReservation = async () => {
     if (!deliveryDate || !formData.fullName || !formData.phone || !formData.address) {
       toast({
         title: "Formulaire incomplet",
@@ -230,15 +241,84 @@ export default function TabaskiPage() {
       return;
     }
 
-    toast({
-      title: "Réservation confirmée ! 🎉",
-      description: `${selectedItem?.name} réservé pour livraison le ${format(deliveryDate, 'PPP', { locale: fr })}`,
-    });
+    if (!selectedItem) return;
 
-    setIsReservationOpen(false);
-    setSelectedItem(null);
-    setDeliveryDate(undefined);
-    setFormData({ fullName: '', phone: '', address: '', notes: '' });
+    setIsSubmitting(true);
+
+    try {
+      const reservationNumber = generateReservationNumber();
+
+      // Save reservation to database
+      const { error: dbError } = await supabase
+        .from('tabaski_reservations')
+        .insert({
+          reservation_number: reservationNumber,
+          user_id: user?.id || null,
+          livestock_id: selectedItem.id,
+          livestock_name: selectedItem.name,
+          livestock_type: selectedItem.type,
+          livestock_breed: selectedItem.breed,
+          livestock_weight: selectedItem.weight,
+          livestock_price: selectedItem.price,
+          seller_name: selectedItem.seller,
+          seller_location: selectedItem.location,
+          customer_name: formData.fullName,
+          customer_phone: formData.phone,
+          customer_email: formData.email || null,
+          delivery_address: formData.address,
+          delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
+          notes: formData.notes || null,
+          status: 'pending',
+          payment_status: 'pending',
+          currency: 'XOF'
+        });
+
+      if (dbError) {
+        throw new Error(dbError.message);
+      }
+
+      // Send email notification if email provided
+      if (formData.email) {
+        try {
+          await supabase.functions.invoke('send-tabaski-notification', {
+            body: {
+              reservationNumber,
+              customerName: formData.fullName,
+              customerEmail: formData.email,
+              customerPhone: formData.phone,
+              livestockName: selectedItem.name,
+              livestockBreed: selectedItem.breed,
+              livestockPrice: selectedItem.price,
+              sellerName: selectedItem.seller,
+              deliveryDate: format(deliveryDate, 'yyyy-MM-dd'),
+              deliveryAddress: formData.address
+            }
+          });
+        } catch (emailError) {
+          console.error('Email notification failed:', emailError);
+          // Don't fail the reservation if email fails
+        }
+      }
+
+      toast({
+        title: "Réservation confirmée ! 🎉",
+        description: `N° ${reservationNumber} - ${selectedItem.name} réservé pour le ${format(deliveryDate, 'PPP', { locale: fr })}`,
+      });
+
+      setIsReservationOpen(false);
+      setSelectedItem(null);
+      setDeliveryDate(undefined);
+      setFormData({ fullName: '', phone: '', email: '', address: '', notes: '' });
+    } catch (error: any) {
+      console.error('Reservation error:', error);
+      toast({
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue lors de la réservation",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Disable dates before today and after Tabaski
@@ -465,6 +545,7 @@ export default function TabaskiPage() {
                   <div className="flex-1">
                     <h4 className="font-semibold">{selectedItem.name}</h4>
                     <p className="text-sm text-muted-foreground">{selectedItem.breed} • {selectedItem.weight}</p>
+                    <p className="text-sm text-muted-foreground">{selectedItem.seller}</p>
                     <p className="text-lg font-bold text-primary mt-1">
                       {selectedItem.price.toLocaleString()} FCFA
                     </p>
@@ -472,7 +553,7 @@ export default function TabaskiPage() {
                 </CardContent>
               </Card>
 
-              {/* Delivery Date Picker */}
+              {/* Delivery Date */}
               <div className="space-y-2">
                 <Label>Date de livraison souhaitée *</Label>
                 <Popover>
@@ -485,10 +566,7 @@ export default function TabaskiPage() {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {deliveryDate 
-                        ? format(deliveryDate, 'PPP', { locale: fr }) 
-                        : "Choisir une date"
-                      }
+                      {deliveryDate ? format(deliveryDate, 'PPP', { locale: fr }) : "Choisir une date"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -497,8 +575,8 @@ export default function TabaskiPage() {
                       selected={deliveryDate}
                       onSelect={setDeliveryDate}
                       disabled={disabledDays}
+                      locale={fr}
                       initialFocus
-                      className={cn("p-3 pointer-events-auto")}
                     />
                   </PopoverContent>
                 </Popover>
@@ -513,78 +591,102 @@ export default function TabaskiPage() {
                   <Label htmlFor="fullName">Nom complet *</Label>
                   <Input
                     id="fullName"
-                    placeholder="Votre nom complet"
                     value={formData.fullName}
                     onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    placeholder="Votre nom complet"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="phone">Téléphone *</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                      placeholder="+221 77 123 45 67"
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email (pour confirmation)</Label>
                   <Input
-                    id="phone"
-                    placeholder="+221 77 XXX XX XX"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder="votre@email.com"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="address">Adresse de livraison *</Label>
-                  <Textarea
-                    id="address"
-                    placeholder="Adresse complète pour la livraison"
-                    value={formData.address}
-                    onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                  />
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Textarea
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+                      placeholder="Adresse complète de livraison"
+                      className="pl-10 min-h-[80px]"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (optionnel)</Label>
+                  <Label htmlFor="notes">Notes supplémentaires</Label>
                   <Textarea
                     id="notes"
-                    placeholder="Instructions spéciales..."
                     value={formData.notes}
                     onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Instructions spéciales, préférences..."
+                    className="min-h-[60px]"
                   />
                 </div>
               </div>
 
-              {/* Summary */}
-              <Card className="bg-accent/50 border-border">
-                <CardContent className="p-3 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Prix animal</span>
-                    <span className="font-medium">{selectedItem.price.toLocaleString()} FCFA</span>
+              {/* Price Summary */}
+              <Card className="bg-primary/5 border-primary/20">
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Total à payer</span>
+                    <span className="text-2xl font-bold text-primary">
+                      {selectedItem.price.toLocaleString()} FCFA
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Frais de livraison</span>
-                    <span className="font-medium text-primary">Gratuit</span>
-                  </div>
-                  <div className="flex justify-between pt-2 border-t font-bold">
-                    <span>Total</span>
-                    <span className="text-primary">{selectedItem.price.toLocaleString()} FCFA</span>
-                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Paiement à la livraison
+                  </p>
                 </CardContent>
               </Card>
 
-              {/* Actions */}
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setIsReservationOpen(false)}
-                  className="flex-1"
-                >
-                  Annuler
-                </Button>
-                <Button 
-                  onClick={submitReservation}
-                  className="flex-1 gap-2"
-                >
-                  <Check className="h-4 w-4" />
-                  Confirmer
-                </Button>
-              </div>
+              {/* Submit Button */}
+              <Button 
+                onClick={submitReservation} 
+                className="w-full gap-2"
+                size="lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Réservation en cours...
+                  </>
+                ) : (
+                  <>
+                    <CalendarIcon className="h-4 w-4" />
+                    Confirmer la réservation
+                  </>
+                )}
+              </Button>
+
+              <p className="text-xs text-center text-muted-foreground">
+                En confirmant, vous acceptez nos conditions de réservation. 
+                Le vendeur vous contactera pour confirmer la disponibilité.
+              </p>
             </div>
           )}
         </DialogContent>

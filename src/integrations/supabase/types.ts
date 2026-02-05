@@ -1324,6 +1324,81 @@ export type Database = {
         }
         Relationships: []
       }
+      tabaski_reservations: {
+        Row: {
+          created_at: string
+          currency: string | null
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_date: string
+          id: string
+          livestock_breed: string
+          livestock_id: string
+          livestock_name: string
+          livestock_price: number
+          livestock_type: string
+          livestock_weight: string | null
+          notes: string | null
+          payment_status: string
+          reservation_number: string
+          seller_location: string
+          seller_name: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          customer_name: string
+          customer_phone: string
+          delivery_address: string
+          delivery_date: string
+          id?: string
+          livestock_breed: string
+          livestock_id: string
+          livestock_name: string
+          livestock_price: number
+          livestock_type: string
+          livestock_weight?: string | null
+          notes?: string | null
+          payment_status?: string
+          reservation_number: string
+          seller_location: string
+          seller_name: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string
+          delivery_address?: string
+          delivery_date?: string
+          id?: string
+          livestock_breed?: string
+          livestock_id?: string
+          livestock_name?: string
+          livestock_price?: number
+          livestock_type?: string
+          livestock_weight?: string | null
+          notes?: string | null
+          payment_status?: string
+          reservation_number?: string
+          seller_location?: string
+          seller_name?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_favorites: {
         Row: {
           created_at: string | null
