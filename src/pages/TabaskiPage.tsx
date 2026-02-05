@@ -10,7 +10,8 @@ import {
   Shield,
   Clock,
   Heart,
-  Loader2
+  Loader2,
+  ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 // Types
 interface LivestockItem {
@@ -204,6 +206,7 @@ export default function TabaskiPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -372,6 +375,18 @@ export default function TabaskiPage() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* My Reservations Link */}
+        {user && (
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/my-tabaski-reservations')}
+            className="w-full gap-2"
+          >
+            <ClipboardList className="h-4 w-4" />
+            Voir mes réservations
+          </Button>
+        )}
+
         {/* Guarantees */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[

@@ -35,6 +35,7 @@ const TransportPage = lazy(() => import('@/pages/TransportPage'))
 const AdminTransportPage = lazy(() => import('@/pages/AdminTransportPage'))
 const MyRentalsPage = lazy(() => import('@/pages/MyRentalsPage'))
 const TabaskiPage = lazy(() => import('@/pages/TabaskiPage'))
+const MyTabaskiReservationsPage = lazy(() => import('@/pages/MyTabaskiReservationsPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -145,6 +146,15 @@ function App() {
                     </div>
                   }>
                     <TabaskiPage />
+                  </Suspense>
+                } />
+                <Route path="my-tabaski-reservations" element={
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <MyTabaskiReservationsPage />
                   </Suspense>
                 } />
                 <Route path="marketplace" element={
