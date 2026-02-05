@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck } from 'lucide-react'
+import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck, Beef } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -20,6 +20,7 @@ export function BottomNavigation() {
   ]
 
   const moreItems = [
+    { icon: Beef, label: 'Tabaski', path: '/tabaski' },
     { icon: Car, label: 'Transport', path: '/transport' },
     { icon: CalendarCheck, label: 'Mes Locations', path: '/my-rentals' },
     { icon: Package, label: 'Colis', path: '/tracking' },
