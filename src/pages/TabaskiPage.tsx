@@ -23,6 +23,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -663,18 +664,29 @@ export default function TabaskiPage() {
                 </div>
               </div>
 
-              {/* Price Summary */}
+              {/* Price Summary with Deposit */}
               <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="p-4">
+                <CardContent className="p-4 space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="font-medium">Total à payer</span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="font-medium">Prix total</span>
+                    <span className="text-xl font-bold text-primary">
                       {selectedItem.price.toLocaleString()} FCFA
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Paiement à la livraison
-                  </p>
+                  <Separator />
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <span className="font-medium text-blue-600">Acompte (30%)</span>
+                      <p className="text-xs text-muted-foreground">À payer pour sécuriser votre réservation</p>
+                    </div>
+                    <span className="text-lg font-bold text-blue-600">
+                      {Math.round(selectedItem.price * 0.3).toLocaleString()} FCFA
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-muted-foreground">
+                    <span>Reste à payer à la livraison</span>
+                    <span>{Math.round(selectedItem.price * 0.7).toLocaleString()} FCFA</span>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -693,14 +705,14 @@ export default function TabaskiPage() {
                 ) : (
                   <>
                     <CalendarIcon className="h-4 w-4" />
-                    Confirmer la réservation
+                    Réserver avec acompte de {Math.round(selectedItem.price * 0.3).toLocaleString()} FCFA
                   </>
                 )}
               </Button>
 
               <p className="text-xs text-center text-muted-foreground">
-                En confirmant, vous acceptez nos conditions de réservation. 
-                Le vendeur vous contactera pour confirmer la disponibilité.
+                Un acompte de 30% est requis pour sécuriser votre réservation. 
+                Le reste sera payé à la livraison.
               </p>
             </div>
           )}
