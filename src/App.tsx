@@ -36,6 +36,7 @@ const AdminTransportPage = lazy(() => import('@/pages/AdminTransportPage'))
 const MyRentalsPage = lazy(() => import('@/pages/MyRentalsPage'))
 const TabaskiPage = lazy(() => import('@/pages/TabaskiPage'))
 const MyTabaskiReservationsPage = lazy(() => import('@/pages/MyTabaskiReservationsPage'))
+const StationsPage = lazy(() => import('@/pages/StationsPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -202,6 +203,15 @@ function App() {
                     </div>
                   }>
                     <CheckoutPage />
+                  </Suspense>
+                } />
+                <Route path="stations" element={
+                  <Suspense fallback={
+                    <div className="flex items-center justify-center min-h-32">
+                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+                    </div>
+                  }>
+                    <StationsPage />
                   </Suspense>
                 } />
                 <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
