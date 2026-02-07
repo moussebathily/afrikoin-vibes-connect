@@ -1324,6 +1324,122 @@ export type Database = {
         }
         Relationships: []
       }
+      station_reports: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          station_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          station_id: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          station_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "station_reports_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stations: {
+        Row: {
+          address: string | null
+          brand: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          current_status: string | null
+          fuel_types: string[] | null
+          id: string
+          image_url: string | null
+          is_24h: boolean | null
+          is_open: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          opening_hours: string | null
+          phone: string | null
+          price_diesel: number | null
+          price_essence: number | null
+          price_gaz: number | null
+          products: string[] | null
+          status_updated_at: string | null
+          total_reports: number | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          brand?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          current_status?: string | null
+          fuel_types?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_24h?: boolean | null
+          is_open?: boolean | null
+          latitude: number
+          longitude: number
+          name: string
+          opening_hours?: string | null
+          phone?: string | null
+          price_diesel?: number | null
+          price_essence?: number | null
+          price_gaz?: number | null
+          products?: string[] | null
+          status_updated_at?: string | null
+          total_reports?: number | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          brand?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          current_status?: string | null
+          fuel_types?: string[] | null
+          id?: string
+          image_url?: string | null
+          is_24h?: boolean | null
+          is_open?: boolean | null
+          latitude?: number
+          longitude?: number
+          name?: string
+          opening_hours?: string | null
+          phone?: string | null
+          price_diesel?: number | null
+          price_essence?: number | null
+          price_gaz?: number | null
+          products?: string[] | null
+          status_updated_at?: string | null
+          total_reports?: number | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tabaski_reservations: {
         Row: {
           created_at: string
