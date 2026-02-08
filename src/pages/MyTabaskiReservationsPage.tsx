@@ -14,7 +14,8 @@ import {
   Package,
   ArrowLeft,
   RefreshCw,
-  Ban
+  Ban,
+  CreditCard
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -28,6 +29,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import TabaskiDepositPayment from '@/components/tabaski/TabaskiDepositPayment';
 
 interface TabaskiReservation {
   id: string;
@@ -85,6 +87,7 @@ export default function MyTabaskiReservationsPage() {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const [cancellingReservation, setCancellingReservation] = useState<TabaskiReservation | null>(null);
   const [cancelReason, setCancelReason] = useState('');
+  const [payingReservation, setPayingReservation] = useState<TabaskiReservation | null>(null);
 
   const { data: reservations, isLoading, error, refetch } = useQuery({
     queryKey: ['tabaski-reservations', user?.id],
@@ -306,15 +309,28 @@ export default function MyTabaskiReservationsPage() {
                         Commandé le {format(new Date(reservation.created_at), 'dd/MM/yyyy à HH:mm', { locale: fr })}
                       </div>
                       {canCancel && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 gap-1"
-                          onClick={() => handleCancelClick(reservation)}
-                        >
-                          <Ban className="h-3.5 w-3.5" />
-                          Annuler
-                        </Button>
+                        <div className="flex gap-2">
+                          {!isDepositPaid && (
+                            <Button
+                              variant="default"
+                              size="sm"
+                              className="gap-1"
+                              onClick={() => setPayingReservation(reservation)}
+                            >
+                              <CreditCard className="h-3.5 w-3.5" />
+                              Payer l'acompte
+                            </Button>
+                          )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 gap-1"
+                            onClick={() => handleCancelClick(reservation)}
+                          >
+                            <Ban className="h-3.5 w-3.5" />
+                            Annuler
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardContent>
@@ -364,6 +380,23 @@ export default function MyTabaskiReservationsPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Deposit Payment Dialog */}
+      {payingReservation && (
+        <TabaskiDepositPayment
+          isOpen={!!payingReservation}
+          onClose={() => setPayingReservation(null)}
+          reservationId={payingReservation.id}
+          reservationNumber={payingReservation.reservation_number}
+          depositAmount={Math.round(payingReservation.livestock_price * 0.3)}
+          totalAmount={payingReservation.livestock_price}
+          currency={payingReservation.currency}
+          onPaymentSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ['tabaski-reservations'] });
+            setPayingReservation(null);
+          }}
+        />
+      )}
     </div>
   );
 }
