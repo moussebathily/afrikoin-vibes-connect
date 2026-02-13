@@ -1,39 +1,26 @@
 
 
-# Plan d'amelioration de la structure et des performances du projet AfriKoin
+# Plan de restructuration du projet AfriKoin
 
-## Problemes identifies
-
-Le projet fonctionne mais souffre de plusieurs problemes de structure et de qualite qui freinent sa maintenabilite et ses performances.
-
-### 1. Fichiers parasites a la racine du projet
-Le dossier racine contient de nombreux fichiers qui n'ont rien a faire la : fichiers `.zip`, `.jks` (cle de signature), `.bat`, `.gif`, fichiers avec des noms en francais avec espaces, fichiers de notes techniques en vrac. Cela rend le projet confus et alourdit le depot Git.
-
-### 2. Duplication du QueryClient
-Le `QueryClient` est declare dans `App.tsx` alors qu'il pourrait etre dans un fichier dedie. Plus important, certaines pages comme `StationsPage` ont eu des bugs car le provider n'etait pas correctement positionne -- ce qui a ete corrige, mais la structure reste fragile.
-
-### 3. Routes repetitives dans App.tsx
-Le fichier `App.tsx` fait ~230 lignes avec un pattern `Suspense fallback` repete 10+ fois de maniere identique. Cela nuit a la lisibilite.
-
-### 4. Absence de constantes centralisees pour les routes
-Les chemins de navigation sont disperses en tant que strings dans `App.tsx`, `BottomNavigation.tsx`, et les differentes pages. Un changement de route necessite des modifications dans plusieurs fichiers.
-
-### 5. Pas de separation des providers
-Tous les providers (Query, Auth, Cart, Router) sont empiles dans `App.tsx`. Une architecture plus propre les separerait.
+## Objectif
+Ameliorer la maintenabilite et la lisibilite du projet sans changer le comportement fonctionnel.
 
 ---
 
-## Plan d'implementation
+## Etape 1 -- Nettoyer les fichiers parasites de la racine
 
-### Etape 1 -- Nettoyer les fichiers parasites de la racine
-Supprimer ou deplacer dans un dossier `docs/` les fichiers qui n'ont pas leur place a la racine :
-- Tous les fichiers `.zip` (6+ fichiers)
-- Les fichiers avec des noms en francais/espaces (`Publication directe en production...`, `Script Bash (Linux/...`, etc.)
-- Les fichiers de notes (`etapedegenerationapk.txt`, `android-resources.md`, `build-mobile.md`, etc.)
-- Le fichier `.gif`, `.bat`, `.jks` (la cle de signature ne devrait jamais etre dans le repo)
-- Les fichiers `kotlin`, `yml`, `cache action`, `fichier .aab` (fichiers sans extension correcte)
+Supprimer les fichiers suivants qui n'ont pas leur place dans le depot :
 
-### Etape 2 -- Creer un fichier de constantes de routes
+- Fichiers ZIP : `afrikoin-auto-prod-1755069284.zip`, `afrikoin-google-play-ci-pack-1755043103.zip`, `afrikoin-release-scaffold.zip`, `afrikoin-vibes-connect-auto-fix.zip`, `afrikoin-vibes-connect-main.zip`, `afrikoin-workflow-arm64.zip`, `android-play-prod-any-branch.zip`, `android-play-workflow-best.zip`, `android-play-workflow.zip`, `deploy_afrikoin.zip`, `afrikoin-release-config.zip`, `keystore-fingerprint-tools.zip`, `realtime-chat-supabase-react-master.zip`, `gradle-wrapper-8.7.zip`
+- Fichier keystore : `afrikoin-release-key.jks` (ne devrait jamais etre dans le repo)
+- Fichiers mal nommes (espaces, noms en francais) : `Publication directe en production a chaque push`, `Script PowerShell (Windows) : build-android.ps1`, `Script Bash (Linux/macOS/WSL) : build-android.sh`, `Configuration des ABI dans Android Studio.md`, `build.yml pour GitHub Actions :`, `cache action`, `fichier .aab`, `docker build avec -f path/Dockerfile`, `.github/workflows/permissions du workflow :`, `« scripts »`
+- Notes techniques en vrac : `etapedegenerationapk.txt`, `android-resources.md`, `build-mobile.md`, `kotlin`, `kotlin-Tests Unitaires`, `yml`
+- Autres : `gradle-completion-4.0.gif`, `convert_aab_to_apk_Version2.bat`, `gradle-completion.bash`, `gradle-completion.plugin.zsh`
+
+---
+
+## Etape 2 -- Creer les constantes de routes
+
 Creer `src/config/routes.ts` avec toutes les routes centralisees :
 
 ```typescript
@@ -41,47 +28,73 @@ export const ROUTES = {
   HOME: '/',
   AUTH: '/auth',
   MARKETPLACE: '/marketplace',
-  PRODUCT: '/product/:id',
+  PRODUCT_DETAIL: '/product/:id',
+  SELLER: '/seller/:sellerId?',
+  CHECKOUT: '/checkout',
   STATIONS: '/stations',
   TABASKI: '/tabaski',
-  // ... etc
+  MY_TABASKI: '/my-tabaski-reservations',
+  TRANSPORT: '/transport',
+  ADMIN_TRANSPORT: '/admin/transport',
+  MY_RENTALS: '/my-rentals',
+  JOBS: '/jobs',
+  JOB_DETAIL: '/jobs/:id',
+  NEWS: '/news',
+  TRACKING: '/tracking',
+  MARKETS: '/markets',
+  SPORTS: '/sports',
+  CULTURE: '/culture',
+  WALLET: '/wallet',
+  CALL: '/call',
+  AI_STUDIO: '/ai-studio',
+  RANKINGS: '/rankings',
+  PROFILE: '/profile',
+  LIKES: '/likes',
+  HOLIDAYS: '/holidays',
+  ABOUT: '/about',
+  PAYMENT_SUCCESS: '/payment-success',
 } as const
 ```
 
-### Etape 3 -- Extraire un composant LazyRoute reutilisable
-Creer `src/components/layout/LazyRoute.tsx` pour eliminer la repetition du pattern Suspense :
+---
 
-```typescript
-function LazyRoute({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense fallback={<RouteLoader />}>
-      {children}
-    </Suspense>
-  )
-}
-```
+## Etape 3 -- Creer le composant LazyRoute
 
-### Etape 4 -- Extraire les Providers dans un composant dedie
-Creer `src/components/providers/AppProviders.tsx` qui regroupe QueryClientProvider, AuthProvider, CartProvider. Cela simplifie `App.tsx` et facilite les tests.
-
-### Etape 5 -- Simplifier App.tsx
-Apres les etapes precedentes, `App.tsx` sera reduit a ~80 lignes au lieu de ~230, avec une structure claire et sans repetition.
+Creer `src/components/layout/LazyRoute.tsx` -- un wrapper Suspense reutilisable avec un fallback standard, eliminant les 10+ repetitions dans App.tsx.
 
 ---
 
-## Details techniques
+## Etape 4 -- Extraire les Providers
 
-**Fichiers a creer :**
-- `src/config/routes.ts` -- constantes de routes
-- `src/components/layout/LazyRoute.tsx` -- wrapper Suspense reutilisable
-- `src/components/providers/AppProviders.tsx` -- providers centralises
+Creer `src/components/providers/AppProviders.tsx` regroupant :
+- `QueryClientProvider` (avec creation du QueryClient)
+- `AuthProvider`
+- `CartProvider`
 
-**Fichiers a modifier :**
-- `src/App.tsx` -- simplification majeure
-- `src/components/layout/BottomNavigation.tsx` -- utiliser les constantes de routes
+---
 
-**Fichiers a supprimer :**
-- ~15 fichiers parasites a la racine (zips, notes, fichiers mal nommes)
+## Etape 5 -- Simplifier App.tsx
 
-**Aucun changement fonctionnel** -- l'application se comportera exactement de la meme maniere pour l'utilisateur final.
+Refactorer `App.tsx` pour utiliser les trois nouveaux modules. Le fichier passera de ~230 lignes a ~80 lignes.
+
+---
+
+## Etape 6 -- Mettre a jour BottomNavigation
+
+Modifier `src/components/layout/BottomNavigation.tsx` pour utiliser les constantes de `ROUTES` au lieu de strings en dur.
+
+---
+
+## Resume des fichiers
+
+| Action | Fichier |
+|--------|---------|
+| Creer | `src/config/routes.ts` |
+| Creer | `src/components/layout/LazyRoute.tsx` |
+| Creer | `src/components/providers/AppProviders.tsx` |
+| Modifier | `src/App.tsx` |
+| Modifier | `src/components/layout/BottomNavigation.tsx` |
+| Supprimer | ~25 fichiers parasites a la racine |
+
+Aucun changement fonctionnel -- l'application se comportera exactement de la meme maniere pour l'utilisateur.
 
