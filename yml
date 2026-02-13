@@ -1,2 +1,0 @@
-- name: Setup Java JDK
-  uses: actions/setup-java@v4.7.1

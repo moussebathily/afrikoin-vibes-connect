@@ -1,9 +1,10 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react'
+import React, { lazy, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider, useAuth } from '@/contexts/AuthContext'
-import { CartProvider } from '@/contexts/CartContext'
+import { useAuth } from '@/contexts/AuthContext'
+import { AppProviders } from '@/components/providers/AppProviders'
 import { AppLayout } from '@/components/layout/AppLayout'
+import { LazyRoute } from '@/components/layout/LazyRoute'
+import { ROUTES } from '@/config/routes'
 import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
 import { WalletPage } from '@/pages/WalletPage'
@@ -24,10 +25,8 @@ import './index.css'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 
-// Lazy load components
-const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(module => ({
-  default: module.AIStudioDemo
-})))
+// Lazy load heavy components
+const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
 const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
 const SellerPage = lazy(() => import('@/pages/SellerPage'))
@@ -41,7 +40,6 @@ const StationsPage = lazy(() => import('@/pages/StationsPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
-  
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -49,39 +47,29 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
       </div>
     )
   }
-  
-  return user ? <>{children}</> : <Navigate to="/auth" replace />
+  return user ? <>{children}</> : <Navigate to={ROUTES.AUTH} replace />
 }
-
-const queryClient = new QueryClient()
 
 function App() {
   const [i18nReady, setI18nReady] = useState(false)
 
   useEffect(() => {
-    setupI18n().then(() => {
-      setI18nReady(true)
-    })
+    setupI18n().then(() => setI18nReady(true))
   }, [])
 
-  // Capacitor status bar: overlay webview and set style based on theme
   useEffect(() => {
     if (Capacitor.getPlatform() !== 'web') {
       try {
         StatusBar.setOverlaysWebView({ overlay: true })
         StatusBar.setBackgroundColor({ color: '#00000000' })
-
         const applyStyle = () => {
           const isDark = document.documentElement.classList.contains('dark')
           StatusBar.setStyle({ style: isDark ? Style.Light : Style.Dark })
         }
         applyStyle()
-
         const observer = new MutationObserver(applyStyle)
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) { /* ignore */ }
     }
   }, [])
 
@@ -94,144 +82,46 @@ function App() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
-        <Router>
-          <div className="min-h-screen bg-background">
-            <Routes>
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <AppLayout />
-                </ProtectedRoute>
-              }>
-                <Route index element={<HomePage />} />
-                <Route path="culture" element={<CulturePage />} />
-                <Route path="sports" element={<SportsPage />} />
-                <Route path="markets" element={<MarketsPage />} />
-                <Route path="rankings" element={<RankingsPage />} />
-                <Route path="wallet" element={<WalletPage />} />
-                <Route path="call" element={<CallPage />} />
-                <Route path="tracking" element={<TrackingPage />} />
-                <Route path="jobs" element={<JobsPage />} />
-                <Route path="jobs/:id" element={<JobDetailPage />} />
-                <Route path="news" element={<NewsPage />} />
-                <Route path="transport" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <TransportPage />
-                  </Suspense>
-                } />
-                <Route path="admin/transport" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <AdminTransportPage />
-                  </Suspense>
-                } />
-                <Route path="my-rentals" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <MyRentalsPage />
-                  </Suspense>
-                } />
-                <Route path="tabaski" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <TabaskiPage />
-                  </Suspense>
-                } />
-                <Route path="my-tabaski-reservations" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <MyTabaskiReservationsPage />
-                  </Suspense>
-                } />
-                <Route path="marketplace" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <MarketplacePage />
-                  </Suspense>
-                } />
-                <Route path="product/:id" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <ProductDetailPage />
-                  </Suspense>
-                } />
-                <Route path="ai-studio" element={
-                  <div className="p-4">
-                    <Suspense fallback={
-                      <div className="flex items-center justify-center min-h-32">
-                        <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                      </div>
-                    }>
-                      <AIStudioDemo />
-                    </Suspense>
-                  </div>
-                } />
-                <Route path="seller/:sellerId?" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <SellerPage />
-                  </Suspense>
-                } />
-                <Route path="checkout" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <CheckoutPage />
-                  </Suspense>
-                } />
-                <Route path="stations" element={
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center min-h-32">
-                      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
-                    </div>
-                  }>
-                    <StationsPage />
-                  </Suspense>
-                } />
-                <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
-                <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
-                <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
-                <Route path="about" element={<AboutPage />} />
-                <Route path="payment-success" element={<PaymentSuccessPage />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
-            <Toaster />
-          </div>
-        </Router>
-        </CartProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <AppProviders>
+      <Router>
+        <div className="min-h-screen bg-background">
+          <Routes>
+            <Route path={ROUTES.AUTH} element={<AuthPage />} />
+            <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route index element={<HomePage />} />
+              <Route path="culture" element={<CulturePage />} />
+              <Route path="sports" element={<SportsPage />} />
+              <Route path="markets" element={<MarketsPage />} />
+              <Route path="rankings" element={<RankingsPage />} />
+              <Route path="wallet" element={<WalletPage />} />
+              <Route path="call" element={<CallPage />} />
+              <Route path="tracking" element={<TrackingPage />} />
+              <Route path="jobs" element={<JobsPage />} />
+              <Route path="jobs/:id" element={<JobDetailPage />} />
+              <Route path="news" element={<NewsPage />} />
+              <Route path="transport" element={<LazyRoute><TransportPage /></LazyRoute>} />
+              <Route path="admin/transport" element={<LazyRoute><AdminTransportPage /></LazyRoute>} />
+              <Route path="my-rentals" element={<LazyRoute><MyRentalsPage /></LazyRoute>} />
+              <Route path="tabaski" element={<LazyRoute><TabaskiPage /></LazyRoute>} />
+              <Route path="my-tabaski-reservations" element={<LazyRoute><MyTabaskiReservationsPage /></LazyRoute>} />
+              <Route path="marketplace" element={<LazyRoute><MarketplacePage /></LazyRoute>} />
+              <Route path="product/:id" element={<LazyRoute><ProductDetailPage /></LazyRoute>} />
+              <Route path="ai-studio" element={<div className="p-4"><LazyRoute><AIStudioDemo /></LazyRoute></div>} />
+              <Route path="seller/:sellerId?" element={<LazyRoute><SellerPage /></LazyRoute>} />
+              <Route path="checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
+              <Route path="stations" element={<LazyRoute><StationsPage /></LazyRoute>} />
+              <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
+              <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
+              <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
+              <Route path="about" element={<AboutPage />} />
+              <Route path="payment-success" element={<PaymentSuccessPage />} />
+              <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
+            </Route>
+          </Routes>
+          <Toaster />
+        </div>
+      </Router>
+    </AppProviders>
   )
 }
 
