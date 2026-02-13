@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { useAdminRole } from '@/hooks/useAdminRole'
+import { ROUTES } from '@/config/routes'
 
 export function BottomNavigation() {
   const navigate = useNavigate()
@@ -13,23 +14,23 @@ export function BottomNavigation() {
   const { isAdmin } = useAdminRole()
 
   const mainItems = [
-    { icon: Home, label: t('navigation.home'), path: '/' },
-    { icon: ShoppingBag, label: 'Boutique', path: '/marketplace' },
-    { icon: Newspaper, label: 'Actus', path: '/news' },
-    { icon: Briefcase, label: 'Emploi', path: '/jobs' },
+    { icon: Home, label: t('navigation.home'), path: ROUTES.HOME },
+    { icon: ShoppingBag, label: 'Boutique', path: ROUTES.MARKETPLACE },
+    { icon: Newspaper, label: 'Actus', path: ROUTES.NEWS },
+    { icon: Briefcase, label: 'Emploi', path: ROUTES.JOBS },
   ]
 
   const moreItems = [
-    { icon: Fuel, label: 'Stations', path: '/stations' },
-    { icon: Beef, label: 'Tabaski', path: '/tabaski' },
-    { icon: Car, label: 'Transport', path: '/transport' },
-    { icon: CalendarCheck, label: 'Mes Locations', path: '/my-rentals' },
-    { icon: Package, label: 'Colis', path: '/tracking' },
-    { icon: TrendingUp, label: 'Marchés', path: '/markets' },
-    { icon: Trophy, label: 'Sport', path: '/sports' },
-    { icon: Palette, label: 'Culture', path: '/culture' },
-    { icon: Wallet, label: 'Wallet', path: '/wallet' },
-    ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: '/admin/transport' }] : []),
+    { icon: Fuel, label: 'Stations', path: ROUTES.STATIONS },
+    { icon: Beef, label: 'Tabaski', path: ROUTES.TABASKI },
+    { icon: Car, label: 'Transport', path: ROUTES.TRANSPORT },
+    { icon: CalendarCheck, label: 'Mes Locations', path: ROUTES.MY_RENTALS },
+    { icon: Package, label: 'Colis', path: ROUTES.TRACKING },
+    { icon: TrendingUp, label: 'Marchés', path: ROUTES.MARKETS },
+    { icon: Trophy, label: 'Sport', path: ROUTES.SPORTS },
+    { icon: Palette, label: 'Culture', path: ROUTES.CULTURE },
+    { icon: Wallet, label: 'Wallet', path: ROUTES.WALLET },
+    ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: ROUTES.ADMIN_TRANSPORT }] : []),
   ]
 
   const isMoreActive = moreItems.some(item => location.pathname === item.path)
