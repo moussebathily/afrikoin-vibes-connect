@@ -1663,6 +1663,130 @@ export type Database = {
           },
         ]
       }
+      wallpaper_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          order_index: number | null
+          slug: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          order_index?: number | null
+          slug: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          order_index?: number | null
+          slug?: string
+        }
+        Relationships: []
+      }
+      wallpaper_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+          wallpaper_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+          wallpaper_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+          wallpaper_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallpaper_favorites_wallpaper_id_fkey"
+            columns: ["wallpaper_id"]
+            isOneToOne: false
+            referencedRelation: "wallpapers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallpapers: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          download_count: number | null
+          favorites_count: number | null
+          file_size: number | null
+          file_url: string
+          height: number | null
+          id: string
+          is_active: boolean | null
+          media_type: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          width: number | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          download_count?: number | null
+          favorites_count?: number | null
+          file_size?: number | null
+          file_url: string
+          height?: number | null
+          id?: string
+          is_active?: boolean | null
+          media_type?: string
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          width?: number | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          download_count?: number | null
+          favorites_count?: number | null
+          file_size?: number | null
+          file_url?: string
+          height?: number | null
+          id?: string
+          is_active?: boolean | null
+          media_type?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallpapers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "wallpaper_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       weekly_rankings: {
         Row: {
           category: string | null
