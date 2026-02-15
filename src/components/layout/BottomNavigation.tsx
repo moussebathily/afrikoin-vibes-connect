@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck, Beef, Fuel } from 'lucide-react'
+import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck, Beef, Fuel, ImageIcon } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -30,6 +30,7 @@ export function BottomNavigation() {
     { icon: Trophy, label: 'Sport', path: ROUTES.SPORTS },
     { icon: Palette, label: 'Culture', path: ROUTES.CULTURE },
     { icon: Wallet, label: 'Wallet', path: ROUTES.WALLET },
+    { icon: ImageIcon, label: 'Fonds d\'Écran', path: ROUTES.WALLPAPERS },
     ...(isAdmin ? [{ icon: Shield, label: 'Admin', path: ROUTES.ADMIN_TRANSPORT }] : []),
   ]
 

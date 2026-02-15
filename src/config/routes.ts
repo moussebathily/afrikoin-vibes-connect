@@ -27,4 +27,5 @@ export const ROUTES = {
   HOLIDAYS: '/holidays',
   ABOUT: '/about',
   PAYMENT_SUCCESS: '/payment-success',
+  WALLPAPERS: '/fonds-ecran',
 } as const

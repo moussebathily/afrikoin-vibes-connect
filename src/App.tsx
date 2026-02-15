@@ -37,6 +37,7 @@ const MyRentalsPage = lazy(() => import('@/pages/MyRentalsPage'))
 const TabaskiPage = lazy(() => import('@/pages/TabaskiPage'))
 const MyTabaskiReservationsPage = lazy(() => import('@/pages/MyTabaskiReservationsPage'))
 const StationsPage = lazy(() => import('@/pages/StationsPage'))
+const WallpapersPage = lazy(() => import('@/pages/WallpapersPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -114,6 +115,7 @@ function App() {
               <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
               <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
               <Route path="about" element={<AboutPage />} />
+              <Route path="fonds-ecran" element={<LazyRoute><WallpapersPage /></LazyRoute>} />
               <Route path="payment-success" element={<PaymentSuccessPage />} />
               <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
             </Route>
