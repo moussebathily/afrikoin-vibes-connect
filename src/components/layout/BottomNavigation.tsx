@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck, Beef, Fuel, ImageIcon } from 'lucide-react'
+import { Home, Wallet, Package, ShoppingBag, MoreHorizontal, Briefcase, Newspaper, Trophy, Palette, TrendingUp, X, Car, Shield, CalendarCheck, Beef, Fuel, ImageIcon, MessageCircle } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -16,11 +16,12 @@ export function BottomNavigation() {
   const mainItems = [
     { icon: Home, label: t('navigation.home'), path: ROUTES.HOME },
     { icon: ShoppingBag, label: 'Boutique', path: ROUTES.MARKETPLACE },
-    { icon: Newspaper, label: 'Actus', path: ROUTES.NEWS },
+    { icon: MessageCircle, label: 'Messages', path: ROUTES.MESSAGING },
     { icon: Briefcase, label: 'Emploi', path: ROUTES.JOBS },
   ]
 
   const moreItems = [
+    { icon: Newspaper, label: 'Actus', path: ROUTES.NEWS },
     { icon: Fuel, label: 'Stations', path: ROUTES.STATIONS },
     { icon: Beef, label: 'Tabaski', path: ROUTES.TABASKI },
     { icon: Car, label: 'Transport', path: ROUTES.TRANSPORT },
