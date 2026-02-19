@@ -16,11 +16,12 @@ export function useAdminRole() {
       }
 
       try {
-        // Direct query to check admin role
-        const { data, error } = await (supabase as any).rpc('has_role', {
-          _user_id: user.id,
-          _role: 'admin'
-        })
+        const { data, error } = await (supabase as any)
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .eq('role', 'admin')
+          .maybeSingle()
 
         if (error) {
           console.error('Error checking admin role:', error)

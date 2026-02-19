@@ -28,4 +28,5 @@ export const ROUTES = {
   ABOUT: '/about',
   PAYMENT_SUCCESS: '/payment-success',
   WALLPAPERS: '/fonds-ecran',
+  MESSAGING: '/messages',
 } as const
