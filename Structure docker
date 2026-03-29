@@ -1,0 +1,6 @@
+project/
+│
+├── frontend/        → Next.js
+├── backend/         → Node.js (API)
+├── ai-service/      → Python (IA)
+├── docker-compose.yml
