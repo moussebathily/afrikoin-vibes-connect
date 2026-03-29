@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - frontend
+      - backend
+      - ai
+
+  frontend:
+    build: ./frontend
+    restart: always
+
+  backend:
+    build: ./backend
+    restart: always
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+
+  ai:
+    build: ./ai-service
+    restart: always
