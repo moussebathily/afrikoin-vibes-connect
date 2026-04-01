@@ -1,0 +1,3 @@
+supabase migration new new-migration
+supabase link --project-ref votbtctkoctxdcgdlroh
+supabase db push
