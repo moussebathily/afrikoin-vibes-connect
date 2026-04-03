@@ -123,6 +123,23 @@ export function AuthPage() {
     }
   }
 
+  const handleGoogleSignIn = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+        },
+      })
+      if (error) {
+        toast.error('Erreur Google', { description: error.message })
+      }
+    } catch (err) {
+      console.error('Google auth error:', err)
+      toast.error('Une erreur est survenue avec Google')
+    }
+  }
+
   const switchMode = (newMode: AuthMode) => {
     setMode(newMode)
     setErrors({})
