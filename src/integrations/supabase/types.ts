@@ -1815,6 +1815,7 @@ export type Database = {
           file_url: string
           height: number | null
           id: string
+          is_active: boolean | null
           is_featured: boolean | null
           media_type: string | null
           tags: string[] | null
@@ -1834,6 +1835,7 @@ export type Database = {
           file_url: string
           height?: number | null
           id?: string
+          is_active?: boolean | null
           is_featured?: boolean | null
           media_type?: string | null
           tags?: string[] | null
@@ -1853,6 +1855,7 @@ export type Database = {
           file_url?: string
           height?: number | null
           id?: string
+          is_active?: boolean | null
           is_featured?: boolean | null
           media_type?: string | null
           tags?: string[] | null
