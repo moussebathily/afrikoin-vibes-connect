@@ -44,7 +44,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 L'application a rencontré une erreur inattendue. Veuillez réessayer.
               </p>
               
-              {process.env.NODE_ENV === 'development' && (
+              {import.meta.env.DEV && (
                 <details className="mt-4">
                   <summary className="cursor-pointer text-sm text-muted-foreground">
                     Détails de l'erreur
