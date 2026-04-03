@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
+// @ts-ignore - CSS import handled by Vite
 import './index.css'
 import { ErrorBoundary } from './components/ErrorBoundary'
 

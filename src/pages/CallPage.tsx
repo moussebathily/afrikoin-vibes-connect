@@ -26,7 +26,7 @@ export function CallPage() {
 
   // Call timer
   useEffect(() => {
-    let interval: NodeJS.Timeout
+    let interval: ReturnType<typeof setInterval>
     if (isConnected) {
       interval = setInterval(() => {
         setCallDuration(prev => prev + 1)

@@ -83,7 +83,7 @@ export const setupI18n = async (userLng?: string) => {
       },
       supportedLngs,
       returnEmptyString: false,
-      debug: process.env.NODE_ENV === 'development',
+      debug: false,
       // Enhanced error handling
       missingKeyHandler: (lng, ns, key) => {
         console.warn(`Missing translation key: ${key} for language: ${lng}`)
