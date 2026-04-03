@@ -466,6 +466,7 @@ export type Database = {
           experience_level: string | null
           id: string
           is_active: boolean | null
+          is_featured: boolean | null
           is_remote: boolean | null
           job_type: string | null
           location: string | null
@@ -487,6 +488,7 @@ export type Database = {
           experience_level?: string | null
           id?: string
           is_active?: boolean | null
+          is_featured?: boolean | null
           is_remote?: boolean | null
           job_type?: string | null
           location?: string | null
@@ -508,6 +510,7 @@ export type Database = {
           experience_level?: string | null
           id?: string
           is_active?: boolean | null
+          is_featured?: boolean | null
           is_remote?: boolean | null
           job_type?: string | null
           location?: string | null
