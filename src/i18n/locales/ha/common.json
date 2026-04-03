@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Gano AfriKoin",
+      "tagline": "Saya & sayar a duk faɗin Afirka",
+      "subtitle": "Dandali na Afirka mai cikakken aiki"
+    },
+    "cta": {
+      "getStarted": "Fara",
+      "create": "Ƙirƙiri abun ciki",
+      "aiStudio": "Studio AI"
+    }
   }
 }

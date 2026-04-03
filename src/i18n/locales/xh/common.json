@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Fumana AfriKoin",
+      "tagline": "Thenga kwaye uthengise kuyo yonke iAfrika",
+      "subtitle": "Iqonga le-Afrika yonke-kwenye-enye"
+    },
+    "cta": {
+      "getStarted": "Qala",
+      "create": "Yenza umxholo",
+      "aiStudio": "Studio ye-AI"
+    }
   }
 }

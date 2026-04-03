@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Ṣàwárí AfriKoin",
+      "tagline": "Ra àti ta ní gbogbo Áfríkà",
+      "subtitle": "Pẹpẹ Áfríkà gbogbo-nínú-ọkan"
+    },
+    "cta": {
+      "getStarted": "Bẹ̀rẹ̀",
+      "create": "Ṣẹ̀dá àkóónú",
+      "aiStudio": "Studio AI"
+    }
   }
 }
