@@ -1,5 +1,6 @@
 import { useEffect, useState, Suspense, lazy } from "react";
 import L from "leaflet";
+// @ts-ignore - CSS import handled by Vite
 import "leaflet/dist/leaflet.css";
 import type { LocationPoint } from "@/types/transport";
 
