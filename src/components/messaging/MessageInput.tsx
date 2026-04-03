@@ -29,7 +29,7 @@ export function MessageInput({ onSend, replyTo, onCancelReply, disabled }: Props
   const fileInputRef = useRef<HTMLInputElement>(null)
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
-  const recordTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const recordTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleSend = async () => {

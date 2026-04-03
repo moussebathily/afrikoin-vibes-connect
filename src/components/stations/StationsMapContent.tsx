@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
+// @ts-ignore - CSS import handled by Vite
 import 'leaflet/dist/leaflet.css'
 import type { Station } from '@/pages/StationsPage'
 import { Button } from '@/components/ui/button'
