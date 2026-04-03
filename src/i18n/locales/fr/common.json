@@ -232,6 +232,18 @@
     "step2": "Cliquez sur le bouton d'appel et autorisez l'accès au microphone",
     "step3": "Parlez naturellement et l'assistant vous répondra vocalement"
   },
+  "marketing": {
+    "hero": {
+      "title": "Découvrez AfriKoin",
+      "tagline": "Acheter & vendre en confiance partout en Afrique",
+      "subtitle": "La plateforme africaine tout-en-un : marketplace, actualités, emploi, transport et divertissement."
+    },
+    "cta": {
+      "getStarted": "Commencer",
+      "create": "Créer du contenu",
+      "aiStudio": "Studio IA"
+    }
+  },
   "_meta": {
     "rtl": false
   }

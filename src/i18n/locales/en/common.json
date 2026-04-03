@@ -121,6 +121,18 @@
     "previous": "Previous",
     "language": "Language"
   },
+  "marketing": {
+    "hero": {
+      "title": "Discover AfriKoin",
+      "tagline": "Buy & sell across Africa with trust",
+      "subtitle": "The all-in-one African platform: marketplace, news, jobs, transport and entertainment."
+    },
+    "cta": {
+      "getStarted": "Get Started",
+      "create": "Create Content",
+      "aiStudio": "AI Studio"
+    }
+  },
   "_meta": {
     "rtl": false
   }
