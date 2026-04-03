@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "AfriKoin Argadhu",
+      "tagline": "Afriikaa keessatti bitaa fi gurgurtaa",
+      "subtitle": "Maqaa Afriikaa hunda-keessaa-tokko"
+    },
+    "cta": {
+      "getStarted": "Jalqabi",
+      "create": "Qabiyyee uumi",
+      "aiStudio": "Studio AI"
+    }
   }
 }

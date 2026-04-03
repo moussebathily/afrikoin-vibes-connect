@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": true
+  },
+  "marketing": {
+    "hero": {
+      "title": "اكتشف AfriKoin",
+      "tagline": "اشترِ وبِع عبر أفريقيا بثقة",
+      "subtitle": "المنصة الأفريقية الشاملة"
+    },
+    "cta": {
+      "getStarted": "ابدأ",
+      "create": "إنشاء محتوى",
+      "aiStudio": "استوديو الذكاء"
+    }
   }
 }

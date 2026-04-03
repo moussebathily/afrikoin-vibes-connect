@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "探索 AfriKoin",
+      "tagline": "在非洲放心买卖",
+      "subtitle": "一站式非洲平台"
+    },
+    "cta": {
+      "getStarted": "开始",
+      "create": "创建内容",
+      "aiStudio": "AI 工作室"
+    }
   }
 }

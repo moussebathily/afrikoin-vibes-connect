@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Gundua AfriKoin",
+      "tagline": "Nunua na uze kote Afrika kwa uaminifu",
+      "subtitle": "Jukwaa la Afrika lote-katika-moja"
+    },
+    "cta": {
+      "getStarted": "Anza",
+      "create": "Tengeneza maudhui",
+      "aiStudio": "Studio ya AI"
+    }
   }
 }

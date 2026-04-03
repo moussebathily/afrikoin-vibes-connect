@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Descubre AfriKoin",
+      "tagline": "Compra y vende en toda África con confianza",
+      "subtitle": "La plataforma africana todo en uno"
+    },
+    "cta": {
+      "getStarted": "Empezar",
+      "create": "Crear contenido",
+      "aiStudio": "Estudio IA"
+    }
   }
 }

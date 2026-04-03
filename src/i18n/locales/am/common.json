@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "AfriKoin ያግኙ",
+      "tagline": "በአፍሪካ ውስጥ በእምነት ይግዙ እና ይሽጡ",
+      "subtitle": "ሁሉን-በአንድ የአፍሪካ መድረክ"
+    },
+    "cta": {
+      "getStarted": "ጀምር",
+      "create": "ይዘት ፍጠር",
+      "aiStudio": "AI ስቱዲዮ"
+    }
   }
 }

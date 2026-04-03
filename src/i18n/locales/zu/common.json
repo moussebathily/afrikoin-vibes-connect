@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Thola AfriKoin",
+      "tagline": "Thenga futhi uthengise kulo lonke i-Afrika",
+      "subtitle": "Inkundla ye-Afrika konke-kweyodwa"
+    },
+    "cta": {
+      "getStarted": "Qala",
+      "create": "Dala okuqukethwe",
+      "aiStudio": "Studio ye-AI"
+    }
   }
 }

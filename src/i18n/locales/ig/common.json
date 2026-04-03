@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Chọpụta AfriKoin",
+      "tagline": "Zụrụ & ree n'ofe Africa",
+      "subtitle": "Ikpo okwu Africa niile-n'otu"
+    },
+    "cta": {
+      "getStarted": "Malite",
+      "create": "Mepụta ọdịnaya",
+      "aiStudio": "Studio AI"
+    }
   }
 }

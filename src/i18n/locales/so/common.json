@@ -81,5 +81,17 @@
   },
   "_meta": {
     "rtl": false
+  },
+  "marketing": {
+    "hero": {
+      "title": "Ogaaw AfriKoin",
+      "tagline": "Ka iibso oo ka iibi Afrika oo dhan",
+      "subtitle": "Madal Afrika ah oo dhammaystiran"
+    },
+    "cta": {
+      "getStarted": "Bilow",
+      "create": "Abuur nuxurka",
+      "aiStudio": "Studio AI"
+    }
   }
 }
