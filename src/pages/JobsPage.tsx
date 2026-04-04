@@ -260,6 +260,8 @@ export function JobsPage() {
 
   const featuredJobs = filteredJobs.filter(job => job.is_featured)
   const regularJobs = filteredJobs.filter(job => !job.is_featured)
+  const visibleRegularJobs = regularJobs.slice(0, visibleJobsCount)
+  const hasMoreJobs = visibleJobsCount < regularJobs.length
 
   const stats = {
     total: allJobs.length,
