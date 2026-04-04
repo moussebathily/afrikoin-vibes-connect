@@ -149,6 +149,8 @@ const demoJobs: Job[] = [
   }
 ]
 
+const JOBS_PAGE_SIZE = 10;
+
 export function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>(demoJobs)
   const [dbJobs, setDbJobs] = useState<Job[]>([])
@@ -158,6 +160,7 @@ export function JobsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedLocations, setSelectedLocations] = useState<string[]>([])
   const [showMap, setShowMap] = useState(false)
+  const [visibleJobsCount, setVisibleJobsCount] = useState(JOBS_PAGE_SIZE)
   const { t } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
