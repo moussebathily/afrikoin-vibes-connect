@@ -425,10 +425,23 @@ export function JobsPage() {
               {activeType === 'all' ? 'Toutes les offres' : `Offres ${getTypeLabel(activeType as Job['type'])}`}
             </h2>
             <div className="space-y-3">
-              {regularJobs.length > 0 ? (
-                regularJobs.map(job => (
-                  <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
-                ))
+              {visibleRegularJobs.length > 0 ? (
+                <>
+                  {visibleRegularJobs.map(job => (
+                    <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
+                  ))}
+                  {hasMoreJobs && (
+                    <div className="flex justify-center pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setVisibleJobsCount(prev => prev + JOBS_PAGE_SIZE)}
+                        className="gap-2"
+                      >
+                        Voir plus d'offres ({regularJobs.length - visibleJobsCount} restantes)
+                      </Button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <Card className="border-dashed">
                   <CardContent className="py-12 text-center">
@@ -437,7 +450,7 @@ export function JobsPage() {
                     <p className="text-sm text-muted-foreground mb-4">
                       Essayez de modifier vos critères de recherche
                     </p>
-                    <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); }}>
+                    <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); setVisibleJobsCount(JOBS_PAGE_SIZE); }}>
                       Réinitialiser les filtres
                     </Button>
                   </CardContent>
