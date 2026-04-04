@@ -149,6 +149,8 @@ const demoJobs: Job[] = [
   }
 ]
 
+const JOBS_PAGE_SIZE = 10;
+
 export function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>(demoJobs)
   const [dbJobs, setDbJobs] = useState<Job[]>([])
@@ -158,6 +160,7 @@ export function JobsPage() {
   const [loading, setLoading] = useState(true)
   const [selectedLocations, setSelectedLocations] = useState<string[]>([])
   const [showMap, setShowMap] = useState(false)
+  const [visibleJobsCount, setVisibleJobsCount] = useState(JOBS_PAGE_SIZE)
   const { t } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -169,6 +172,7 @@ export function JobsPage() {
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
+        .limit(50)
 
       if (error) {
         console.error('Error fetching jobs:', error)
@@ -256,6 +260,8 @@ export function JobsPage() {
 
   const featuredJobs = filteredJobs.filter(job => job.is_featured)
   const regularJobs = filteredJobs.filter(job => !job.is_featured)
+  const visibleRegularJobs = regularJobs.slice(0, visibleJobsCount)
+  const hasMoreJobs = visibleJobsCount < regularJobs.length
 
   const stats = {
     total: allJobs.length,
@@ -419,10 +425,23 @@ export function JobsPage() {
               {activeType === 'all' ? 'Toutes les offres' : `Offres ${getTypeLabel(activeType as Job['type'])}`}
             </h2>
             <div className="space-y-3">
-              {regularJobs.length > 0 ? (
-                regularJobs.map(job => (
-                  <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
-                ))
+              {visibleRegularJobs.length > 0 ? (
+                <>
+                  {visibleRegularJobs.map(job => (
+                    <JobCard key={job.id} job={job} formatDate={formatDate} getTypeLabel={getTypeLabel} getTypeVariant={getTypeVariant} />
+                  ))}
+                  {hasMoreJobs && (
+                    <div className="flex justify-center pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setVisibleJobsCount(prev => prev + JOBS_PAGE_SIZE)}
+                        className="gap-2"
+                      >
+                        Voir plus d'offres ({regularJobs.length - visibleJobsCount} restantes)
+                      </Button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <Card className="border-dashed">
                   <CardContent className="py-12 text-center">
@@ -431,7 +450,7 @@ export function JobsPage() {
                     <p className="text-sm text-muted-foreground mb-4">
                       Essayez de modifier vos critères de recherche
                     </p>
-                    <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); }}>
+                    <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveType('all'); setVisibleJobsCount(JOBS_PAGE_SIZE); }}>
                       Réinitialiser les filtres
                     </Button>
                   </CardContent>

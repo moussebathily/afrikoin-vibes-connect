@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, SlidersHorizontal, Package, Sparkles, TrendingUp, Star, Filter } from 'lucide-react';
+import { Search, SlidersHorizontal, Package, Sparkles, TrendingUp, Star, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,29 +11,44 @@ import { DEMO_PRODUCTS, PRODUCT_CATEGORIES } from '@/data/demoData';
 import { cn } from '@/lib/utils';
 import type { Product } from '@/types/cart';
 
+const PAGE_SIZE = 12;
+
 export const EnhancedProductGrid: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState<'popular' | 'newest' | 'price_asc' | 'price_desc'>('popular');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const handleViewProduct = (product: Product) => {
     navigate(`/product/${product.id}`);
   };
 
-  // Filter and sort products
+  const handleSearchChange = useCallback((value: string) => {
+    setSearchQuery(value);
+    setVisibleCount(PAGE_SIZE);
+  }, []);
+
+  const handleCategoryChange = useCallback((value: string) => {
+    setSelectedCategory(value);
+    setVisibleCount(PAGE_SIZE);
+  }, []);
+
+  const handleSortChange = useCallback((value: typeof sortBy) => {
+    setSortBy(value);
+    setVisibleCount(PAGE_SIZE);
+  }, []);
+
   const filteredProducts = useMemo(() => {
     let filtered = [...DEMO_PRODUCTS];
 
-    // Category filter
     if (selectedCategory !== 'all') {
-      filtered = filtered.filter(p => 
+      filtered = filtered.filter(p =>
         p.category?.toLowerCase() === selectedCategory.toLowerCase() ||
         p.category?.toLowerCase().includes(selectedCategory.toLowerCase())
       );
     }
 
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(p =>
@@ -43,7 +58,6 @@ export const EnhancedProductGrid: React.FC = () => {
       );
     }
 
-    // Sort
     switch (sortBy) {
       case 'popular':
         filtered.sort((a, b) => b.views_count - a.views_count);
@@ -62,13 +76,14 @@ export const EnhancedProductGrid: React.FC = () => {
     return filtered;
   }, [searchQuery, selectedCategory, sortBy]);
 
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredProducts.length;
   const featuredProducts = DEMO_PRODUCTS.filter(p => p.is_featured).slice(0, 4);
 
   return (
     <div className="space-y-6">
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20 p-6 md:p-8">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgwLDAsMCwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-50" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -100,14 +115,14 @@ export const EnhancedProductGrid: React.FC = () => {
           <Input
             placeholder="Rechercher un produit, pays, catégorie..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10 h-11 bg-background/50 backdrop-blur-sm"
           />
         </div>
         <div className="flex gap-2">
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+            onChange={(e) => handleSortChange(e.target.value as typeof sortBy)}
             className="h-11 px-3 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="popular">Plus populaires</option>
@@ -131,7 +146,7 @@ export const EnhancedProductGrid: React.FC = () => {
                 key={cat.id}
                 variant={isActive ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => handleCategoryChange(cat.id)}
                 className={cn(
                   "flex-shrink-0 gap-2 h-10 px-4 transition-all",
                   isActive && "shadow-md"
@@ -139,8 +154,8 @@ export const EnhancedProductGrid: React.FC = () => {
               >
                 <span className="text-lg">{cat.icon}</span>
                 <span>{cat.name}</span>
-                <Badge 
-                  variant="secondary" 
+                <Badge
+                  variant="secondary"
                   className={cn(
                     "ml-1 h-5 px-1.5 text-[10px]",
                     isActive && "bg-background/20"
@@ -178,13 +193,13 @@ export const EnhancedProductGrid: React.FC = () => {
       {/* Results Count */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          <span className="font-semibold text-foreground">{filteredProducts.length}</span> produit{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
+          <span className="font-semibold text-foreground">{visibleProducts.length}</span> sur <span className="font-semibold text-foreground">{filteredProducts.length}</span> produit{filteredProducts.length > 1 ? 's' : ''}
         </p>
         {searchQuery && (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => setSearchQuery('')}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleSearchChange('')}
             className="text-primary"
           >
             Effacer la recherche
@@ -205,21 +220,36 @@ export const EnhancedProductGrid: React.FC = () => {
                 Essayez de modifier vos critères de recherche
               </p>
             </div>
-            <Button variant="outline" onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}>
+            <Button variant="outline" onClick={() => { handleSearchChange(''); handleCategoryChange('all'); }}>
               Réinitialiser les filtres
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              onView={handleViewProduct}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {visibleProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onView={handleViewProduct}
+              />
+            ))}
+          </div>
+
+          {hasMore && (
+            <div className="flex justify-center pt-4">
+              <Button
+                variant="outline"
+                onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
+                className="gap-2"
+              >
+                <Loader2 className="h-4 w-4" />
+                Voir plus de produits ({filteredProducts.length - visibleCount} restants)
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
