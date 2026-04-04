@@ -172,6 +172,7 @@ export function JobsPage() {
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
+        .limit(50)
 
       if (error) {
         console.error('Error fetching jobs:', error)
