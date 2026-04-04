@@ -38,15 +38,7 @@ export function TopBar() {
 
         {/* Actions */}
         <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/search')}
-            aria-label={t('navigation.search')}
-            className="hover:bg-primary/10 hover:text-primary rounded-xl"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
+          <GlobalSearch />
           
           <Button
             variant="ghost"
