@@ -109,9 +109,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        const isInvalidCredentials = error.message.toLowerCase().includes('invalid login credentials')
+
         toast({
-          title: "Erreur de connexion",
-          description: error.message,
+          title: "Connexion impossible",
+          description: isInvalidCredentials
+            ? "Email ou mot de passe incorrect. Si vous venez de créer votre compte, confirmez d'abord votre email."
+            : error.message,
           variant: "destructive",
         })
         return { error }
@@ -156,7 +160,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       toast({
         title: "Inscription réussie",
-        description: "Vérifiez votre email pour confirmer votre compte.",
+        description: "Vérifiez votre email et confirmez votre compte avant la première connexion.",
         variant: "default",
       })
 

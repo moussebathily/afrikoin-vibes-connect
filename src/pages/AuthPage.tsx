@@ -19,7 +19,8 @@ export function AuthPage() {
     confirmPassword: ''
   })
   const [loading, setLoading] = useState(false)
-  const [emailSent, setEmailSent] = useState(false)
+  const [successState, setSuccessState] = useState<null | { type: 'signup' | 'forgot'; email: string }>(null)
+  const [resendingConfirmation, setResendingConfirmation] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   
   const { signIn, signUp, user } = useAuth()
@@ -82,28 +83,18 @@ export function AuthPage() {
         if (error) {
           toast.error('Erreur', { description: error.message })
         } else {
-          setEmailSent(true)
+          setSuccessState({ type: 'forgot', email: formData.email })
           toast.success('Email envoyé', { description: 'Vérifiez votre boîte mail' })
         }
       } else if (mode === 'login') {
         const { error } = await signIn(formData.email, formData.password)
-        if (error) {
-          toast.error('Erreur de connexion', { description: error.message })
-        } else {
-          toast.success('Bienvenue !', { description: 'Connexion réussie' })
+        if (!error) {
           navigate('/')
         }
       } else {
         const { error } = await signUp(formData.email, formData.password, formData.name)
-        if (error) {
-          if (error.message.includes('already registered')) {
-            toast.error('Email déjà utilisé', { description: 'Connectez-vous ou utilisez un autre email' })
-          } else {
-            toast.error('Erreur', { description: error.message })
-          }
-        } else {
-          toast.success('Compte créé !', { description: 'Vérifiez votre email pour confirmer' })
-          setMode('login')
+        if (!error) {
+          setSuccessState({ type: 'signup', email: formData.email })
         }
       }
     } catch (error) {
@@ -143,10 +134,38 @@ export function AuthPage() {
   const switchMode = (newMode: AuthMode) => {
     setMode(newMode)
     setErrors({})
-    setEmailSent(false)
+    setSuccessState(null)
   }
 
-  if (emailSent) {
+  const handleResendConfirmation = async () => {
+    if (!successState?.email || successState.type !== 'signup') return
+
+    setResendingConfirmation(true)
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: successState.email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+        },
+      })
+
+      if (error) {
+        toast.error('Impossible de renvoyer l’email', { description: error.message })
+        return
+      }
+
+      toast.success('Email renvoyé', { description: 'Vérifiez votre boîte mail ou vos spams.' })
+    } catch (error) {
+      console.error('Resend confirmation error:', error)
+      toast.error('Une erreur est survenue lors du renvoi de l’email')
+    } finally {
+      setResendingConfirmation(false)
+    }
+  }
+
+  if (successState) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-accent/5 to-secondary/5 flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
@@ -154,10 +173,33 @@ export function AuthPage() {
             <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-success" />
             </div>
-            <h2 className="text-xl font-bold mb-2">Email envoyé !</h2>
+            <h2 className="text-xl font-bold mb-2">
+              {successState.type === 'signup' ? 'Compte créé !' : 'Email envoyé !'}
+            </h2>
             <p className="text-muted-foreground mb-6">
-              Vérifiez votre boîte mail <strong>{formData.email}</strong> pour réinitialiser votre mot de passe.
+              {successState.type === 'signup' ? (
+                <>
+                  Nous avons envoyé un lien de confirmation à <strong>{successState.email}</strong>.<br />
+                  Confirmez votre email avant de vous connecter.
+                </>
+              ) : (
+                <>
+                  Vérifiez votre boîte mail <strong>{successState.email}</strong> pour réinitialiser votre mot de passe.
+                </>
+              )}
             </p>
+
+            {successState.type === 'signup' && (
+              <Button
+                onClick={handleResendConfirmation}
+                variant="outline"
+                className="w-full mb-3"
+                disabled={resendingConfirmation}
+              >
+                {resendingConfirmation ? 'Renvoi...' : 'Renvoyer l’email de confirmation'}
+              </Button>
+            )}
+
             <Button onClick={() => switchMode('login')} variant="gradient" className="w-full">
               Retour à la connexion
             </Button>
