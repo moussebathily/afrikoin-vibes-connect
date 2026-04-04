@@ -1,9 +1,10 @@
 import React from 'react'
-import { Bell, Search, Plus } from 'lucide-react'
+import { Bell, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { LanguageSelector } from '@/components/ui/language-selector'
 import { CartButton } from '@/components/cart/CartButton'
+import { GlobalSearch } from '@/components/search/GlobalSearch'
 import { useAuth } from '@/contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -37,15 +38,7 @@ export function TopBar() {
 
         {/* Actions */}
         <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate('/search')}
-            aria-label={t('navigation.search')}
-            className="hover:bg-primary/10 hover:text-primary rounded-xl"
-          >
-            <Search className="h-5 w-5" />
-          </Button>
+          <GlobalSearch />
           
           <Button
             variant="ghost"
