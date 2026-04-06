@@ -1099,6 +1099,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "rentals_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "rentals_vehicle_id_fkey"
             columns: ["vehicle_id"]
             isOneToOne: false
@@ -1200,6 +1207,13 @@ export type Database = {
             columns: ["driver_id"]
             isOneToOne: false
             referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ride_reviews_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers_public"
             referencedColumns: ["id"]
           },
           {
@@ -1320,6 +1334,13 @@ export type Database = {
             columns: ["driver_id"]
             isOneToOne: false
             referencedRelation: "drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rides_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers_public"
             referencedColumns: ["id"]
           },
           {
@@ -1744,6 +1765,13 @@ export type Database = {
             referencedRelation: "drivers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "vehicles_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "drivers_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       wallpaper_categories: {
@@ -1947,7 +1975,45 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      drivers_public: {
+        Row: {
+          average_rating: number | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          is_active: boolean | null
+          is_verified: boolean | null
+          photo_url: string | null
+          status: string | null
+          total_reviews: number | null
+          total_rides: number | null
+        }
+        Insert: {
+          average_rating?: number | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          photo_url?: string | null
+          status?: string | null
+          total_reviews?: number | null
+          total_rides?: number | null
+        }
+        Update: {
+          average_rating?: number | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          photo_url?: string | null
+          status?: string | null
+          total_reviews?: number | null
+          total_rides?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
