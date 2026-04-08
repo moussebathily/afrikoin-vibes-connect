@@ -967,6 +967,13 @@ export type Database = {
             referencedRelation: "seller_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "products_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "seller_profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
@@ -1947,7 +1954,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      seller_profiles_public: {
+        Row: {
+          banner_url: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_verified: boolean | null
+          logo_url: string | null
+          rating: number | null
+          store_name: string | null
+          total_sales: number | null
+          user_id: string | null
+        }
+        Insert: {
+          banner_url?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          rating?: number | null
+          store_name?: string | null
+          total_sales?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          banner_url?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          is_verified?: boolean | null
+          logo_url?: string | null
+          rating?: number | null
+          store_name?: string | null
+          total_sales?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {
