@@ -89,6 +89,7 @@ function App() {
     <AppProviders>
       <Router>
         <div className="min-h-screen bg-background">
+          <SEOHead />
           <Routes>
             <Route path={ROUTES.AUTH} element={<AuthPage />} />
             <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
