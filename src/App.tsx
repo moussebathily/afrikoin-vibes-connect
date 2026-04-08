@@ -20,6 +20,7 @@ import { JobsPage } from '@/pages/JobsPage'
 import { JobDetailPage } from '@/pages/JobDetailPage'
 import { NewsPage } from '@/pages/NewsPage'
 import { Toaster } from '@/components/ui/toaster'
+import { SEOHead } from '@/components/seo/SEOHead'
 import { setupI18n } from '@/i18n/config'
 // @ts-ignore - CSS import handled by Vite
 import './index.css'
