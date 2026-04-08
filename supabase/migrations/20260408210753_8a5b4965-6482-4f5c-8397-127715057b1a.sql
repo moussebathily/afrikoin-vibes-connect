@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Anyone can view sellers" ON public.seller_profiles;
