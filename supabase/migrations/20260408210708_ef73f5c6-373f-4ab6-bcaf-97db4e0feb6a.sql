@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Members can view reads" ON public.message_reads;
