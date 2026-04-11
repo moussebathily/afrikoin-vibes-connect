@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/package*.json ./
-RUN npm i express
-COPY server.js ./server.js
+RUN npm i --omit=dev express
+COPY server.cjs ./server.cjs
 EXPOSE 8080
-CMD ["node","server.js"]
+CMD ["node", "server.cjs"]
