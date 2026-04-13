@@ -57,6 +57,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   const [i18nReady, setI18nReady] = useState(false)
+  useNetworkStatus() // Global online/offline notifications
 
   useEffect(() => {
     setupI18n().then(() => setI18nReady(true))
