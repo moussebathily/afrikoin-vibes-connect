@@ -1,17 +1,22 @@
 import React, { Suspense } from 'react'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { SkeletonCard } from '@/components/ui/skeleton-card'
 
 function RouteLoader() {
   return (
-    <div className="flex items-center justify-center min-h-32">
-      <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-pulse" />
+    <div className="p-4 space-y-4">
+      <SkeletonCard />
+      <SkeletonCard />
     </div>
   )
 }
 
 export function LazyRoute({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<RouteLoader />}>
-      {children}
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<RouteLoader />}>
+        {children}
+      </Suspense>
+    </ErrorBoundary>
   )
 }
