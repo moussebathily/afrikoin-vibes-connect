@@ -26,6 +26,7 @@ import { setupI18n } from '@/i18n/config'
 import './index.css'
 import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
+import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
 // Lazy load heavy components
 const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
@@ -56,6 +57,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   const [i18nReady, setI18nReady] = useState(false)
+  useNetworkStatus() // Global online/offline notifications
 
   useEffect(() => {
     setupI18n().then(() => setI18nReady(true))
