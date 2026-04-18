@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Replicate from "https://esm.sh/replicate@0.25.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,95 +11,81 @@ serve(async (req) => {
   }
 
   try {
-    const { 
-      productDescription, 
-      category, 
+    const {
+      productDescription,
+      category,
       style = 'realistic',
       aspectRatio = '1:1',
-      includeContext = true 
+      includeContext = true
     } = await req.json();
 
-    if (!productDescription) {
-      throw new Error('Product description is required');
-    }
+    if (!productDescription) throw new Error('Product description is required');
 
-    const REPLICATE_API_KEY = Deno.env.get('REPLICATE_API_KEY');
-    if (!REPLICATE_API_KEY) {
-      throw new Error('REPLICATE_API_KEY is not set');
-    }
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not set');
 
-    console.log('Generating illustration for:', productDescription);
+    console.log('Generating illustration via Lovable AI for:', productDescription);
 
-    const replicate = new Replicate({
-      auth: REPLICATE_API_KEY,
+    const styleMap: Record<string, string> = {
+      realistic: 'photorealistic, professional product photography, high quality',
+      illustrated: 'clean illustration, vector style, modern',
+      artistic: 'artistic rendering, creative, stylized',
+      minimal: 'minimalist, clean lines, simple composition',
+      african: 'African aesthetic, traditional patterns, warm colors'
+    };
+    const selectedStyle = styleMap[style] || styleMap.realistic;
+    const contextPrompt = includeContext ? ', African marketplace context, culturally appropriate' : '';
+
+    const prompt = `${productDescription}, ${selectedStyle}, professional product image, clean background${category ? `, ${category} category` : ''}, well-lit, commercial photography${contextPrompt}, no text overlays, ${aspectRatio} aspect ratio.`;
+
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash-image',
+        messages: [{ role: 'user', content: prompt }],
+        modalities: ['image', 'text']
+      }),
     });
 
-    // Styles d'illustration adaptés
-    const styleMap: Record<string, string> = {
-      realistic: 'photorealistic, high quality photography, professional product shot',
-      illustrated: 'clean illustration, vector style, modern design',
-      artistic: 'artistic rendering, creative interpretation, stylized',
-      minimal: 'minimalist design, clean lines, simple composition',
-      african: 'African aesthetic, traditional patterns, warm colors, cultural elements'
-    };
-
-    const selectedStyle = styleMap[style] || styleMap.realistic;
-
-    // Contexte africain si demandé
-    const contextPrompt = includeContext 
-      ? ', African marketplace context, suitable for African consumers, culturally appropriate'
-      : '';
-
-    // Prompt optimisé pour génération d'illustrations produit
-    const prompt = `${productDescription}, ${selectedStyle}, 
-professional product image, clean background, 
-${category ? `${category} category,` : ''} 
-well-lit, high contrast, commercial photography style,
-suitable for e-commerce listing${contextPrompt}, 
-no text overlays, focus on product details,
-studio lighting, professional composition`;
-
-    console.log('Using prompt:', prompt);
-
-    // Génération avec Flux-Schnell pour rapidité
-    const output = await replicate.run(
-      "black-forest-labs/flux-schnell",
-      {
-        input: {
-          prompt: prompt,
-          go_fast: true,
-          megapixels: "1",
-          num_outputs: 1,
-          aspect_ratio: aspectRatio,
-          output_format: "webp",
-          output_quality: 85,
-          num_inference_steps: 4
-        }
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ success: false, error: 'Trop de requêtes.' }), {
+          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
       }
-    );
-
-    console.log('Illustration generated successfully');
-
-    // Suggestions d'amélioration basées sur le contenu
-    const suggestions = [];
-    if (productDescription.length < 20) {
-      suggestions.push('Ajouter plus de détails dans la description pour de meilleures illustrations');
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ success: false, error: 'Crédits AI épuisés.' }), {
+          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      throw new Error(`AI gateway error: ${await response.text()}`);
     }
-    if (!category) {
-      suggestions.push('Spécifier une catégorie pour des illustrations plus précises');
-    }
+
+    const result = await response.json();
+    const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    if (!imageUrl) throw new Error('No image returned by AI');
+
+    const suggestions: string[] = [];
+    if (productDescription.length < 20) suggestions.push('Ajouter plus de détails dans la description');
+    if (!category) suggestions.push('Spécifier une catégorie pour de meilleurs résultats');
 
     return new Response(JSON.stringify({
       success: true,
-      illustration_url: Array.isArray(output) ? output[0] : output,
+      illustration_url: imageUrl,
+      description: productDescription,
       metadata: {
         product_description: productDescription,
         category: category || 'Non spécifiée',
-        style: style,
+        style,
         aspect_ratio: aspectRatio,
         generated_at: new Date().toISOString()
       },
-      suggestions: suggestions,
+      suggestions,
       alternative_styles: Object.keys(styleMap).filter(s => s !== style)
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -108,15 +93,10 @@ studio lighting, professional composition`;
 
   } catch (error) {
     console.error('Error in illustration generator:', error);
-    
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: false,
-      error: error.message,
-      fallback_suggestions: [
-        'Essayer une description plus simple',
-        'Vérifier la connexion internet',
-        'Réessayer avec un style différent'
-      ]
+      error: error instanceof Error ? error.message : 'Unknown error',
+      fallback_suggestions: ['Essayer une description plus simple', 'Réessayer avec un style différent']
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

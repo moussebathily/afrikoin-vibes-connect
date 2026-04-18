@@ -1,4 +1,3 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -18,153 +17,120 @@ serve(async (req) => {
       throw new Error('Either imageUrl or text is required');
     }
 
-    const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
-    if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY is not set');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not set');
     }
 
-    console.log('Starting content moderation...');
+    console.log('Starting content moderation via Lovable AI...');
 
-    // Modération du texte
-    let textModerationResult = null;
+    const userContent: any[] = [];
+    const inputDescription: string[] = [];
+
     if (text) {
-      console.log('Moderating text content...');
-      const textResponse = await fetch('https://api.openai.com/v1/moderations', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          input: text,
-        }),
-      });
-
-      if (!textResponse.ok) {
-        throw new Error(`Text moderation failed: ${await textResponse.text()}`);
-      }
-
-      textModerationResult = await textResponse.json();
+      inputDescription.push(`Texte de l'annonce: "${text}"`);
     }
-
-    // Modération de l'image + analyse de qualité
-    let imageModerationResult = null;
-    let qualityAnalysis = null;
+    userContent.push({
+      type: 'text',
+      text: `Analyse ce contenu d'annonce pour une plateforme de vente africaine (AfriKoin). ${inputDescription.join(' ')} Vérifie si le contenu est approprié, évalue la qualité, et donne des suggestions.`
+    });
 
     if (imageUrl) {
-      console.log('Moderating image content and analyzing quality...');
-      
-      // Analyse de modération + qualité avec GPT Vision
-      const visionResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${OPENAI_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o',
-          messages: [
-            {
-              role: 'system',
-              content: `Tu es un expert en modération de contenu pour une plateforme de vente africaine. 
-                       Analyse cette image et réponds UNIQUEMENT en JSON avec cette structure exacte:
-                       {
-                         "appropriate": boolean,
-                         "quality_score": number (0-10),
-                         "quality_issues": string[],
-                         "content_flags": string[],
-                         "recommended_price_range": string,
-                         "category_suggestion": string,
-                         "description_suggestions": string[]
-                       }`
-            },
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: 'Analyse cette image de produit à vendre en Afrique. Vérifie le contenu approprié, la qualité de l\'image, et donne des suggestions.'
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: imageUrl
-                  }
-                }
-              ]
-            }
-          ],
-          max_tokens: 1000,
-          temperature: 0.1,
-        }),
+      userContent.push({
+        type: 'image_url',
+        image_url: { url: imageUrl }
       });
-
-      if (!visionResponse.ok) {
-        throw new Error(`Vision analysis failed: ${await visionResponse.text()}`);
-      }
-
-      const visionResult = await visionResponse.json();
-      
-      try {
-        const analysisText = visionResult.choices[0].message.content;
-        // Extraire le JSON de la réponse
-        const jsonMatch = analysisText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const analysis = JSON.parse(jsonMatch[0]);
-          imageModerationResult = {
-            appropriate: analysis.appropriate,
-            content_flags: analysis.content_flags || []
-          };
-          qualityAnalysis = {
-            score: analysis.quality_score || 0,
-            issues: analysis.quality_issues || [],
-            price_range: analysis.recommended_price_range || '',
-            category: analysis.category_suggestion || '',
-            suggestions: analysis.description_suggestions || []
-          };
-        }
-      } catch (parseError) {
-        console.error('Error parsing vision analysis:', parseError);
-        // Fallback
-        imageModerationResult = { appropriate: true, content_flags: [] };
-        qualityAnalysis = { score: 5, issues: [], price_range: '', category: '', suggestions: [] };
-      }
     }
 
-    // Résultat final
-    const result = {
-      approved: (!textModerationResult || !textModerationResult.results[0]?.flagged) && 
-                (!imageModerationResult || imageModerationResult.appropriate),
-      text_moderation: textModerationResult,
-      image_moderation: imageModerationResult,
-      quality_analysis: qualityAnalysis,
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content: `Tu es un expert en modération de contenu pour une plateforme de vente africaine. Analyse l'image et/ou le texte fournis et détecte tout contenu inapproprié (violence, nudité, arnaques, produits illégaux, haine, etc.).`
+          },
+          { role: 'user', content: userContent }
+        ],
+        tools: [{
+          type: 'function',
+          function: {
+            name: 'submit_moderation',
+            description: 'Soumet le résultat de la modération.',
+            parameters: {
+              type: 'object',
+              properties: {
+                appropriate: { type: 'boolean', description: 'Le contenu est-il approprié ?' },
+                quality_score: { type: 'number', description: 'Score qualité 0-10' },
+                quality_issues: { type: 'array', items: { type: 'string' } },
+                content_flags: { type: 'array', items: { type: 'string' } },
+                recommended_price_range: { type: 'string' },
+                category_suggestion: { type: 'string' },
+                description_suggestions: { type: 'array', items: { type: 'string' } }
+              },
+              required: ['appropriate', 'quality_score', 'quality_issues', 'content_flags', 'description_suggestions'],
+              additionalProperties: false
+            }
+          }
+        }],
+        tool_choice: { type: 'function', function: { name: 'submit_moderation' } }
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Trop de requêtes, réessayez dans un instant.' }), {
+          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'Crédits AI épuisés. Ajoutez des crédits dans Settings → Workspace → Usage.' }), {
+          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      throw new Error(`AI gateway error: ${await response.text()}`);
+    }
+
+    const result = await response.json();
+    const toolCall = result.choices?.[0]?.message?.tool_calls?.[0];
+    const analysis = toolCall ? JSON.parse(toolCall.function.arguments) : {
+      appropriate: true, quality_score: 5, quality_issues: [], content_flags: [], description_suggestions: []
+    };
+
+    const finalResult = {
+      approved: analysis.appropriate,
+      quality_analysis: {
+        score: analysis.quality_score,
+        issues: analysis.quality_issues,
+        category: analysis.category_suggestion,
+        price_range: analysis.recommended_price_range
+      },
       recommendations: {
-        can_publish: true,
-        improvements: []
+        improvements: [
+          ...(analysis.quality_score < 6 ? ["Améliorer la qualité de l'image"] : []),
+          ...(analysis.quality_issues || []),
+          ...(analysis.description_suggestions || [])
+        ],
+        can_publish: analysis.appropriate && analysis.quality_score >= 4
       }
     };
 
-    // Ajouter des recommandations
-    if (qualityAnalysis?.score < 6) {
-      result.recommendations.improvements.push("Améliorer la qualité de l'image");
-    }
-    if (qualityAnalysis?.issues?.length > 0) {
-      result.recommendations.improvements.push(...qualityAnalysis.issues);
-    }
+    console.log('Moderation completed successfully');
 
-    result.recommendations.can_publish = result.approved && (qualityAnalysis?.score || 10) >= 4;
-
-    console.log('Moderation completed:', result);
-
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify(finalResult), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
     console.error('Error in AI content moderator:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      approved: false 
+    return new Response(JSON.stringify({
+      error: error instanceof Error ? error.message : 'Unknown error',
+      approved: false
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
