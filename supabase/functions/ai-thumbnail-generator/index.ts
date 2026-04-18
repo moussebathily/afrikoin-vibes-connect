@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Replicate from "https://esm.sh/replicate@0.25.2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,76 +17,68 @@ serve(async (req) => {
       throw new Error('Product name and price are required');
     }
 
-    const REPLICATE_API_KEY = Deno.env.get('REPLICATE_API_KEY');
-    if (!REPLICATE_API_KEY) {
-      throw new Error('REPLICATE_API_KEY is not set');
-    }
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not set');
 
-    console.log('Generating thumbnail for:', productName);
+    console.log('Generating thumbnail via Lovable AI for:', productName);
 
-    const replicate = new Replicate({
-      auth: REPLICATE_API_KEY,
-    });
-
-    // Style adapté au marché africain
     const styleMap: Record<string, string> = {
-      modern: 'modern, clean, minimalist design with African colors',
+      modern: 'modern, clean, minimalist with African colors',
       traditional: 'traditional African patterns, warm earth tones',
       luxury: 'premium, elegant, gold accents, sophisticated',
       vibrant: 'bright colors, dynamic, energetic, colorful patterns'
     };
-
     const selectedStyle = styleMap[style] || styleMap.modern;
 
-    // Prompt optimisé pour miniatures e-commerce africaines
-    const prompt = `Product thumbnail for African marketplace: ${productName}, 
-price ${price} ${currency}, ${category ? `category: ${category},` : ''} 
-${selectedStyle}, professional product photography, 
-AfriKoin logo placement, 1:1 aspect ratio, 
-high contrast, clear pricing display, 
-studio lighting, white or gradient background, 
-optimized for mobile viewing, 
-African aesthetic elements, 
-clean typography, modern e-commerce style`;
+    const prompt = `Professional product thumbnail for African e-commerce: ${productName}, price ${price} ${currency}${category ? `, category: ${category}` : ''}. Style: ${selectedStyle}. Square 1:1 format, studio lighting, clean background, mobile-optimized, African aesthetic, e-commerce ready.`;
 
-    console.log('Using prompt:', prompt);
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash-image',
+        messages: [{ role: 'user', content: prompt }],
+        modalities: ['image', 'text']
+      }),
+    });
 
-    const output = await replicate.run(
-      "black-forest-labs/flux-schnell",
-      {
-        input: {
-          prompt: prompt,
-          go_fast: true,
-          megapixels: "1",
-          num_outputs: 1,
-          aspect_ratio: "1:1",
-          output_format: "webp",
-          output_quality: 90,
-          num_inference_steps: 4
-        }
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ success: false, error: 'Trop de requêtes, réessayez plus tard.' }), {
+          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
       }
-    );
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ success: false, error: 'Crédits AI épuisés.' }), {
+          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      throw new Error(`AI gateway error: ${await response.text()}`);
+    }
 
-    console.log('Thumbnail generated successfully');
+    const result = await response.json();
+    const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
-    // Génération d'une miniature texte en fallback
-    const textThumbnail = {
-      productName,
-      price: `${price} ${currency}`,
-      style: style,
-      backgroundColor: '#FF6B35', // Couleur AfriKoin
-      textColor: '#FFFFFF',
-      category: category || 'Produit'
-    };
+    if (!imageUrl) throw new Error('No image returned by AI');
 
     return new Response(JSON.stringify({
       success: true,
-      thumbnail_url: Array.isArray(output) ? output[0] : output,
-      text_thumbnail: textThumbnail,
+      thumbnail_url: imageUrl,
+      text_thumbnail: {
+        productName,
+        price: `${price} ${currency}`,
+        style,
+        backgroundColor: '#FF6B35',
+        textColor: '#FFFFFF',
+        category: category || 'Produit'
+      },
       metadata: {
         product: productName,
         price: `${price} ${currency}`,
-        style: style,
+        style,
         generated_at: new Date().toISOString()
       }
     }), {
@@ -96,20 +87,14 @@ clean typography, modern e-commerce style`;
 
   } catch (error) {
     console.error('Error in thumbnail generator:', error);
-    
-    // Fallback en cas d'erreur : miniature texte simple
-    const fallbackThumbnail = {
-      productName: req.url.includes('productName') ? 'Produit' : '',
-      price: req.url.includes('price') ? 'Prix' : '',
-      backgroundColor: '#FF6B35',
-      textColor: '#FFFFFF',
-      category: 'Produit'
-    };
-
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: false,
-      error: error.message,
-      fallback_thumbnail: fallbackThumbnail
+      error: error instanceof Error ? error.message : 'Unknown error',
+      fallback_thumbnail: {
+        backgroundColor: '#FF6B35',
+        textColor: '#FFFFFF',
+        category: 'Produit'
+      }
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
