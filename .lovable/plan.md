@@ -1,104 +1,128 @@
 
 
-# Conseils pour rendre AfriKoin meilleur et plus performant
+# Plans d'Amélioration pour AfriKoin
 
-## Analyse de l'existant
+## 1. Architecture & Performance
 
-Votre projet est déjà bien structuré : lazy loading, code splitting, hooks optimisés, i18n, Supabase. Voici les axes d'amélioration prioritaires.
+### A. Split du Bundle par Région
+- Créer des builds conditionnels par pays (Côte d'Ivoire, Sénégal, Mali, etc.)
+- Charger dynamiquement les providers Mobile Money locaux (Orange CI vs Orange SN)
+- Réduire le bundle initial de ~30% avec cette approche
 
----
+### B. PWA Optimisée (Offline-First)
+- Service Worker avancé avec stratégie "Stale-While-Revalidate"
+- Cache local des produits favoris et messages récents
+- Sync différé des likes/commentaires offline
 
-## 1. Performance (impact immédiat)
+### C. Images Avancées
+- Pipeline d'images responsive (srcset automatique)
+- Lazy loading avec placeholder blur-up
+- Format WebP/AVIF avec fallback JPEG
 
-### A. Réduire le bundle initial
-- **Problème** : `@huggingface/transformers` est une dépendance lourde (~50MB) importée dans le bundle principal.
-- **Action** : La charger dynamiquement uniquement dans AI Studio via `import()`.
-- **Problème** : 17+ packages Radix UI sont installés, certains probablement inutilisés (hover-card, menubar, navigation-menu, toggle-group, etc.).
-- **Action** : Supprimer les dépendances Radix non utilisées.
+## 2. Intelligence Artificielle & Automatisation
 
-### B. Images et assets
-- **Action** : Utiliser des images WebP/AVIF au lieu de PNG/JPG pour les wallpapers et produits.
-- **Action** : Ajouter `loading="lazy"` sur toutes les images hors du viewport initial.
-- **Action** : Utiliser des tailles d'images adaptées (srcset) pour mobile vs desktop.
+### A. AI Productivity Suite
+- **Auto-Description**: Les vendeurs uploadent une photo → l'IA génère titre + description + prix suggéré
+- **Traduction Live**: Chat automatiquement traduit en temps réel entre vendeur/acheteur (FR ↔ WOLOF ↔ HAOUSSA)
+- **Modération 24/7**: Détection automatique des produits interdits avant publication
 
-### C. Requêtes Supabase
-- **Action** : Ajouter `staleTime` et `gcTime` dans React Query pour éviter les re-fetch inutiles :
-  ```ts
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: { staleTime: 5 * 60 * 1000, gcTime: 10 * 60 * 1000 }
-    }
-  })
-  ```
-- **Action** : Paginer les requêtes (limiter à 20-50 éléments par page au lieu de tout charger).
+### B. Recommandation Intelligente
+- Système de recommandation basé sur l'historique d'achat local
+- "Produits similaires près de chez vous" avec géolocalisation
+- Trending topics par quartier/ville
 
----
+## 3. Monétisation & Revenue
 
-## 2. Expérience utilisateur (UX)
+### A. Business Model Expansion
+- **Premium Vendeur** (XOF 5000/mois): Produits en vedette, stats avancées, badge vérifié
+- **Crédits Likes** (déjà en place): Gamification avec packs (100 likes = XOF 1000)
+- **Sponsoring Local**: Shops peuvent sponsoriser leur visibilité par zone géo
 
-### A. Offline / PWA
-- Ajouter un Service Worker pour le cache des pages visitées.
-- Permettre la navigation offline avec les données en cache.
+### B. Frais de Transaction
+- Commission 2-5% sur transactions via portefeuille intégré
+- Frais de retrait vers Mobile Money (marge de 1%)
 
-### B. Skeleton loading
-- Remplacer le simple "pulse" loader par des squelettes adaptés à chaque page (cards, listes, maps).
+### C. API & B2B
+- API publique pour intégration dans d'autres apps (facturation API calls)
+- Whitelabel solution pour grandes enseignes
 
-### C. Recherche globale
-- Ajouter une barre de recherche universelle dans le TopBar pour trouver rapidement produits, emplois, stations.
+## 4. UX & Engagement
 
-### D. Notifications push
-- Implémenter les web push notifications pour les messages, commandes, et alertes emploi.
+### A. Navigation Universelle
+- Barre de recherche globale (Ctrl+K) avec fuzzy search
+- Raccourcis clavier complets pour power users
+- Mode "Kiosk" pour stands marchands en physique
 
----
+### B. Social Features
+- Stories améliorées avec polls et questions
+- Live Shopping: vendeurs en livestream pour démonstrations
+- Communautés thématiques (passionnés de tech, agriculture, etc.)
 
-## 3. Sécurité et fiabilité
+### C. Onboarding Intelligent
+- Parcours adapté selon le pays détecté
+- Tutoriel interactif pour premiers vendeurs
+- Checklist de vérification KYC gamifiée
 
-### A. RLS (Row Level Security)
-- Vérifier que TOUTES les tables ont des politiques RLS actives et correctes.
-- Ajouter des politiques granulaires (un utilisateur ne peut modifier que ses propres données).
+## 5. Sécurité & Trust
 
-### B. Validation des entrées
-- Ajouter Zod validation côté client ET des contraintes CHECK côté base de données.
+### A. Trust Score
+- Système de réputation blockchain-like (immutable)
+- Badges: Vérifié téléphone, Vérifié ID, Super vendeur
+- Escrow pour transactions > XOF 50,000
 
-### C. Rate limiting
-- Utiliser les Edge Functions avec rate limiting pour les actions sensibles (login, signup, like).
+### B. Sécurité Renforcée
+- 2FA via SMS/App pour transactions sensibles
+- Détection anomalie ML (login inhabituel, transaction suspecte)
+- Audit trail complet pour litiges
 
----
+## 6. SEO & Acquisition
 
-## 4. Architecture et maintenabilité
+### A. Content Marketing
+- Blog intégré avec guides "Comment vendre en ligne au Sénégal"
+- Pages SEO pour chaque catégorie + ville ("Acheter mouton Tabaski Dakar")
+- Sitemap dynamique généré quotidiennement
 
-### A. Tests
-- Ajouter Vitest + React Testing Library pour les composants critiques (Auth, Cart, Checkout).
-- Ajouter des tests E2E avec Playwright pour les flux principaux.
+### B. Partenariats
+- Intégration WhatsApp Business API pour notifications
+- Bot Telegram pour alertes prix
+- SDK Flutter pour apps partenaires
 
-### B. Monitoring
-- Intégrer Sentry pour capturer les erreurs en production automatiquement.
-- Ajouter des analytics (Plausible ou PostHog) pour comprendre l'usage réel.
+## 7. Analytics & Data-Driven
 
-### C. CI/CD
-- Le workflow GitHub existe mais n'est pas complet : ajouter lint + type-check + tests avant chaque déploiement.
+### A. Dashboard Admin Avancé
+- Funnels de conversion par étape
+- Heatmaps de navigation
+- Prédiction de tendances par catégorie/zone
 
----
+### B. ML Ops
+- Entraînement modèles sur data locale africaine
+- A/B testing framework intégré
+- Alertes anomalies business (drop soudain ventes zone X)
 
-## 5. SEO et croissance
+## Implémentation Prioritaire
 
-- Ajouter des meta tags dynamiques par page (Open Graph, Twitter Cards).
-- Générer un sitemap dynamique basé sur les produits et emplois réels.
-- Optimiser le Largest Contentful Paint (LCP) en priorisant le contenu above-the-fold.
+### Phase 1 (Quick Wins - 2 semaines)
+1. PWA offline-first améliorée
+2. Barre de recherche universelle
+3. Optimisation images (WebP + lazy)
 
----
+### Phase 2 (Revenue - 4 semaines)
+1. Système Premium Vendeur
+2. Escrow transactions
+3. API documentation publique
 
-## Résumé des priorités
+### Phase 3 (Scale - 8 semaines)
+1. AI auto-description produits
+2. Live shopping
+3. ML recommandations
 
-| Priorité | Action | Impact |
-|----------|--------|--------|
-| 1 | Supprimer `@huggingface/transformers` du bundle principal | -50MB bundle |
-| 2 | Configurer `staleTime` dans React Query | Moins de requêtes |
-| 3 | Pagination des données | Chargement plus rapide |
-| 4 | Images optimisées (WebP + lazy) | LCP amélioré |
-| 5 | Supprimer les dépendances Radix inutilisées | Bundle plus léger |
-| 6 | Ajouter des tests | Fiabilité |
-| 7 | PWA / Service Worker | Expérience offline |
+## Configuration Cloud Requise
+- **Instance Lovable Cloud**: Mini → Small (trafic > 1000 users/jour)
+- **AI Balance**: $50/mois minimum pour génération images + traductions
+- **Edge Functions**: 13 déjà en place, monitorer les cold starts
 
-Voulez-vous que j'implémente l'un de ces points en particulier ?
+## Technologie Recommandée
+- **CDN**: Cloudflare pour images et static assets
+- **Monitoring**: Sentry pour erreurs, PostHog pour analytics produit
+- **Tests**: E2E avec Playwright sur flux critiques (auth, paiement)
 
