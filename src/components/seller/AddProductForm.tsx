@@ -37,7 +37,8 @@ import {
   Package,
   DollarSign,
   Tag,
-  Layers
+  Layers,
+  Sparkles
 } from "lucide-react";
 
 const productFormSchema = z.object({
@@ -87,6 +88,7 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -160,6 +162,59 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
 
   const removeImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAIGenerate = async () => {
+    if (images.length === 0) {
+      toast({
+        title: "Image requise",
+        description: "Ajoutez au moins une photo du produit pour utiliser l'IA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-product-from-photo', {
+        body: {
+          imageUrl: images[0],
+          currency: form.getValues('currency') || 'XOF',
+          country: form.getValues('country') || undefined,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Apply only to empty fields so we don't overwrite manual edits
+      if (!form.getValues('title') && data.title) {
+        form.setValue('title', data.title, { shouldValidate: true });
+      }
+      if (!form.getValues('description') && data.description) {
+        form.setValue('description', data.description, { shouldValidate: true });
+      }
+      if (!form.getValues('category') && data.category) {
+        form.setValue('category', data.category, { shouldValidate: true });
+      }
+      if ((!form.getValues('price') || form.getValues('price') === 0) && data.suggested_price) {
+        form.setValue('price', Math.round(data.suggested_price), { shouldValidate: true });
+      }
+
+      toast({
+        title: "✨ IA appliquée",
+        description: `Suggestions générées (confiance: ${data.confidence ?? 'medium'})`,
+      });
+    } catch (err: any) {
+      console.error('AI generation error:', err);
+      toast({
+        title: "Erreur IA",
+        description: err.message || "Impossible de générer les suggestions",
+        variant: "destructive",
+      });
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const onSubmit = async (values: ProductFormValues) => {
@@ -267,6 +322,29 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
               <p className="text-xs text-muted-foreground">
                 Maximum 5 images. Formats: JPG, PNG, WebP
               </p>
+
+              {images.length > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAIGenerate}
+                  disabled={aiLoading}
+                  className="w-full mt-2 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30 hover:from-primary/20 hover:to-accent/20"
+                >
+                  {aiLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Analyse de la photo...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2 text-primary" />
+                      ✨ Générer titre, description &amp; prix avec l'IA
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
 
             {/* Title */}
