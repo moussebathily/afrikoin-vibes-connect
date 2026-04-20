@@ -164,6 +164,59 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
     setImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleAIGenerate = async () => {
+    if (images.length === 0) {
+      toast({
+        title: "Image requise",
+        description: "Ajoutez au moins une photo du produit pour utiliser l'IA",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-product-from-photo', {
+        body: {
+          imageUrl: images[0],
+          currency: form.getValues('currency') || 'XOF',
+          country: form.getValues('country') || undefined,
+        },
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      // Apply only to empty fields so we don't overwrite manual edits
+      if (!form.getValues('title') && data.title) {
+        form.setValue('title', data.title, { shouldValidate: true });
+      }
+      if (!form.getValues('description') && data.description) {
+        form.setValue('description', data.description, { shouldValidate: true });
+      }
+      if (!form.getValues('category') && data.category) {
+        form.setValue('category', data.category, { shouldValidate: true });
+      }
+      if ((!form.getValues('price') || form.getValues('price') === 0) && data.suggested_price) {
+        form.setValue('price', Math.round(data.suggested_price), { shouldValidate: true });
+      }
+
+      toast({
+        title: "✨ IA appliquée",
+        description: `Suggestions générées (confiance: ${data.confidence ?? 'medium'})`,
+      });
+    } catch (err: any) {
+      console.error('AI generation error:', err);
+      toast({
+        title: "Erreur IA",
+        description: err.message || "Impossible de générer les suggestions",
+        variant: "destructive",
+      });
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const onSubmit = async (values: ProductFormValues) => {
     if (!user) {
       toast({
