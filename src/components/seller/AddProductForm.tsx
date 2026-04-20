@@ -322,6 +322,29 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
               <p className="text-xs text-muted-foreground">
                 Maximum 5 images. Formats: JPG, PNG, WebP
               </p>
+
+              {images.length > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleAIGenerate}
+                  disabled={aiLoading}
+                  className="w-full mt-2 bg-gradient-to-r from-primary/10 to-accent/10 border-primary/30 hover:from-primary/20 hover:to-accent/20"
+                >
+                  {aiLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Analyse de la photo...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-2 text-primary" />
+                      ✨ Générer titre, description &amp; prix avec l'IA
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
 
             {/* Title */}
