@@ -37,7 +37,8 @@ import {
   Package,
   DollarSign,
   Tag,
-  Layers
+  Layers,
+  Sparkles
 } from "lucide-react";
 
 const productFormSchema = z.object({
