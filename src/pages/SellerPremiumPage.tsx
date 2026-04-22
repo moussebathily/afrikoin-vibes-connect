@@ -70,7 +70,32 @@ export default function SellerPremiumPage() {
   };
 
   useEffect(() => {
+    if (!user?.id) return;
     loadStatus();
+
+    // Realtime: refresh on any change to my seller_profile or subscriptions
+    const channel = (supabase as any)
+      .channel(`premium-status-${user.id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "seller_profiles", filter: `user_id=eq.${user.id}` },
+        () => loadStatus()
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "seller_subscriptions", filter: `user_id=eq.${user.id}` },
+        () => loadStatus()
+      )
+      .subscribe();
+
+    // Refresh when tab regains focus (covers webhooks while user was away)
+    const onFocus = () => loadStatus();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      (supabase as any).removeChannel(channel);
+      window.removeEventListener("focus", onFocus);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
