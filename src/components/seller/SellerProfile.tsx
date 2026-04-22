@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PremiumBadge } from "@/components/seller/PremiumBadge";
+import { TrustScoreBadge } from "@/components/seller/TrustScoreBadge";
 import { 
   MapPin, 
   Calendar, 
@@ -11,10 +13,12 @@ import {
   Share2,
   Phone,
   Mail,
-  Globe
+  Globe,
+  Crown
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 interface SellerProfileProps {
   storeName: string;
@@ -28,6 +32,8 @@ interface SellerProfileProps {
   email?: string;
   website?: string;
   isVerified?: boolean;
+  isPremium?: boolean;
+  trustScore?: number;
   rating: number;
   totalReviews: number;
   joinedAt: string;
@@ -47,12 +53,15 @@ export function SellerProfile({
   email,
   website,
   isVerified,
+  isPremium,
+  trustScore = 0,
   rating,
   totalReviews,
   joinedAt,
   isOwner,
   onEdit
 }: SellerProfileProps) {
+  const navigate = useNavigate();
   return (
     <Card className="overflow-hidden">
       {/* Banner */}
