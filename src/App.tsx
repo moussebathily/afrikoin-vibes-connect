@@ -42,6 +42,7 @@ const MyTabaskiReservationsPage = lazy(() => import('@/pages/MyTabaskiReservatio
 const StationsPage = lazy(() => import('@/pages/StationsPage'))
 const WallpapersPage = lazy(() => import('@/pages/WallpapersPage'))
 const MessagingPage = lazy(() => import('@/pages/MessagingPage'))
+const SellerPremiumPage = lazy(() => import('@/pages/SellerPremiumPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -114,6 +115,7 @@ function App() {
               <Route path="marketplace" element={<LazyRoute><MarketplacePage /></LazyRoute>} />
               <Route path="product/:id" element={<LazyRoute><ProductDetailPage /></LazyRoute>} />
               <Route path="ai-studio" element={<div className="p-4"><LazyRoute><AIStudioDemo /></LazyRoute></div>} />
+              <Route path="seller/premium" element={<LazyRoute><SellerPremiumPage /></LazyRoute>} />
               <Route path="seller/:sellerId?" element={<LazyRoute><SellerPage /></LazyRoute>} />
               <Route path="checkout" element={<LazyRoute><CheckoutPage /></LazyRoute>} />
               <Route path="stations" element={<LazyRoute><StationsPage /></LazyRoute>} />

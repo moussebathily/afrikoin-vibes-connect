@@ -39,6 +39,8 @@ interface SellerProfileData {
   email?: string;
   website?: string;
   is_verified?: boolean;
+  is_premium?: boolean;
+  trust_score?: number;
   rating: number;
   total_reviews: number;
   total_sales: number;
@@ -120,7 +122,17 @@ export default function SellerPage() {
       }
 
       if (profileData) {
-        setSellerProfile(profileData as SellerProfileData);
+        // Compute live trust score via RPC
+        let trustScore = (profileData as any).trust_score ?? 0;
+        try {
+          const { data: scoreData } = await supabase.rpc("compute_seller_trust_score" as any, {
+            _seller_id: (profileData as any).id,
+          });
+          if (typeof scoreData === "number") trustScore = scoreData;
+        } catch (e) {
+          console.warn("trust score rpc failed", e);
+        }
+        setSellerProfile({ ...(profileData as any), trust_score: trustScore } as SellerProfileData);
       }
 
       // Fetch seller's products
@@ -224,6 +236,8 @@ export default function SellerPage() {
           email={sellerProfile.email}
           website={sellerProfile.website}
           isVerified={sellerProfile.is_verified}
+          isPremium={sellerProfile.is_premium}
+          trustScore={sellerProfile.trust_score ?? 0}
           rating={sellerProfile.rating}
           totalReviews={sellerProfile.total_reviews}
           joinedAt={sellerProfile.joined_at}

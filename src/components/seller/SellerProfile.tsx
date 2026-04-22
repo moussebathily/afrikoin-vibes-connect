@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PremiumBadge } from "@/components/seller/PremiumBadge";
+import { TrustScoreBadge } from "@/components/seller/TrustScoreBadge";
 import { 
   MapPin, 
   Calendar, 
@@ -11,10 +13,12 @@ import {
   Share2,
   Phone,
   Mail,
-  Globe
+  Globe,
+  Crown
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 interface SellerProfileProps {
   storeName: string;
@@ -28,6 +32,8 @@ interface SellerProfileProps {
   email?: string;
   website?: string;
   isVerified?: boolean;
+  isPremium?: boolean;
+  trustScore?: number;
   rating: number;
   totalReviews: number;
   joinedAt: string;
@@ -47,12 +53,15 @@ export function SellerProfile({
   email,
   website,
   isVerified,
+  isPremium,
+  trustScore = 0,
   rating,
   totalReviews,
   joinedAt,
   isOwner,
   onEdit
 }: SellerProfileProps) {
+  const navigate = useNavigate();
   return (
     <Card className="overflow-hidden">
       {/* Banner */}
@@ -84,6 +93,8 @@ export function SellerProfile({
               {isVerified && (
                 <BadgeCheck className="h-6 w-6 text-primary fill-primary/20" />
               )}
+              {isPremium && <PremiumBadge size="sm" />}
+              <TrustScoreBadge score={trustScore} size="sm" />
               <Badge variant="secondary" className="capitalize">
                 {businessType === 'business' ? 'Entreprise' : 'Particulier'}
               </Badge>
@@ -110,12 +121,24 @@ export function SellerProfile({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {isOwner ? (
-              <Button onClick={onEdit} variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-2" />
-                Modifier
-              </Button>
+              <>
+                <Button onClick={onEdit} variant="outline" size="sm">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+                {!isPremium && (
+                  <Button
+                    size="sm"
+                    onClick={() => navigate('/seller/premium')}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 border-0 text-white"
+                  >
+                    <Crown className="h-4 w-4 mr-2" />
+                    Devenir Premium
+                  </Button>
+                )}
+              </>
             ) : (
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
