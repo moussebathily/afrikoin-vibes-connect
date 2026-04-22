@@ -3,6 +3,7 @@ import { Heart, ShoppingCart, Eye, MapPin, Package, Star } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { SmartImage } from '@/components/ui/smart-image';
 import { useCart } from '@/contexts/CartContext';
 import type { Product } from '@/types/cart';
 
@@ -44,10 +45,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onView }) => 
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
         {product.images?.[0] ? (
-          <img
+          <SmartImage
             src={product.images[0]}
             alt={product.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
