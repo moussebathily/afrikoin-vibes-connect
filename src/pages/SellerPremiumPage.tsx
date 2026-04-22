@@ -171,17 +171,17 @@ export default function SellerPremiumPage() {
                   </CardDescription>
                 </div>
                 {status?.has_active_subscription ? (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
+                  <Dialog>
+                    <DialogTrigger asChild>
                       <Button variant="outline" size="sm" disabled={cancelling}>
                         <XCircle className="h-4 w-4 mr-2" />
                         Résilier
                       </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Résilier votre abonnement Premium ?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Résilier votre abonnement Premium ?</DialogTitle>
+                        <DialogDescription>
                           Vos avantages Premium resteront actifs jusqu'au{" "}
                           <strong>
                             {status?.premium_until
@@ -189,16 +189,20 @@ export default function SellerPremiumPage() {
                               : "—"}
                           </strong>
                           . Aucun renouvellement automatique ne sera effectué.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={cancel} disabled={cancelling}>
-                          {cancelling ? "Résiliation..." : "Confirmer la résiliation"}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Annuler</Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button onClick={cancel} disabled={cancelling}>
+                            {cancelling ? "Résiliation..." : "Confirmer la résiliation"}
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 ) : (
                   <Badge variant="secondary">Renouvellement désactivé</Badge>
                 )}
