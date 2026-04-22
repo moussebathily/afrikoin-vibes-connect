@@ -93,6 +93,8 @@ export function SellerProfile({
               {isVerified && (
                 <BadgeCheck className="h-6 w-6 text-primary fill-primary/20" />
               )}
+              {isPremium && <PremiumBadge size="sm" />}
+              <TrustScoreBadge score={trustScore} size="sm" />
               <Badge variant="secondary" className="capitalize">
                 {businessType === 'business' ? 'Entreprise' : 'Particulier'}
               </Badge>
@@ -119,12 +121,24 @@ export function SellerProfile({
           </div>
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {isOwner ? (
-              <Button onClick={onEdit} variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-2" />
-                Modifier
-              </Button>
+              <>
+                <Button onClick={onEdit} variant="outline" size="sm">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+                {!isPremium && (
+                  <Button
+                    size="sm"
+                    onClick={() => navigate('/seller/premium')}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-90 border-0 text-white"
+                  >
+                    <Crown className="h-4 w-4 mr-2" />
+                    Devenir Premium
+                  </Button>
+                )}
+              </>
             ) : (
               <Button variant="outline" size="sm">
                 <Share2 className="h-4 w-4 mr-2" />
