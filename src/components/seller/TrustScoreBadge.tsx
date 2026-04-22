@@ -1,7 +1,6 @@
 import { Shield, ShieldCheck, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface TrustScoreBadgeProps {
   score: number;
@@ -41,25 +40,18 @@ export function TrustScoreBadge({ score, size = "md", showLabel = true, classNam
   const iconSize = size === "sm" ? "h-3 w-3" : size === "lg" ? "h-5 w-5" : "h-4 w-4";
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Badge className={cn(config.color, "gap-1", className)}>
-            <Icon className={iconSize} />
-            {showLabel && (
-              <span>
-                {config.label} · {score}/100
-              </span>
-            )}
-            {!showLabel && <span>{score}</span>}
-          </Badge>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="text-xs">
-            Score de confiance basé sur les vérifications, ventes, avis et abonnement Premium.
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Badge
+      className={cn(config.color, "gap-1", className)}
+      title={`Score de confiance: ${score}/100 — basé sur vérifications, ventes, avis et Premium`}
+    >
+      <Icon className={iconSize} />
+      {showLabel ? (
+        <span>
+          {config.label} · {score}/100
+        </span>
+      ) : (
+        <span>{score}</span>
+      )}
+    </Badge>
   );
 }
