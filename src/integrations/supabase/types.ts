@@ -1339,12 +1339,18 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          id_verified: boolean | null
+          is_premium: boolean | null
           is_verified: boolean | null
           logo_url: string | null
           phone: string | null
+          phone_verified: boolean | null
+          premium_until: string | null
           rating: number | null
           store_name: string
+          total_reviews: number | null
           total_sales: number | null
+          trust_score: number | null
           updated_at: string | null
           user_id: string
         }
@@ -1355,12 +1361,18 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          id_verified?: boolean | null
+          is_premium?: boolean | null
           is_verified?: boolean | null
           logo_url?: string | null
           phone?: string | null
+          phone_verified?: boolean | null
+          premium_until?: string | null
           rating?: number | null
           store_name: string
+          total_reviews?: number | null
           total_sales?: number | null
+          trust_score?: number | null
           updated_at?: string | null
           user_id: string
         }
@@ -1371,13 +1383,70 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          id_verified?: boolean | null
+          is_premium?: boolean | null
           is_verified?: boolean | null
           logo_url?: string | null
           phone?: string | null
+          phone_verified?: boolean | null
+          premium_until?: string | null
           rating?: number | null
           store_name?: string
+          total_reviews?: number | null
           total_sales?: number | null
+          trust_score?: number | null
           updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seller_subscriptions: {
+        Row: {
+          amount: number
+          auto_renew: boolean | null
+          cancelled_at: string | null
+          created_at: string
+          currency: string
+          expires_at: string | null
+          id: string
+          payment_method: string | null
+          plan: string
+          seller_id: string
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          auto_renew?: boolean | null
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          payment_method?: string | null
+          plan?: string
+          seller_id: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          auto_renew?: boolean | null
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          expires_at?: string | null
+          id?: string
+          payment_method?: string | null
+          plan?: string
+          seller_id?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1950,6 +2019,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      compute_seller_trust_score: {
+        Args: { _seller_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
