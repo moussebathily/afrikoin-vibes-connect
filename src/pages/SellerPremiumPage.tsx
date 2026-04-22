@@ -1,38 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Check, ArrowLeft, Sparkles, TrendingUp, BadgeCheck, BarChart3, Zap } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Crown, Check, ArrowLeft, Sparkles, TrendingUp, BadgeCheck, BarChart3, Zap, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
 const PLANS = [
-  {
-    id: "monthly",
-    name: "Mensuel",
-    price: 5000,
-    period: "/mois",
-    highlight: false,
-    savings: null,
-  },
-  {
-    id: "quarterly",
-    name: "Trimestriel",
-    price: 13500,
-    period: "/3 mois",
-    highlight: true,
-    savings: "Économisez 10%",
-  },
-  {
-    id: "yearly",
-    name: "Annuel",
-    price: 48000,
-    period: "/an",
-    highlight: false,
-    savings: "Économisez 20%",
-  },
+  { id: "monthly", name: "Mensuel", price: 5000, period: "/mois", highlight: false, savings: null },
+  { id: "quarterly", name: "Trimestriel", price: 13500, period: "/3 mois", highlight: true, savings: "Économisez 10%" },
+  { id: "yearly", name: "Annuel", price: 48000, period: "/an", highlight: false, savings: "Économisez 20%" },
 ];
 
 const FEATURES = [
@@ -44,11 +34,46 @@ const FEATURES = [
   { icon: Check, text: "Publications illimitées de produits" },
 ];
 
+interface PremiumStatus {
+  is_premium: boolean;
+  premium_until: string | null;
+  has_active_subscription: boolean;
+}
+
 export default function SellerPremiumPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [loading, setLoading] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [status, setStatus] = useState<PremiumStatus | null>(null);
+
+  const loadStatus = async () => {
+    if (!user) return;
+    const { data: profile } = await (supabase as any)
+      .from("seller_profiles")
+      .select("is_premium, premium_until")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const { data: activeSub } = await (supabase as any)
+      .from("seller_subscriptions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    setStatus({
+      is_premium: !!profile?.is_premium,
+      premium_until: profile?.premium_until ?? null,
+      has_active_subscription: !!activeSub,
+    });
+  };
+
+  useEffect(() => {
+    loadStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const subscribe = async (plan: string) => {
     if (!user) {
@@ -65,6 +90,7 @@ export default function SellerPremiumPage() {
         title: "Bienvenue chez Premium ! 🎉",
         description: `Votre abonnement ${data.plan} est actif jusqu'au ${new Date(data.expires_at).toLocaleDateString("fr-FR")}.`,
       });
+      await loadStatus();
       setTimeout(() => navigate("/seller"), 1500);
     } catch (e: any) {
       toast({
@@ -76,6 +102,32 @@ export default function SellerPremiumPage() {
       setLoading(null);
     }
   };
+
+  const cancel = async () => {
+    setCancelling(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("seller-premium-cancel", { body: {} });
+      if (error) throw error;
+      const until = data?.premium_until ? new Date(data.premium_until).toLocaleDateString("fr-FR") : null;
+      toast({
+        title: "Abonnement résilié",
+        description: until && data?.active_until_expiry
+          ? `Vos avantages Premium restent actifs jusqu'au ${until}.`
+          : "Vos avantages Premium ont été désactivés.",
+      });
+      await loadStatus();
+    } catch (e: any) {
+      toast({
+        title: "Erreur",
+        description: e.message || "Impossible de résilier",
+        variant: "destructive",
+      });
+    } finally {
+      setCancelling(false);
+    }
+  };
+
+  const isPremiumActive = status?.is_premium && (!status.premium_until || new Date(status.premium_until) > new Date());
 
   return (
     <div className="min-h-screen bg-background pb-safe-nav">
@@ -102,6 +154,59 @@ export default function SellerPremiumPage() {
             Augmentez votre visibilité, gagnez la confiance des acheteurs et vendez plus avec Premium.
           </p>
         </div>
+
+        {/* Active subscription panel */}
+        {isPremiumActive && (
+          <Card className="border-amber-500/40 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+            <CardHeader>
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Crown className="h-5 w-5 text-amber-500" />
+                    Abonnement Premium actif
+                  </CardTitle>
+                  <CardDescription>
+                    {status?.premium_until
+                      ? `Valable jusqu'au ${new Date(status.premium_until).toLocaleDateString("fr-FR")}`
+                      : "Actif"}
+                  </CardDescription>
+                </div>
+                {status?.has_active_subscription ? (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" size="sm" disabled={cancelling}>
+                        <XCircle className="h-4 w-4 mr-2" />
+                        Résilier
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Résilier votre abonnement Premium ?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Vos avantages Premium resteront actifs jusqu'au{" "}
+                          <strong>
+                            {status?.premium_until
+                              ? new Date(status.premium_until).toLocaleDateString("fr-FR")
+                              : "—"}
+                          </strong>
+                          . Aucun renouvellement automatique ne sera effectué.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={cancel} disabled={cancelling}>
+                          {cancelling ? "Résiliation..." : "Confirmer la résiliation"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                ) : (
+                  <Badge variant="secondary">Renouvellement désactivé</Badge>
+                )}
+              </div>
+            </CardHeader>
+          </Card>
+        )}
 
         {/* Features */}
         <Card>
@@ -155,7 +260,11 @@ export default function SellerPremiumPage() {
                   onClick={() => subscribe(plan.id)}
                   disabled={loading !== null}
                 >
-                  {loading === plan.id ? "Activation..." : "Choisir"}
+                  {loading === plan.id
+                    ? "Activation..."
+                    : isPremiumActive
+                    ? "Changer / Renouveler"
+                    : "Choisir"}
                 </Button>
               </CardContent>
             </Card>
