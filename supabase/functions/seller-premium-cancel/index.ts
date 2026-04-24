@@ -62,6 +62,24 @@ serve(async (req) => {
         .eq("id", seller.id);
     }
 
+    // Log cancellation activity
+    await supabase.rpc("log_premium_activity", {
+      _user_id: user.id,
+      _event_type: "cancellation",
+      _source: "seller-premium-cancel",
+      _plan: null,
+      _amount: null,
+      _currency: "XOF",
+      _payment_method: null,
+      _previous_status: seller.is_premium ? "active" : "inactive",
+      _new_status: stillActive ? "cancelled_grace" : "inactive",
+      _premium_until: seller.premium_until,
+      _message: stillActive
+        ? `Résiliation enregistrée. Avantages actifs jusqu'à expiration.`
+        : `Résiliation enregistrée. Avantages désactivés.`,
+      _metadata: { cancelled_count: subs?.length ?? 0 },
+    });
+
     return new Response(
       JSON.stringify({
         success: true,

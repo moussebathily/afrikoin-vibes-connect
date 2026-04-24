@@ -67,6 +67,13 @@ serve(async (req) => {
 
     if (subErr) throw subErr;
 
+    // Read previous premium status for activity log
+    const { data: prevProfile } = await supabase
+      .from("seller_profiles")
+      .select("is_premium, premium_until")
+      .eq("id", seller.id)
+      .maybeSingle();
+
     // Update seller_profile premium status
     await supabase
       .from("seller_profiles")
@@ -75,6 +82,23 @@ serve(async (req) => {
         premium_until: expiresAt.toISOString(),
       })
       .eq("id", seller.id);
+
+    // Log activity (payment / activation)
+    const wasActive = prevProfile?.is_premium && prevProfile?.premium_until && new Date(prevProfile.premium_until) > new Date();
+    await supabase.rpc("log_premium_activity", {
+      _user_id: user.id,
+      _event_type: wasActive ? "renewal" : "payment",
+      _source: "seller-premium-subscribe",
+      _plan: plan,
+      _amount: planConfig.amount,
+      _currency: "XOF",
+      _payment_method: payment_method,
+      _previous_status: wasActive ? "active" : "inactive",
+      _new_status: "active",
+      _premium_until: expiresAt.toISOString(),
+      _message: `${planConfig.label} activé via ${payment_method}`,
+      _metadata: { subscription_id: sub.id },
+    });
 
     return new Response(
       JSON.stringify({
