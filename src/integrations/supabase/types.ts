@@ -1331,6 +1331,60 @@ export type Database = {
           },
         ]
       }
+      seller_premium_activity: {
+        Row: {
+          amount: number | null
+          created_at: string
+          currency: string | null
+          event_type: string
+          id: string
+          message: string | null
+          metadata: Json | null
+          new_status: string | null
+          payment_method: string | null
+          plan: string | null
+          premium_until: string | null
+          previous_status: string | null
+          seller_id: string | null
+          source: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          event_type: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          new_status?: string | null
+          payment_method?: string | null
+          plan?: string | null
+          premium_until?: string | null
+          previous_status?: string | null
+          seller_id?: string | null
+          source?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          currency?: string | null
+          event_type?: string
+          id?: string
+          message?: string | null
+          metadata?: Json | null
+          new_status?: string | null
+          payment_method?: string | null
+          plan?: string | null
+          premium_until?: string | null
+          previous_status?: string | null
+          seller_id?: string | null
+          source?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       seller_profiles: {
         Row: {
           banner_url: string | null
@@ -2029,6 +2083,23 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_premium_activity: {
+        Args: {
+          _amount?: number
+          _currency?: string
+          _event_type: string
+          _message?: string
+          _metadata?: Json
+          _new_status?: string
+          _payment_method?: string
+          _plan?: string
+          _premium_until?: string
+          _previous_status?: string
+          _source?: string
+          _user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
