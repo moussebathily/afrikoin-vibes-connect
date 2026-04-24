@@ -17,6 +17,7 @@ import { Crown, Check, ArrowLeft, Sparkles, TrendingUp, BadgeCheck, BarChart3, Z
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { PremiumActivityFeed } from "@/components/seller/PremiumActivityFeed";
 
 const PLANS = [
   { id: "monthly", name: "Mensuel", price: 5000, period: "/mois", highlight: false, savings: null },
@@ -298,6 +299,9 @@ export default function SellerPremiumPage() {
             </Card>
           ))}
         </div>
+
+        {/* Activity feed */}
+        {user?.id && <PremiumActivityFeed userId={user.id} />}
 
         <p className="text-xs text-muted-foreground text-center">
           Paiement via Mobile Money (Orange, Wave, MTN). Annulation possible à tout moment.
