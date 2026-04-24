@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -12,9 +19,13 @@ import {
   Clock,
   CheckCircle2,
   Settings2,
+  Download,
+  FileText,
+  FileSpreadsheet,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 interface PremiumActivity {
   id: string;
@@ -90,16 +101,134 @@ export function PremiumActivityFeed({ userId }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
+  const { toast } = useToast();
+
+  const eventLabel = (t: string) => EVENT_META[t]?.label ?? t;
+
+  const exportCSV = () => {
+    if (!items.length) return;
+    const headers = [
+      "Date",
+      "Événement",
+      "Source",
+      "Plan",
+      "Montant",
+      "Devise",
+      "Méthode de paiement",
+      "Statut précédent",
+      "Nouveau statut",
+      "Premium jusqu'au",
+      "Message",
+    ];
+    const escape = (v: any) => {
+      const s = v == null ? "" : String(v);
+      return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const rows = items.map((it) => [
+      format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
+      eventLabel(it.event_type),
+      it.source ?? "",
+      it.plan ?? "",
+      it.amount ?? "",
+      it.currency ?? "",
+      it.payment_method ?? "",
+      it.previous_status ?? "",
+      it.new_status ?? "",
+      it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+      it.message ?? "",
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
+    const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `activite-premium-${format(new Date(), "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: "Export CSV téléchargé" });
+  };
+
+  const exportPDF = async () => {
+    if (!items.length) return;
+    const [{ default: jsPDF }, autoTableMod] = await Promise.all([
+      import("jspdf"),
+      import("jspdf-autotable"),
+    ]);
+    const autoTable = (autoTableMod as any).default ?? (autoTableMod as any);
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    doc.setFontSize(16);
+    doc.text("Fil d'activité Premium", 40, 40);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(
+      `Généré le ${format(new Date(), "d MMMM yyyy 'à' HH:mm", { locale: fr })} • ${items.length} événement(s)`,
+      40,
+      58
+    );
+
+    autoTable(doc, {
+      startY: 75,
+      head: [["Date", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
+      body: items.map((it) => [
+        format(new Date(it.created_at), "dd/MM/yyyy HH:mm", { locale: fr }),
+        eventLabel(it.event_type),
+        it.plan ?? "—",
+        it.amount != null ? `${Number(it.amount).toLocaleString("fr-FR")} ${it.currency ?? "XOF"}` : "—",
+        it.payment_method ?? "—",
+        it.premium_until ? format(new Date(it.premium_until), "dd/MM/yyyy") : "—",
+        it.message ?? "",
+      ]),
+      styles: { fontSize: 9, cellPadding: 6, overflow: "linebreak" },
+      headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: "bold" },
+      alternateRowStyles: { fillColor: [250, 250, 250] },
+      columnStyles: {
+        0: { cellWidth: 95 },
+        1: { cellWidth: 80 },
+        2: { cellWidth: 70 },
+        3: { cellWidth: 90 },
+        4: { cellWidth: 80 },
+        5: { cellWidth: 70 },
+        6: { cellWidth: "auto" },
+      },
+      margin: { left: 40, right: 40 },
+    });
+
+    doc.save(`activite-premium-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+    toast({ title: "Export PDF téléchargé" });
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-primary" />
-          Fil d'activité Premium
-        </CardTitle>
-        <CardDescription>
-          Historique des événements ayant modifié votre statut Premium (paiements, webhooks, résiliations).
-        </CardDescription>
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              Fil d'activité Premium
+            </CardTitle>
+            <CardDescription>
+              Historique des événements ayant modifié votre statut Premium (paiements, webhooks, résiliations).
+            </CardDescription>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" disabled={!items.length}>
+                <Download className="h-4 w-4 mr-2" />
+                Exporter
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={exportCSV}>
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Exporter en CSV
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportPDF}>
+                <FileText className="h-4 w-4 mr-2" />
+                Exporter en PDF
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
         {loading ? (
