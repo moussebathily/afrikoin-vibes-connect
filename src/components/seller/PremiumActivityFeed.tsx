@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -12,9 +19,13 @@ import {
   Clock,
   CheckCircle2,
   Settings2,
+  Download,
+  FileText,
+  FileSpreadsheet,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 interface PremiumActivity {
   id: string;
