@@ -238,18 +238,34 @@ export function PremiumActivityFeed({ userId }: Props) {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={!items.length}>
-                <Download className="h-4 w-4 mr-2" />
-                Exporter
+              <Button variant="outline" size="sm" disabled={!items.length || exporting !== null}>
+                {exporting !== null ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                {exporting === "csv"
+                  ? "Génération CSV…"
+                  : exporting === "pdf"
+                  ? "Génération PDF…"
+                  : "Exporter"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={exportCSV}>
-                <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={exportCSV} disabled={exporting !== null}>
+                {exporting === "csv" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                )}
                 Exporter en CSV
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={exportPDF}>
-                <FileText className="h-4 w-4 mr-2" />
+              <DropdownMenuItem onClick={exportPDF} disabled={exporting !== null}>
+                {exporting === "pdf" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <FileText className="h-4 w-4 mr-2" />
+                )}
                 Exporter en PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
