@@ -220,7 +220,7 @@ export function PremiumActivityFeed({ userId }: Props) {
         margin: { left: 40, right: 40 },
       });
 
-      doc.save(`activite-premium-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+      doc.save(buildFileName("pdf"));
       toast({ title: "Export PDF téléchargé", description: `${items.length} événement(s) exportés.` });
     } catch (err) {
       console.error("PDF export error:", err);
