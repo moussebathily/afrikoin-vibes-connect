@@ -111,6 +111,40 @@ export function PremiumActivityFeed({ userId }: Props) {
 
   const eventLabel = (t: string) => EVENT_META[t]?.label ?? t;
 
+  const getTransactionId = (it: PremiumActivity) => {
+    const md = it.metadata ?? {};
+    return (
+      md.transaction_id ||
+      md.payment_id ||
+      md.payment_intent ||
+      md.payment_intent_id ||
+      md.checkout_session_id ||
+      md.session_id ||
+      md.stripe_event_id ||
+      md.event_id ||
+      md.invoice_id ||
+      md.reference ||
+      md.tx_ref ||
+      md.charge_id ||
+      it.id
+    );
+  };
+
+  const filteredItems = items.filter((it) => {
+    const t = new Date(it.created_at).getTime();
+    if (dateFrom) {
+      const from = new Date(dateFrom);
+      from.setHours(0, 0, 0, 0);
+      if (t < from.getTime()) return false;
+    }
+    if (dateTo) {
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      if (t > to.getTime()) return false;
+    }
+    return true;
+  });
+
   const buildFileName = (ext: "csv" | "pdf") => {
     const now = new Date();
     const ym = format(now, "yyyy-MM");
@@ -118,8 +152,12 @@ export function PremiumActivityFeed({ userId }: Props) {
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
-    const count = items.length;
-    return `activite-premium-${ym}-${monthName}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
+    const count = filteredItems.length;
+    const range =
+      dateFrom || dateTo
+        ? `_${dateFrom || "debut"}_au_${dateTo || "fin"}`
+        : "";
+    return `activite-premium-${ym}-${monthName}${range}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
   };
 
   const exportCSV = async () => {
