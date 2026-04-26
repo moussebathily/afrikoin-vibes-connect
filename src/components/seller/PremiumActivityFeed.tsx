@@ -157,7 +157,7 @@ export function PremiumActivityFeed({ userId }: Props) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `activite-premium-${format(new Date(), "yyyy-MM-dd")}.csv`;
+      a.download = buildFileName("csv");
       a.click();
       URL.revokeObjectURL(url);
       toast({ title: "Export CSV téléchargé", description: `${items.length} événement(s) exportés.` });
