@@ -64,6 +64,7 @@ interface Props {
 export function PremiumActivityFeed({ userId }: Props) {
   const [items, setItems] = useState<PremiumActivity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState<null | "csv" | "pdf">(null);
 
   const load = async () => {
     const { data } = await (supabase as any)
