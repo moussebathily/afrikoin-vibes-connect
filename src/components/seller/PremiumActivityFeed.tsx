@@ -107,6 +107,17 @@ export function PremiumActivityFeed({ userId }: Props) {
 
   const eventLabel = (t: string) => EVENT_META[t]?.label ?? t;
 
+  const buildFileName = (ext: "csv" | "pdf") => {
+    const now = new Date();
+    const ym = format(now, "yyyy-MM");
+    const monthName = format(now, "MMMM", { locale: fr })
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    const count = items.length;
+    return `activite-premium-${ym}-${monthName}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
+  };
+
   const exportCSV = async () => {
     if (!items.length || exporting) return;
     setExporting("csv");
