@@ -22,6 +22,7 @@ import {
   Download,
   FileText,
   FileSpreadsheet,
+  Loader2,
 } from "lucide-react";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
