@@ -317,7 +317,7 @@ export function PremiumActivityFeed({ userId }: Props) {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={!items.length || exporting !== null}>
+              <Button variant="outline" size="sm" disabled={!filteredItems.length || exporting !== null}>
                 {exporting !== null ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
@@ -327,7 +327,7 @@ export function PremiumActivityFeed({ userId }: Props) {
                   ? "Génération CSV…"
                   : exporting === "pdf"
                   ? "Génération PDF…"
-                  : "Exporter"}
+                  : `Exporter${filteredItems.length !== items.length ? ` (${filteredItems.length})` : ""}`}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -350,6 +350,45 @@ export function PremiumActivityFeed({ userId }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {items.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-muted/30 p-3">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="premium-date-from" className="text-xs text-muted-foreground">Du</Label>
+              <Input
+                id="premium-date-from"
+                type="date"
+                value={dateFrom}
+                max={dateTo || undefined}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="h-9 w-[160px]"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="premium-date-to" className="text-xs text-muted-foreground">Au</Label>
+              <Input
+                id="premium-date-to"
+                type="date"
+                value={dateTo}
+                min={dateFrom || undefined}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="h-9 w-[160px]"
+              />
+            </div>
+            {(dateFrom || dateTo) && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => { setDateFrom(""); setDateTo(""); }}
+              >
+                Réinitialiser
+              </Button>
+            )}
+            <span className="ml-auto text-xs text-muted-foreground">
+              {filteredItems.length} / {items.length} événement(s)
+            </span>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {loading ? (
