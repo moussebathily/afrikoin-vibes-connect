@@ -227,7 +227,16 @@ export function PremiumActivityFeed({ userId }: Props) {
   };
 
   const exportPDF = async () => {
-    if (!items.length || exporting) return;
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond à la période sélectionnée.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
     setExporting("pdf");
     try {
       const [{ default: jsPDF }, autoTableMod] = await Promise.all([
@@ -240,17 +249,22 @@ export function PremiumActivityFeed({ userId }: Props) {
       doc.text("Fil d'activité Premium", 40, 40);
       doc.setFontSize(10);
       doc.setTextColor(100);
+      const periodLabel =
+        dateFrom || dateTo
+          ? ` • Période : ${dateFrom ? format(new Date(dateFrom), "dd/MM/yyyy") : "début"} → ${dateTo ? format(new Date(dateTo), "dd/MM/yyyy") : "fin"}`
+          : "";
       doc.text(
-        `Généré le ${format(new Date(), "d MMMM yyyy 'à' HH:mm", { locale: fr })} • ${items.length} événement(s)`,
+        `Généré le ${format(new Date(), "d MMMM yyyy 'à' HH:mm", { locale: fr })} • ${filteredItems.length} événement(s)${periodLabel}`,
         40,
         58
       );
 
       autoTable(doc, {
         startY: 75,
-        head: [["Date", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
-        body: items.map((it) => [
+        head: [["Date", "ID transaction", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
+        body: filteredItems.map((it) => [
           format(new Date(it.created_at), "dd/MM/yyyy HH:mm", { locale: fr }),
+          String(getTransactionId(it)),
           eventLabel(it.event_type),
           it.plan ?? "—",
           it.amount != null ? `${Number(it.amount).toLocaleString("fr-FR")} ${it.currency ?? "XOF"}` : "—",
@@ -262,19 +276,20 @@ export function PremiumActivityFeed({ userId }: Props) {
         headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: "bold" },
         alternateRowStyles: { fillColor: [250, 250, 250] },
         columnStyles: {
-          0: { cellWidth: 95 },
-          1: { cellWidth: 80 },
+          0: { cellWidth: 85 },
+          1: { cellWidth: 110, font: "courier", fontSize: 8 },
           2: { cellWidth: 70 },
-          3: { cellWidth: 90 },
+          3: { cellWidth: 60 },
           4: { cellWidth: 80 },
           5: { cellWidth: 70 },
-          6: { cellWidth: "auto" },
+          6: { cellWidth: 65 },
+          7: { cellWidth: "auto" },
         },
         margin: { left: 40, right: 40 },
       });
 
       doc.save(buildFileName("pdf"));
-      toast({ title: "Export PDF téléchargé", description: `${items.length} événement(s) exportés.` });
+      toast({ title: "Export PDF téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
     } catch (err) {
       console.error("PDF export error:", err);
       toast({
