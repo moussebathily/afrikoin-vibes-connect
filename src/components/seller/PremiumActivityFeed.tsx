@@ -161,11 +161,21 @@ export function PremiumActivityFeed({ userId }: Props) {
   };
 
   const exportCSV = async () => {
-    if (!items.length || exporting) return;
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond à la période sélectionnée.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
     setExporting("csv");
     try {
       const headers = [
         "Date",
+        "ID transaction",
         "Événement",
         "Source",
         "Plan",
@@ -181,8 +191,9 @@ export function PremiumActivityFeed({ userId }: Props) {
         const s = v == null ? "" : String(v);
         return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
       };
-      const rows = items.map((it) => [
+      const rows = filteredItems.map((it) => [
         format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
+        getTransactionId(it),
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
@@ -202,7 +213,7 @@ export function PremiumActivityFeed({ userId }: Props) {
       a.download = buildFileName("csv");
       a.click();
       URL.revokeObjectURL(url);
-      toast({ title: "Export CSV téléchargé", description: `${items.length} événement(s) exportés.` });
+      toast({ title: "Export CSV téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
     } catch (err) {
       console.error("CSV export error:", err);
       toast({
