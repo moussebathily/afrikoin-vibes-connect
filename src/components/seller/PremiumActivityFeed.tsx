@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Activity,
@@ -65,6 +67,8 @@ export function PremiumActivityFeed({ userId }: Props) {
   const [items, setItems] = useState<PremiumActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState<null | "csv" | "pdf">(null);
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
 
   const load = async () => {
     const { data } = await (supabase as any)
@@ -107,6 +111,40 @@ export function PremiumActivityFeed({ userId }: Props) {
 
   const eventLabel = (t: string) => EVENT_META[t]?.label ?? t;
 
+  const getTransactionId = (it: PremiumActivity) => {
+    const md = it.metadata ?? {};
+    return (
+      md.transaction_id ||
+      md.payment_id ||
+      md.payment_intent ||
+      md.payment_intent_id ||
+      md.checkout_session_id ||
+      md.session_id ||
+      md.stripe_event_id ||
+      md.event_id ||
+      md.invoice_id ||
+      md.reference ||
+      md.tx_ref ||
+      md.charge_id ||
+      it.id
+    );
+  };
+
+  const filteredItems = items.filter((it) => {
+    const t = new Date(it.created_at).getTime();
+    if (dateFrom) {
+      const from = new Date(dateFrom);
+      from.setHours(0, 0, 0, 0);
+      if (t < from.getTime()) return false;
+    }
+    if (dateTo) {
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      if (t > to.getTime()) return false;
+    }
+    return true;
+  });
+
   const buildFileName = (ext: "csv" | "pdf") => {
     const now = new Date();
     const ym = format(now, "yyyy-MM");
@@ -114,16 +152,30 @@ export function PremiumActivityFeed({ userId }: Props) {
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
-    const count = items.length;
-    return `activite-premium-${ym}-${monthName}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
+    const count = filteredItems.length;
+    const range =
+      dateFrom || dateTo
+        ? `_${dateFrom || "debut"}_au_${dateTo || "fin"}`
+        : "";
+    return `activite-premium-${ym}-${monthName}${range}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
   };
 
   const exportCSV = async () => {
-    if (!items.length || exporting) return;
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond à la période sélectionnée.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
     setExporting("csv");
     try {
       const headers = [
         "Date",
+        "ID transaction",
         "Événement",
         "Source",
         "Plan",
@@ -139,8 +191,9 @@ export function PremiumActivityFeed({ userId }: Props) {
         const s = v == null ? "" : String(v);
         return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
       };
-      const rows = items.map((it) => [
+      const rows = filteredItems.map((it) => [
         format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
+        getTransactionId(it),
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
@@ -160,7 +213,7 @@ export function PremiumActivityFeed({ userId }: Props) {
       a.download = buildFileName("csv");
       a.click();
       URL.revokeObjectURL(url);
-      toast({ title: "Export CSV téléchargé", description: `${items.length} événement(s) exportés.` });
+      toast({ title: "Export CSV téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
     } catch (err) {
       console.error("CSV export error:", err);
       toast({
@@ -174,7 +227,16 @@ export function PremiumActivityFeed({ userId }: Props) {
   };
 
   const exportPDF = async () => {
-    if (!items.length || exporting) return;
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond à la période sélectionnée.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
     setExporting("pdf");
     try {
       const [{ default: jsPDF }, autoTableMod] = await Promise.all([
@@ -187,17 +249,22 @@ export function PremiumActivityFeed({ userId }: Props) {
       doc.text("Fil d'activité Premium", 40, 40);
       doc.setFontSize(10);
       doc.setTextColor(100);
+      const periodLabel =
+        dateFrom || dateTo
+          ? ` • Période : ${dateFrom ? format(new Date(dateFrom), "dd/MM/yyyy") : "début"} → ${dateTo ? format(new Date(dateTo), "dd/MM/yyyy") : "fin"}`
+          : "";
       doc.text(
-        `Généré le ${format(new Date(), "d MMMM yyyy 'à' HH:mm", { locale: fr })} • ${items.length} événement(s)`,
+        `Généré le ${format(new Date(), "d MMMM yyyy 'à' HH:mm", { locale: fr })} • ${filteredItems.length} événement(s)${periodLabel}`,
         40,
         58
       );
 
       autoTable(doc, {
         startY: 75,
-        head: [["Date", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
-        body: items.map((it) => [
+        head: [["Date", "ID transaction", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
+        body: filteredItems.map((it) => [
           format(new Date(it.created_at), "dd/MM/yyyy HH:mm", { locale: fr }),
+          String(getTransactionId(it)),
           eventLabel(it.event_type),
           it.plan ?? "—",
           it.amount != null ? `${Number(it.amount).toLocaleString("fr-FR")} ${it.currency ?? "XOF"}` : "—",
@@ -209,19 +276,20 @@ export function PremiumActivityFeed({ userId }: Props) {
         headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: "bold" },
         alternateRowStyles: { fillColor: [250, 250, 250] },
         columnStyles: {
-          0: { cellWidth: 95 },
-          1: { cellWidth: 80 },
+          0: { cellWidth: 85 },
+          1: { cellWidth: 110, font: "courier", fontSize: 8 },
           2: { cellWidth: 70 },
-          3: { cellWidth: 90 },
+          3: { cellWidth: 60 },
           4: { cellWidth: 80 },
           5: { cellWidth: 70 },
-          6: { cellWidth: "auto" },
+          6: { cellWidth: 65 },
+          7: { cellWidth: "auto" },
         },
         margin: { left: 40, right: 40 },
       });
 
       doc.save(buildFileName("pdf"));
-      toast({ title: "Export PDF téléchargé", description: `${items.length} événement(s) exportés.` });
+      toast({ title: "Export PDF téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
     } catch (err) {
       console.error("PDF export error:", err);
       toast({
@@ -249,7 +317,7 @@ export function PremiumActivityFeed({ userId }: Props) {
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" disabled={!items.length || exporting !== null}>
+              <Button variant="outline" size="sm" disabled={!filteredItems.length || exporting !== null}>
                 {exporting !== null ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
@@ -259,7 +327,7 @@ export function PremiumActivityFeed({ userId }: Props) {
                   ? "Génération CSV…"
                   : exporting === "pdf"
                   ? "Génération PDF…"
-                  : "Exporter"}
+                  : `Exporter${filteredItems.length !== items.length ? ` (${filteredItems.length})` : ""}`}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -282,6 +350,45 @@ export function PremiumActivityFeed({ userId }: Props) {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+        {items.length > 0 && (
+          <div className="mt-4 flex flex-wrap items-end gap-3 rounded-md border border-border bg-muted/30 p-3">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="premium-date-from" className="text-xs text-muted-foreground">Du</Label>
+              <Input
+                id="premium-date-from"
+                type="date"
+                value={dateFrom}
+                max={dateTo || undefined}
+                onChange={(e) => setDateFrom(e.target.value)}
+                className="h-9 w-[160px]"
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="premium-date-to" className="text-xs text-muted-foreground">Au</Label>
+              <Input
+                id="premium-date-to"
+                type="date"
+                value={dateTo}
+                min={dateFrom || undefined}
+                onChange={(e) => setDateTo(e.target.value)}
+                className="h-9 w-[160px]"
+              />
+            </div>
+            {(dateFrom || dateTo) && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => { setDateFrom(""); setDateTo(""); }}
+              >
+                Réinitialiser
+              </Button>
+            )}
+            <span className="ml-auto text-xs text-muted-foreground">
+              {filteredItems.length} / {items.length} événement(s)
+            </span>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         {loading ? (
