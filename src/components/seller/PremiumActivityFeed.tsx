@@ -476,12 +476,40 @@ export function PremiumActivityFeed({ userId }: Props) {
                 className="h-9 w-[160px]"
               />
             </div>
-            {(dateFrom || dateTo) && (
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs text-muted-foreground">Plan</Label>
+              <Select value={planFilter} onValueChange={setPlanFilter}>
+                <SelectTrigger className="h-9 w-[160px]">
+                  <SelectValue placeholder="Tous les plans" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les plans</SelectItem>
+                  {availablePlans.map((p) => (
+                    <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs text-muted-foreground">Type d'événement</Label>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="h-9 w-[180px]">
+                  <SelectValue placeholder="Tous les types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les types</SelectItem>
+                  {availableTypes.map((t) => (
+                    <SelectItem key={t} value={t}>{eventLabel(t)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {(dateFrom || dateTo || planFilter !== "all" || typeFilter !== "all") && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => { setDateFrom(""); setDateTo(""); }}
+                onClick={() => { setDateFrom(""); setDateTo(""); setPlanFilter("all"); setTypeFilter("all"); }}
               >
                 Réinitialiser
               </Button>
