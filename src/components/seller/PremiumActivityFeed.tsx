@@ -440,6 +440,7 @@ export function PremiumActivityFeed({ userId }: Props) {
                   <FileText className="h-4 w-4 mr-2" />
                 )}
                 Exporter en PDF
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={exportXLSX} disabled={exporting !== null}>
                 {exporting === "xlsx" ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
