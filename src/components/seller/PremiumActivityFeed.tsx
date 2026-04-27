@@ -381,10 +381,12 @@ export function PremiumActivityFeed({ userId }: Props) {
         "Plan",
         "Montant",
         "Devise",
+        "Montant formaté",
         "Méthode de paiement",
         "Statut précédent",
         "Nouveau statut",
         "Premium jusqu'au",
+        "Vidéo / Livestream",
         "Message",
       ];
       const rows = filteredItems.map((it) => [
@@ -393,12 +395,14 @@ export function PremiumActivityFeed({ userId }: Props) {
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
-        it.amount ?? "",
-        it.currency ?? "",
+        it.amount != null ? Number(it.amount) : "",
+        (it.currency ?? "").toUpperCase(),
+        formatAmount(it.amount, it.currency),
         it.payment_method ?? "",
         it.previous_status ?? "",
         it.new_status ?? "",
         it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        String(getStreamRef(it) || ""),
         it.message ?? "",
       ]);
       const periodLabel = `${dateFrom || "début"} → ${dateTo || "fin"}`;
@@ -413,10 +417,22 @@ export function PremiumActivityFeed({ userId }: Props) {
       ];
       const aoa = [...meta, headers, ...rows];
       const ws = XLSX.utils.aoa_to_sheet(aoa);
+      // Apply numeric format to "Montant" column (index 5) for each data row
+      const headerRowIndex = meta.length; // 0-based; data rows follow
+      const amountColLetter = XLSX.utils.encode_col(5);
+      for (let i = 0; i < rows.length; i++) {
+        const r = headerRowIndex + 1 + i; // skip header row
+        const addr = `${amountColLetter}${r + 1}`;
+        const cell = ws[addr];
+        if (cell && typeof cell.v === "number") {
+          cell.t = "n";
+          cell.z = "#,##0.00";
+        }
+      }
       ws["!cols"] = [
         { wch: 20 }, { wch: 28 }, { wch: 16 }, { wch: 14 }, { wch: 12 },
-        { wch: 12 }, { wch: 8 }, { wch: 18 }, { wch: 16 }, { wch: 16 },
-        { wch: 14 }, { wch: 50 },
+        { wch: 14 }, { wch: 8 }, { wch: 18 }, { wch: 18 }, { wch: 16 },
+        { wch: 16 }, { wch: 14 }, { wch: 40 }, { wch: 50 },
       ];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Activité Premium");
