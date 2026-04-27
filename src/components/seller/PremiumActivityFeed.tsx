@@ -232,10 +232,12 @@ export function PremiumActivityFeed({ userId }: Props) {
         "Plan",
         "Montant",
         "Devise",
+        "Montant formaté",
         "Méthode de paiement",
         "Statut précédent",
         "Nouveau statut",
         "Premium jusqu'au",
+        "Vidéo / Livestream",
         "Message",
       ];
       const escape = (v: any) => {
@@ -248,12 +250,14 @@ export function PremiumActivityFeed({ userId }: Props) {
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
-        it.amount ?? "",
-        it.currency ?? "",
+        it.amount != null ? Number(it.amount).toFixed(2) : "",
+        (it.currency ?? "").toUpperCase(),
+        formatAmount(it.amount, it.currency),
         it.payment_method ?? "",
         it.previous_status ?? "",
         it.new_status ?? "",
         it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        getStreamRef(it),
         it.message ?? "",
       ]);
       const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
