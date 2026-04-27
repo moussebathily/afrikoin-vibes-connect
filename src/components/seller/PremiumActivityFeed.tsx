@@ -319,6 +319,81 @@ export function PremiumActivityFeed({ userId }: Props) {
     }
   };
 
+  const exportXLSX = async () => {
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond aux filtres sélectionnés.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+    setExporting("xlsx");
+    try {
+      const XLSX = await import("xlsx");
+      const headers = [
+        "Date",
+        "ID transaction",
+        "Événement",
+        "Source",
+        "Plan",
+        "Montant",
+        "Devise",
+        "Méthode de paiement",
+        "Statut précédent",
+        "Nouveau statut",
+        "Premium jusqu'au",
+        "Message",
+      ];
+      const rows = filteredItems.map((it) => [
+        format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
+        String(getTransactionId(it)),
+        eventLabel(it.event_type),
+        it.source ?? "",
+        it.plan ?? "",
+        it.amount ?? "",
+        it.currency ?? "",
+        it.payment_method ?? "",
+        it.previous_status ?? "",
+        it.new_status ?? "",
+        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        it.message ?? "",
+      ]);
+      const periodLabel = `${dateFrom || "début"} → ${dateTo || "fin"}`;
+      const meta = [
+        ["Fil d'activité Premium"],
+        [`Généré le`, format(new Date(), "yyyy-MM-dd HH:mm")],
+        [`Période`, periodLabel],
+        [`Plan`, planFilter === "all" ? "Tous" : planFilter],
+        [`Type`, typeFilter === "all" ? "Tous" : eventLabel(typeFilter)],
+        [`Nombre d'événements`, filteredItems.length],
+        [],
+      ];
+      const aoa = [...meta, headers, ...rows];
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws["!cols"] = [
+        { wch: 20 }, { wch: 28 }, { wch: 16 }, { wch: 14 }, { wch: 12 },
+        { wch: 12 }, { wch: 8 }, { wch: 18 }, { wch: 16 }, { wch: 16 },
+        { wch: 14 }, { wch: 50 },
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Activité Premium");
+      XLSX.writeFile(wb, buildFileName("xlsx"));
+      toast({ title: "Export XLSX téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
+    } catch (err) {
+      console.error("XLSX export error:", err);
+      toast({
+        title: "Échec de l'export XLSX",
+        description: err instanceof Error ? err.message : "Une erreur est survenue lors de la génération du fichier XLSX.",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(null);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
