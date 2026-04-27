@@ -140,6 +140,40 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const getStreamRef = (it: PremiumActivity) => {
+    const md = it.metadata ?? {};
+    return (
+      md.livestream_url ||
+      md.live_url ||
+      md.stream_url ||
+      md.video_url ||
+      md.video_link ||
+      md.youtube_url ||
+      md.twitch_url ||
+      md.facebook_live_url ||
+      md.livestream_id ||
+      md.stream_id ||
+      md.video_id ||
+      md.broadcast_id ||
+      ""
+    );
+  };
+
+  const formatAmount = (amount: number | null, currency: string | null) => {
+    if (amount == null) return "";
+    const cur = (currency || "XOF").toUpperCase();
+    try {
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: cur,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(Number(amount));
+    } catch {
+      return `${Number(amount).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
+    }
+  };
+
   const availablePlans = Array.from(new Set(items.map((i) => i.plan).filter(Boolean))) as string[];
   const availableTypes = Array.from(new Set(items.map((i) => i.event_type).filter(Boolean)));
 
@@ -198,10 +232,12 @@ export function PremiumActivityFeed({ userId }: Props) {
         "Plan",
         "Montant",
         "Devise",
+        "Montant formaté",
         "Méthode de paiement",
         "Statut précédent",
         "Nouveau statut",
         "Premium jusqu'au",
+        "Vidéo / Livestream",
         "Message",
       ];
       const escape = (v: any) => {
@@ -214,12 +250,14 @@ export function PremiumActivityFeed({ userId }: Props) {
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
-        it.amount ?? "",
-        it.currency ?? "",
+        it.amount != null ? Number(it.amount).toFixed(2) : "",
+        (it.currency ?? "").toUpperCase(),
+        formatAmount(it.amount, it.currency),
         it.payment_method ?? "",
         it.previous_status ?? "",
         it.new_status ?? "",
         it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        getStreamRef(it),
         it.message ?? "",
       ]);
       const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
@@ -278,29 +316,31 @@ export function PremiumActivityFeed({ userId }: Props) {
 
       autoTable(doc, {
         startY: 75,
-        head: [["Date", "ID transaction", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Message"]],
+        head: [["Date", "ID transaction", "Événement", "Plan", "Montant", "Méthode", "Jusqu'au", "Vidéo / Live", "Message"]],
         body: filteredItems.map((it) => [
           format(new Date(it.created_at), "dd/MM/yyyy HH:mm", { locale: fr }),
           String(getTransactionId(it)),
           eventLabel(it.event_type),
           it.plan ?? "—",
-          it.amount != null ? `${Number(it.amount).toLocaleString("fr-FR")} ${it.currency ?? "XOF"}` : "—",
+          formatAmount(it.amount, it.currency) || "—",
           it.payment_method ?? "—",
           it.premium_until ? format(new Date(it.premium_until), "dd/MM/yyyy") : "—",
+          String(getStreamRef(it) || "—"),
           it.message ?? "",
         ]),
         styles: { fontSize: 9, cellPadding: 6, overflow: "linebreak" },
         headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: "bold" },
         alternateRowStyles: { fillColor: [250, 250, 250] },
         columnStyles: {
-          0: { cellWidth: 85 },
-          1: { cellWidth: 110, font: "courier", fontSize: 8 },
-          2: { cellWidth: 70 },
-          3: { cellWidth: 60 },
-          4: { cellWidth: 80 },
-          5: { cellWidth: 70 },
-          6: { cellWidth: 65 },
-          7: { cellWidth: "auto" },
+          0: { cellWidth: 80 },
+          1: { cellWidth: 100, font: "courier", fontSize: 8 },
+          2: { cellWidth: 65 },
+          3: { cellWidth: 55 },
+          4: { cellWidth: 85, halign: "right" },
+          5: { cellWidth: 65 },
+          6: { cellWidth: 60 },
+          7: { cellWidth: 110, font: "courier", fontSize: 8 },
+          8: { cellWidth: "auto" },
         },
         margin: { left: 40, right: 40 },
       });
@@ -341,10 +381,12 @@ export function PremiumActivityFeed({ userId }: Props) {
         "Plan",
         "Montant",
         "Devise",
+        "Montant formaté",
         "Méthode de paiement",
         "Statut précédent",
         "Nouveau statut",
         "Premium jusqu'au",
+        "Vidéo / Livestream",
         "Message",
       ];
       const rows = filteredItems.map((it) => [
@@ -353,12 +395,14 @@ export function PremiumActivityFeed({ userId }: Props) {
         eventLabel(it.event_type),
         it.source ?? "",
         it.plan ?? "",
-        it.amount ?? "",
-        it.currency ?? "",
+        it.amount != null ? Number(it.amount) : "",
+        (it.currency ?? "").toUpperCase(),
+        formatAmount(it.amount, it.currency),
         it.payment_method ?? "",
         it.previous_status ?? "",
         it.new_status ?? "",
         it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        String(getStreamRef(it) || ""),
         it.message ?? "",
       ]);
       const periodLabel = `${dateFrom || "début"} → ${dateTo || "fin"}`;
@@ -373,10 +417,22 @@ export function PremiumActivityFeed({ userId }: Props) {
       ];
       const aoa = [...meta, headers, ...rows];
       const ws = XLSX.utils.aoa_to_sheet(aoa);
+      // Apply numeric format to "Montant" column (index 5) for each data row
+      const headerRowIndex = meta.length; // 0-based; data rows follow
+      const amountColLetter = XLSX.utils.encode_col(5);
+      for (let i = 0; i < rows.length; i++) {
+        const r = headerRowIndex + 1 + i; // skip header row
+        const addr = `${amountColLetter}${r + 1}`;
+        const cell = ws[addr];
+        if (cell && typeof cell.v === "number") {
+          cell.t = "n";
+          cell.z = "#,##0.00";
+        }
+      }
       ws["!cols"] = [
         { wch: 20 }, { wch: 28 }, { wch: 16 }, { wch: 14 }, { wch: 12 },
-        { wch: 12 }, { wch: 8 }, { wch: 18 }, { wch: 16 }, { wch: 16 },
-        { wch: 14 }, { wch: 50 },
+        { wch: 14 }, { wch: 8 }, { wch: 18 }, { wch: 18 }, { wch: 16 },
+        { wch: 16 }, { wch: 14 }, { wch: 40 }, { wch: 50 },
       ];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Activité Premium");
