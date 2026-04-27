@@ -140,6 +140,40 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const getStreamRef = (it: PremiumActivity) => {
+    const md = it.metadata ?? {};
+    return (
+      md.livestream_url ||
+      md.live_url ||
+      md.stream_url ||
+      md.video_url ||
+      md.video_link ||
+      md.youtube_url ||
+      md.twitch_url ||
+      md.facebook_live_url ||
+      md.livestream_id ||
+      md.stream_id ||
+      md.video_id ||
+      md.broadcast_id ||
+      ""
+    );
+  };
+
+  const formatAmount = (amount: number | null, currency: string | null) => {
+    if (amount == null || amount === undefined || amount === "") return "";
+    const cur = (currency || "XOF").toUpperCase();
+    try {
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: cur,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(Number(amount));
+    } catch {
+      return `${Number(amount).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
+    }
+  };
+
   const availablePlans = Array.from(new Set(items.map((i) => i.plan).filter(Boolean))) as string[];
   const availableTypes = Array.from(new Set(items.map((i) => i.event_type).filter(Boolean)));
 
