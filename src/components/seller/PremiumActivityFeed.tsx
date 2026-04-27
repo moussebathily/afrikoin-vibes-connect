@@ -160,7 +160,7 @@ export function PremiumActivityFeed({ userId }: Props) {
     return true;
   });
 
-  const buildFileName = (ext: "csv" | "pdf") => {
+  const buildFileName = (ext: "csv" | "pdf" | "xlsx") => {
     const now = new Date();
     const ym = format(now, "yyyy-MM");
     const monthName = format(now, "MMMM", { locale: fr })
@@ -172,7 +172,9 @@ export function PremiumActivityFeed({ userId }: Props) {
       dateFrom || dateTo
         ? `_${dateFrom || "debut"}_au_${dateTo || "fin"}`
         : "";
-    return `activite-premium-${ym}-${monthName}${range}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
+    const planTag = planFilter !== "all" ? `_plan-${planFilter}` : "";
+    const typeTag = typeFilter !== "all" ? `_type-${typeFilter}` : "";
+    return `activite-premium-${ym}-${monthName}${range}${planTag}${typeTag}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
   };
 
   const exportCSV = async () => {
