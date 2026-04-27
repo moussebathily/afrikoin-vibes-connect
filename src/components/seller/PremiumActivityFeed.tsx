@@ -160,7 +160,7 @@ export function PremiumActivityFeed({ userId }: Props) {
   };
 
   const formatAmount = (amount: number | null, currency: string | null) => {
-    if (amount == null || amount === undefined || amount === "") return "";
+    if (amount == null) return "";
     const cur = (currency || "XOF").toUpperCase();
     try {
       return new Intl.NumberFormat("fr-FR", {
