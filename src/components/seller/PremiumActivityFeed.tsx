@@ -140,6 +140,9 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const availablePlans = Array.from(new Set(items.map((i) => i.plan).filter(Boolean))) as string[];
+  const availableTypes = Array.from(new Set(items.map((i) => i.event_type).filter(Boolean)));
+
   const filteredItems = items.filter((it) => {
     const t = new Date(it.created_at).getTime();
     if (dateFrom) {
@@ -152,6 +155,8 @@ export function PremiumActivityFeed({ userId }: Props) {
       to.setHours(23, 59, 59, 999);
       if (t > to.getTime()) return false;
     }
+    if (planFilter !== "all" && (it.plan ?? "") !== planFilter) return false;
+    if (typeFilter !== "all" && it.event_type !== typeFilter) return false;
     return true;
   });
 
