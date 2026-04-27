@@ -24,8 +24,16 @@ import {
   Download,
   FileText,
   FileSpreadsheet,
+  FileBarChart,
   Loader2,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { formatDistanceToNow, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -66,9 +74,11 @@ interface Props {
 export function PremiumActivityFeed({ userId }: Props) {
   const [items, setItems] = useState<PremiumActivity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [exporting, setExporting] = useState<null | "csv" | "pdf">(null);
+  const [exporting, setExporting] = useState<null | "csv" | "pdf" | "xlsx">(null);
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+  const [planFilter, setPlanFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
 
   const load = async () => {
     const { data } = await (supabase as any)
@@ -130,6 +140,9 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const availablePlans = Array.from(new Set(items.map((i) => i.plan).filter(Boolean))) as string[];
+  const availableTypes = Array.from(new Set(items.map((i) => i.event_type).filter(Boolean)));
+
   const filteredItems = items.filter((it) => {
     const t = new Date(it.created_at).getTime();
     if (dateFrom) {
@@ -142,10 +155,12 @@ export function PremiumActivityFeed({ userId }: Props) {
       to.setHours(23, 59, 59, 999);
       if (t > to.getTime()) return false;
     }
+    if (planFilter !== "all" && (it.plan ?? "") !== planFilter) return false;
+    if (typeFilter !== "all" && it.event_type !== typeFilter) return false;
     return true;
   });
 
-  const buildFileName = (ext: "csv" | "pdf") => {
+  const buildFileName = (ext: "csv" | "pdf" | "xlsx") => {
     const now = new Date();
     const ym = format(now, "yyyy-MM");
     const monthName = format(now, "MMMM", { locale: fr })
@@ -157,7 +172,9 @@ export function PremiumActivityFeed({ userId }: Props) {
       dateFrom || dateTo
         ? `_${dateFrom || "debut"}_au_${dateTo || "fin"}`
         : "";
-    return `activite-premium-${ym}-${monthName}${range}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
+    const planTag = planFilter !== "all" ? `_plan-${planFilter}` : "";
+    const typeTag = typeFilter !== "all" ? `_type-${typeFilter}` : "";
+    return `activite-premium-${ym}-${monthName}${range}${planTag}${typeTag}-${count}evt${count > 1 ? "s" : ""}.${ext}`;
   };
 
   const exportCSV = async () => {
@@ -302,6 +319,81 @@ export function PremiumActivityFeed({ userId }: Props) {
     }
   };
 
+  const exportXLSX = async () => {
+    if (!filteredItems.length || exporting) {
+      if (!filteredItems.length) {
+        toast({
+          title: "Aucun événement à exporter",
+          description: "Aucune activité ne correspond aux filtres sélectionnés.",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+    setExporting("xlsx");
+    try {
+      const XLSX = await import("xlsx");
+      const headers = [
+        "Date",
+        "ID transaction",
+        "Événement",
+        "Source",
+        "Plan",
+        "Montant",
+        "Devise",
+        "Méthode de paiement",
+        "Statut précédent",
+        "Nouveau statut",
+        "Premium jusqu'au",
+        "Message",
+      ];
+      const rows = filteredItems.map((it) => [
+        format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
+        String(getTransactionId(it)),
+        eventLabel(it.event_type),
+        it.source ?? "",
+        it.plan ?? "",
+        it.amount ?? "",
+        it.currency ?? "",
+        it.payment_method ?? "",
+        it.previous_status ?? "",
+        it.new_status ?? "",
+        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
+        it.message ?? "",
+      ]);
+      const periodLabel = `${dateFrom || "début"} → ${dateTo || "fin"}`;
+      const meta = [
+        ["Fil d'activité Premium"],
+        [`Généré le`, format(new Date(), "yyyy-MM-dd HH:mm")],
+        [`Période`, periodLabel],
+        [`Plan`, planFilter === "all" ? "Tous" : planFilter],
+        [`Type`, typeFilter === "all" ? "Tous" : eventLabel(typeFilter)],
+        [`Nombre d'événements`, filteredItems.length],
+        [],
+      ];
+      const aoa = [...meta, headers, ...rows];
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      ws["!cols"] = [
+        { wch: 20 }, { wch: 28 }, { wch: 16 }, { wch: 14 }, { wch: 12 },
+        { wch: 12 }, { wch: 8 }, { wch: 18 }, { wch: 16 }, { wch: 16 },
+        { wch: 14 }, { wch: 50 },
+      ];
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Activité Premium");
+      XLSX.writeFile(wb, buildFileName("xlsx"));
+      toast({ title: "Export XLSX téléchargé", description: `${filteredItems.length} événement(s) exportés.` });
+    } catch (err) {
+      console.error("XLSX export error:", err);
+      toast({
+        title: "Échec de l'export XLSX",
+        description: err instanceof Error ? err.message : "Une erreur est survenue lors de la génération du fichier XLSX.",
+        variant: "destructive",
+      });
+    } finally {
+      setExporting(null);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -327,6 +419,8 @@ export function PremiumActivityFeed({ userId }: Props) {
                   ? "Génération CSV…"
                   : exporting === "pdf"
                   ? "Génération PDF…"
+                  : exporting === "xlsx"
+                  ? "Génération XLSX…"
                   : `Exporter${filteredItems.length !== items.length ? ` (${filteredItems.length})` : ""}`}
               </Button>
             </DropdownMenuTrigger>
@@ -346,6 +440,14 @@ export function PremiumActivityFeed({ userId }: Props) {
                   <FileText className="h-4 w-4 mr-2" />
                 )}
                 Exporter en PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={exportXLSX} disabled={exporting !== null}>
+                {exporting === "xlsx" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <FileBarChart className="h-4 w-4 mr-2" />
+                )}
+                Exporter en XLSX
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -374,12 +476,40 @@ export function PremiumActivityFeed({ userId }: Props) {
                 className="h-9 w-[160px]"
               />
             </div>
-            {(dateFrom || dateTo) && (
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs text-muted-foreground">Plan</Label>
+              <Select value={planFilter} onValueChange={setPlanFilter}>
+                <SelectTrigger className="h-9 w-[160px]">
+                  <SelectValue placeholder="Tous les plans" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les plans</SelectItem>
+                  {availablePlans.map((p) => (
+                    <SelectItem key={p} value={p} className="capitalize">{p}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs text-muted-foreground">Type d'événement</Label>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="h-9 w-[180px]">
+                  <SelectValue placeholder="Tous les types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les types</SelectItem>
+                  {availableTypes.map((t) => (
+                    <SelectItem key={t} value={t}>{eventLabel(t)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {(dateFrom || dateTo || planFilter !== "all" || typeFilter !== "all") && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => { setDateFrom(""); setDateTo(""); }}
+                onClick={() => { setDateFrom(""); setDateTo(""); setPlanFilter("all"); setTypeFilter("all"); }}
               >
                 Réinitialiser
               </Button>
