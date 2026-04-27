@@ -419,6 +419,8 @@ export function PremiumActivityFeed({ userId }: Props) {
                   ? "Génération CSV…"
                   : exporting === "pdf"
                   ? "Génération PDF…"
+                  : exporting === "xlsx"
+                  ? "Génération XLSX…"
                   : `Exporter${filteredItems.length !== items.length ? ` (${filteredItems.length})` : ""}`}
               </Button>
             </DropdownMenuTrigger>
