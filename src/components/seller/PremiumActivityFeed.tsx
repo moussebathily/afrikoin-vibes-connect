@@ -140,9 +140,16 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const PLACEHOLDER = "—";
+
+  // Normalize stream/video reference: returns a complete URL when possible,
+  // otherwise a prefixed identifier (youtube:ID, twitch:ID, etc.).
   const getStreamRef = (it: PremiumActivity) => {
     const md = it.metadata ?? {};
-    return (
+    const isUrl = (v: any) => typeof v === "string" && /^https?:\/\//i.test(v);
+
+    // 1) Direct URLs
+    const directUrl =
       md.livestream_url ||
       md.live_url ||
       md.stream_url ||
@@ -150,18 +157,35 @@ export function PremiumActivityFeed({ userId }: Props) {
       md.video_link ||
       md.youtube_url ||
       md.twitch_url ||
-      md.facebook_live_url ||
-      md.livestream_id ||
-      md.stream_id ||
-      md.video_id ||
-      md.broadcast_id ||
-      ""
-    );
+      md.facebook_live_url;
+    if (isUrl(directUrl)) return directUrl as string;
+
+    // 2) Platform-specific IDs → reconstruct URL
+    if (md.youtube_id) return `https://www.youtube.com/watch?v=${md.youtube_id}`;
+    if (md.twitch_id || md.twitch_channel) return `https://www.twitch.tv/${md.twitch_id || md.twitch_channel}`;
+    if (md.facebook_video_id) return `https://www.facebook.com/watch/?v=${md.facebook_video_id}`;
+    if (md.tiktok_id) return `https://www.tiktok.com/video/${md.tiktok_id}`;
+
+    // 3) Generic IDs → prefixed identifier
+    const platform = (md.platform || md.provider || "").toString().toLowerCase();
+    const genericId = md.livestream_id || md.stream_id || md.video_id || md.broadcast_id;
+    if (genericId) {
+      const prefix = platform || "stream";
+      return `${prefix}:${genericId}`;
+    }
+
+    return "";
   };
 
+  // Display value for stream column with placeholder fallback
+  const streamCell = (it: PremiumActivity) => getStreamRef(it) || PLACEHOLDER;
+
   const formatAmount = (amount: number | null, currency: string | null) => {
-    if (amount == null) return "";
-    const cur = (currency || "XOF").toUpperCase();
+    if (amount == null || isNaN(Number(amount))) return PLACEHOLDER;
+    const cur = (currency || "").toUpperCase();
+    if (!cur) {
+      return `${Number(amount).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${PLACEHOLDER}`;
+    }
     try {
       return new Intl.NumberFormat("fr-FR", {
         style: "currency",
