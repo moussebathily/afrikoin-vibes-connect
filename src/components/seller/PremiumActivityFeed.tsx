@@ -140,9 +140,16 @@ export function PremiumActivityFeed({ userId }: Props) {
     );
   };
 
+  const PLACEHOLDER = "—";
+
+  // Normalize stream/video reference: returns a complete URL when possible,
+  // otherwise a prefixed identifier (youtube:ID, twitch:ID, etc.).
   const getStreamRef = (it: PremiumActivity) => {
     const md = it.metadata ?? {};
-    return (
+    const isUrl = (v: any) => typeof v === "string" && /^https?:\/\//i.test(v);
+
+    // 1) Direct URLs
+    const directUrl =
       md.livestream_url ||
       md.live_url ||
       md.stream_url ||
@@ -150,18 +157,35 @@ export function PremiumActivityFeed({ userId }: Props) {
       md.video_link ||
       md.youtube_url ||
       md.twitch_url ||
-      md.facebook_live_url ||
-      md.livestream_id ||
-      md.stream_id ||
-      md.video_id ||
-      md.broadcast_id ||
-      ""
-    );
+      md.facebook_live_url;
+    if (isUrl(directUrl)) return directUrl as string;
+
+    // 2) Platform-specific IDs → reconstruct URL
+    if (md.youtube_id) return `https://www.youtube.com/watch?v=${md.youtube_id}`;
+    if (md.twitch_id || md.twitch_channel) return `https://www.twitch.tv/${md.twitch_id || md.twitch_channel}`;
+    if (md.facebook_video_id) return `https://www.facebook.com/watch/?v=${md.facebook_video_id}`;
+    if (md.tiktok_id) return `https://www.tiktok.com/video/${md.tiktok_id}`;
+
+    // 3) Generic IDs → prefixed identifier
+    const platform = (md.platform || md.provider || "").toString().toLowerCase();
+    const genericId = md.livestream_id || md.stream_id || md.video_id || md.broadcast_id;
+    if (genericId) {
+      const prefix = platform || "stream";
+      return `${prefix}:${genericId}`;
+    }
+
+    return "";
   };
 
+  // Display value for stream column with placeholder fallback
+  const streamCell = (it: PremiumActivity) => getStreamRef(it) || PLACEHOLDER;
+
   const formatAmount = (amount: number | null, currency: string | null) => {
-    if (amount == null) return "";
-    const cur = (currency || "XOF").toUpperCase();
+    if (amount == null || isNaN(Number(amount))) return PLACEHOLDER;
+    const cur = (currency || "").toUpperCase();
+    if (!cur) {
+      return `${Number(amount).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${PLACEHOLDER}`;
+    }
     try {
       return new Intl.NumberFormat("fr-FR", {
         style: "currency",
@@ -248,17 +272,17 @@ export function PremiumActivityFeed({ userId }: Props) {
         format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
         getTransactionId(it),
         eventLabel(it.event_type),
-        it.source ?? "",
-        it.plan ?? "",
-        it.amount != null ? Number(it.amount).toFixed(2) : "",
-        (it.currency ?? "").toUpperCase(),
+        it.source ?? PLACEHOLDER,
+        it.plan ?? PLACEHOLDER,
+        it.amount != null ? Number(it.amount).toFixed(2) : PLACEHOLDER,
+        it.currency ? it.currency.toUpperCase() : PLACEHOLDER,
         formatAmount(it.amount, it.currency),
-        it.payment_method ?? "",
-        it.previous_status ?? "",
-        it.new_status ?? "",
-        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
-        getStreamRef(it),
-        it.message ?? "",
+        it.payment_method ?? PLACEHOLDER,
+        it.previous_status ?? PLACEHOLDER,
+        it.new_status ?? PLACEHOLDER,
+        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : PLACEHOLDER,
+        streamCell(it),
+        it.message ?? PLACEHOLDER,
       ]);
       const csv = [headers, ...rows].map((r) => r.map(escape).join(",")).join("\n");
       const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8;" });
@@ -321,12 +345,12 @@ export function PremiumActivityFeed({ userId }: Props) {
           format(new Date(it.created_at), "dd/MM/yyyy HH:mm", { locale: fr }),
           String(getTransactionId(it)),
           eventLabel(it.event_type),
-          it.plan ?? "—",
-          formatAmount(it.amount, it.currency) || "—",
-          it.payment_method ?? "—",
-          it.premium_until ? format(new Date(it.premium_until), "dd/MM/yyyy") : "—",
-          String(getStreamRef(it) || "—"),
-          it.message ?? "",
+          it.plan ?? PLACEHOLDER,
+          formatAmount(it.amount, it.currency),
+          it.payment_method ?? PLACEHOLDER,
+          it.premium_until ? format(new Date(it.premium_until), "dd/MM/yyyy") : PLACEHOLDER,
+          streamCell(it),
+          it.message ?? PLACEHOLDER,
         ]),
         styles: { fontSize: 9, cellPadding: 6, overflow: "linebreak" },
         headStyles: { fillColor: [245, 158, 11], textColor: 255, fontStyle: "bold" },
@@ -393,17 +417,17 @@ export function PremiumActivityFeed({ userId }: Props) {
         format(new Date(it.created_at), "yyyy-MM-dd HH:mm:ss"),
         String(getTransactionId(it)),
         eventLabel(it.event_type),
-        it.source ?? "",
-        it.plan ?? "",
-        it.amount != null ? Number(it.amount) : "",
-        (it.currency ?? "").toUpperCase(),
+        it.source ?? PLACEHOLDER,
+        it.plan ?? PLACEHOLDER,
+        it.amount != null && !isNaN(Number(it.amount)) ? Number(it.amount) : PLACEHOLDER,
+        it.currency ? it.currency.toUpperCase() : PLACEHOLDER,
         formatAmount(it.amount, it.currency),
-        it.payment_method ?? "",
-        it.previous_status ?? "",
-        it.new_status ?? "",
-        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : "",
-        String(getStreamRef(it) || ""),
-        it.message ?? "",
+        it.payment_method ?? PLACEHOLDER,
+        it.previous_status ?? PLACEHOLDER,
+        it.new_status ?? PLACEHOLDER,
+        it.premium_until ? format(new Date(it.premium_until), "yyyy-MM-dd") : PLACEHOLDER,
+        streamCell(it),
+        it.message ?? PLACEHOLDER,
       ]);
       const periodLabel = `${dateFrom || "début"} → ${dateTo || "fin"}`;
       const meta = [
