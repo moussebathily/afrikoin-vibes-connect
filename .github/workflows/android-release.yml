@@ -1,0 +1,315 @@
+name: Android Release (AAB + Play Store)
+
+# Workflow consolidé:
+#  1) Build web (Vite) + sync Capacitor
+#  2) Signature release via secrets dédiés
+#  3) Génération de l'AAB (et APK universel pour test)
+#  4) Publication en artifacts GitHub
+#  5) Création d'une GitHub Release sur tag vX.Y.Z
+#  6) Upload optionnel vers Google Play (track configurable + rollout)
+#
+# Secrets requis pour la signature:
+#   ANDROID_KEYSTORE              (base64 du .jks)
+#   ANDROID_KEYSTORE_PASSWORD
+#   ANDROID_KEY_ALIAS
+#   ANDROID_KEY_PASSWORD
+#
+# Secret optionnel pour upload Google Play:
+#   PLAY_SERVICE_ACCOUNT_JSON     (JSON du service account)
+#
+# Secret optionnel de vérification:
+#   EXPECTED_UPLOAD_SHA1          (SHA-1 attendu de la clé d'upload Play)
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      publish_play:
+        description: 'Publier vers Google Play après le build'
+        type: boolean
+        required: false
+        default: false
+      track:
+        description: 'Track Google Play (si publish_play=true)'
+        type: choice
+        required: false
+        default: internal
+        options: [internal, alpha, beta, production]
+      rollout:
+        description: 'Rollout fraction pour production (0-1). Vide = 100%.'
+        required: false
+        default: '0.2'
+
+env:
+  PACKAGE_NAME: app.lovable.afrikoin
+
+jobs:
+  build-aab:
+    name: Build signed AAB
+    runs-on: ubuntu-latest
+    outputs:
+      aab_path: ${{ steps.locate.outputs.aab_path }}
+      apk_path: ${{ steps.locate.outputs.apk_path }}
+      mapping_path: ${{ steps.locate.outputs.mapping_path }}
+      version_name: ${{ steps.locate.outputs.version_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          log-accepted-android-sdk-licenses: true
+          packages: |
+            platform-tools
+            platforms;android-35
+            build-tools;35.0.0
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        run: chmod +x android/gradlew
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v2
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Sync Capacitor Android
+        run: npx cap sync android
+
+      - name: Decode keystore from secret
+        env:
+          ANDROID_KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_B64" ]; then
+            echo "❌ Secret ANDROID_KEYSTORE manquant (base64 du .jks)" >&2
+            exit 1
+          fi
+          mkdir -p android/app
+          echo "$ANDROID_KEYSTORE_B64" | base64 -d > android/app/release.keystore
+          ls -la android/app/release.keystore
+
+      - name: Configure signing properties
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          {
+            echo "MYAPP_UPLOAD_STORE_FILE=release.keystore"
+            echo "MYAPP_UPLOAD_STORE_PASSWORD=$STORE_PASSWORD"
+            echo "MYAPP_UPLOAD_KEY_ALIAS=$KEY_ALIAS"
+            echo "MYAPP_UPLOAD_KEY_PASSWORD=$KEY_PASSWORD"
+          } >> android/gradle.properties
+
+      - name: Verify keystore SHA-1
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          EXPECTED: ${{ secrets.EXPECTED_UPLOAD_SHA1 }}
+        run: |
+          set -e
+          RAW=$(keytool -list -v -alias "$KEY_ALIAS" \
+            -keystore android/app/release.keystore \
+            -storepass "$STORE_PASSWORD" -keypass "$KEY_PASSWORD")
+          FP=$(printf "%s" "$RAW" | sed -n 's/.*SHA1:\s*\(.*\)/\1/p' | head -n1 | tr '[:lower:]' '[:upper:]' | tr -d ' :')
+          echo "SHA-1 keystore: $FP"
+          if [ -n "$EXPECTED" ]; then
+            EXP=$(echo "$EXPECTED" | tr '[:lower:]' '[:upper:]' | tr -d ' :')
+            if [ "$FP" != "$EXP" ]; then
+              echo "❌ SHA-1 ne correspond pas à EXPECTED_UPLOAD_SHA1 ($EXP)"
+              exit 1
+            fi
+            echo "✅ SHA-1 conforme."
+          fi
+
+      - name: Print signing config
+        working-directory: android
+        run: ./gradlew :app:printSigningConfig --no-daemon
+
+      - name: Build AAB (release)
+        working-directory: android
+        run: ./gradlew :app:clean :app:bundleRelease --no-daemon --stacktrace
+
+      - name: Build universal APK (debug install/test)
+        working-directory: android
+        run: ./gradlew :app:assembleRelease --no-daemon --stacktrace
+        continue-on-error: true
+
+      - name: Locate build outputs
+        id: locate
+        run: |
+          AAB=$(find android/app/build/outputs/bundle -name "*.aab" | head -n1)
+          APK=$(find android/app/build/outputs/apk -name "*.apk" | head -n1 || true)
+          MAP=$(find android/app/build/outputs/mapping -name "mapping.txt" | head -n1 || true)
+          echo "aab_path=$AAB" >> $GITHUB_OUTPUT
+          echo "apk_path=$APK" >> $GITHUB_OUTPUT
+          echo "mapping_path=$MAP" >> $GITHUB_OUTPUT
+          VN="${GITHUB_REF_NAME#v}"
+          echo "version_name=$VN" >> $GITHUB_OUTPUT
+          echo "📦 AAB: $AAB"
+          echo "📦 APK: $APK"
+          echo "🗺️  mapping: $MAP"
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload APK artifact
+        if: steps.locate.outputs.apk_path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload ProGuard mapping
+        if: steps.locate.outputs.mapping_path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: proguard-mapping
+          path: android/app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: warn
+          retention-days: 30
+
+  github-release:
+    name: GitHub Release (on tag)
+    needs: build-aab
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download AAB
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-aab
+          path: dist/
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-apk
+          path: dist/
+        continue-on-error: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: AfriKoin ${{ github.ref_name }}
+          files: |
+            dist/*.aab
+            dist/*.apk
+          body: |
+            ## AfriKoin ${{ github.ref_name }}
+
+            📱 **Android AAB** prêt pour Google Play Store
+            - Version: ${{ needs.build-aab.outputs.version_name }}
+            - Build: #${{ github.run_number }}
+            - Commit: ${{ github.sha }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-play:
+    name: Publish to Google Play
+    needs: build-aab
+    runs-on: ubuntu-latest
+    # Conditions: tag v* OU dispatch manuel avec publish_play=true
+    # Et le secret PLAY_SERVICE_ACCOUNT_JSON doit exister (vérifié au runtime)
+    if: |
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' && inputs.publish_play == true)
+    environment: production
+    steps:
+      - name: Verify Play service account secret
+        env:
+          PLAY_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_JSON" ]; then
+            echo "❌ Secret PLAY_SERVICE_ACCOUNT_JSON manquant — étape Play ignorée."
+            exit 1
+          fi
+          echo "✅ Service account présent."
+
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-aab
+          path: release/
+
+      - name: Download mapping (optional)
+        uses: actions/download-artifact@v4
+        with:
+          name: proguard-mapping
+          path: release/
+        continue-on-error: true
+
+      - name: Determine track and rollout
+        id: track
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            TRACK="production"
+            RF="${{ inputs.rollout }}"
+            [ -z "$RF" ] && RF="0.2"
+            echo "track=$TRACK" >> $GITHUB_OUTPUT
+            echo "status=inProgress" >> $GITHUB_OUTPUT
+            echo "userFraction=$RF" >> $GITHUB_OUTPUT
+          else
+            TRACK="${{ inputs.track }}"
+            [ -z "$TRACK" ] && TRACK="internal"
+            if [ "$TRACK" = "production" ] && [ -n "${{ inputs.rollout }}" ]; then
+              echo "track=$TRACK" >> $GITHUB_OUTPUT
+              echo "status=inProgress" >> $GITHUB_OUTPUT
+              echo "userFraction=${{ inputs.rollout }}" >> $GITHUB_OUTPUT
+            else
+              echo "track=$TRACK" >> $GITHUB_OUTPUT
+              echo "status=completed" >> $GITHUB_OUTPUT
+              echo "userFraction=" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ env.PACKAGE_NAME }}
+          releaseFiles: release/*.aab
+          mappingFile: release/mapping.txt
+          track: ${{ steps.track.outputs.track }}
+          status: ${{ steps.track.outputs.status }}
+          userFraction: ${{ steps.track.outputs.userFraction }}
+          inAppUpdatePriority: 3
+          releaseNotes: |
+            {"fr-FR": "Mise à jour AfriKoin ${{ github.ref_name }} (build #${{ github.run_number }})"}
