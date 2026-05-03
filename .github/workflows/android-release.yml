@@ -354,7 +354,7 @@ jobs:
 
   publish-play:
     name: Publish to Google Play
-    needs: build-aab
+    needs: [build-aab, changelog]
     runs-on: ubuntu-latest
     # Conditions: tag v* OU dispatch manuel avec publish_play=true
     # Et le secret PLAY_SERVICE_ACCOUNT_JSON doit exister (vérifié au runtime)
