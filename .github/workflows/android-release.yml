@@ -469,9 +469,10 @@ jobs:
           files: |
             dist/*.aab
             dist/*.apk
+            release-notes/RELEASE_NOTES_APK.md
           body_path: release-notes/RELEASE_NOTES.md
           draft: false
-          prerelease: false
+          prerelease: ${{ needs.changelog.outputs.has_breaking == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
