@@ -386,6 +386,12 @@ jobs:
           path: release/
         continue-on-error: true
 
+      - name: Download release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes/
+
       - name: Determine track and rollout
         id: track
         run: |
@@ -421,5 +427,5 @@ jobs:
           status: ${{ steps.track.outputs.status }}
           userFraction: ${{ steps.track.outputs.userFraction }}
           inAppUpdatePriority: 3
-          releaseNotes: |
-            {"fr-FR": "Mise à jour AfriKoin ${{ github.ref_name }} (build #${{ github.run_number }})"}
+          whatsNewDirectory: release-notes/whatsnew
+
