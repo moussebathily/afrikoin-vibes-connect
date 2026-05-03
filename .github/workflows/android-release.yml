@@ -204,9 +204,119 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  changelog:
+    name: Generate release notes
+    runs-on: ubuntu-latest
+    if: |
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' && inputs.publish_play == true)
+    outputs:
+      prev_tag: ${{ steps.notes.outputs.prev_tag }}
+      curr_tag: ${{ steps.notes.outputs.curr_tag }}
+    steps:
+      - name: Checkout (full history + tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog from tag compare
+        id: notes
+        env:
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+        run: |
+          set -e
+          mkdir -p release-notes/whatsnew
+
+          # Tag courant: tag poussé OU dernier tag existant (cas dispatch manuel)
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            CURR_TAG="${GITHUB_REF_NAME}"
+          else
+            CURR_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          fi
+          # Tag précédent (avant le courant)
+          if [ -n "$CURR_TAG" ]; then
+            PREV_TAG=$(git describe --tags --abbrev=0 "${CURR_TAG}^" 2>/dev/null || echo "")
+            RANGE="${PREV_TAG:+${PREV_TAG}..}${CURR_TAG}"
+          else
+            PREV_TAG=""
+            CURR_TAG="HEAD"
+            RANGE="HEAD"
+          fi
+          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "curr_tag=$CURR_TAG" >> $GITHUB_OUTPUT
+          echo "📝 Compare range: $RANGE"
+
+          # Récupère les commits du range
+          LOG=$(git log --no-merges --pretty=format:"%H%x09%s%x09%an" $RANGE || true)
+
+          section() {
+            local title="$1"; local pattern="$2"
+            local lines
+            lines=$(echo "$LOG" | awk -F'\t' -v p="$pattern" '$2 ~ p { printf "- %s (%s)\n", $2, substr($1,1,7) }')
+            if [ -n "$lines" ]; then
+              echo "### $title"
+              echo "$lines"
+              echo ""
+            fi
+          }
+
+          {
+            echo "## AfriKoin ${CURR_TAG}"
+            echo ""
+            if [ -n "$PREV_TAG" ]; then
+              echo "**Compare:** [\`${PREV_TAG}...${CURR_TAG}\`](${REPO_URL}/compare/${PREV_TAG}...${CURR_TAG})"
+            else
+              echo "**Première release**"
+            fi
+            echo ""
+            echo "- Build: #${GITHUB_RUN_NUMBER}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo ""
+            section "✨ Nouveautés" "^feat(\\(.*\\))?!?:"
+            section "🐛 Corrections" "^fix(\\(.*\\))?!?:"
+            section "⚡ Performance" "^perf(\\(.*\\))?!?:"
+            section "♻️ Refactor" "^refactor(\\(.*\\))?!?:"
+            section "📚 Docs" "^docs(\\(.*\\))?!?:"
+            section "🔧 Maintenance" "^(chore|build|ci|style|test)(\\(.*\\))?!?:"
+
+            OTHERS=$(echo "$LOG" | awk -F'\t' '$2 !~ /^(feat|fix|perf|refactor|docs|chore|build|ci|style|test)(\(.*\))?!?:/ { printf "- %s (%s)\n", $2, substr($1,1,7) }')
+            if [ -n "$OTHERS" ]; then
+              echo "### 📦 Autres changements"
+              echo "$OTHERS"
+              echo ""
+            fi
+          } > release-notes/RELEASE_NOTES.md
+
+          echo "----- RELEASE_NOTES.md -----"
+          cat release-notes/RELEASE_NOTES.md
+
+          # Notes Play Store: max 500 caractères, texte brut, par locale
+          # On extrait un résumé compact (titres de commits feat/fix uniquement)
+          {
+            echo "AfriKoin ${CURR_TAG}"
+            echo ""
+            echo "$LOG" | awk -F'\t' '$2 ~ /^(feat|fix)(\(.*\))?!?:/ { print "• " $2 }' | head -n 12
+          } > release-notes/whatsnew/whatsnew-fr-FR.tmp
+
+          # Tronque à 480 caractères pour rester sous la limite Play (500)
+          head -c 480 release-notes/whatsnew/whatsnew-fr-FR.tmp > release-notes/whatsnew/whatsnew-fr-FR
+          rm release-notes/whatsnew/whatsnew-fr-FR.tmp
+          # Locale par défaut en-US (copie du fr-FR si absent)
+          cp release-notes/whatsnew/whatsnew-fr-FR release-notes/whatsnew/whatsnew-en-US
+
+          echo "----- whatsnew-fr-FR -----"
+          cat release-notes/whatsnew/whatsnew-fr-FR
+
+      - name: Upload release notes artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes/
+          retention-days: 30
+
   github-release:
     name: GitHub Release (on tag)
-    needs: build-aab
+    needs: [build-aab, changelog]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
@@ -223,6 +333,12 @@ jobs:
           path: dist/
         continue-on-error: true
 
+      - name: Download release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -230,13 +346,7 @@ jobs:
           files: |
             dist/*.aab
             dist/*.apk
-          body: |
-            ## AfriKoin ${{ github.ref_name }}
-
-            📱 **Android AAB** prêt pour Google Play Store
-            - Version: ${{ needs.build-aab.outputs.version_name }}
-            - Build: #${{ github.run_number }}
-            - Commit: ${{ github.sha }}
+          body_path: release-notes/RELEASE_NOTES.md
           draft: false
           prerelease: false
         env:
