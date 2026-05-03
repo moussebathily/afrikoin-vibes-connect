@@ -207,105 +207,228 @@ jobs:
   changelog:
     name: Generate release notes
     runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref, 'refs/tags/v') ||
-      (github.event_name == 'workflow_dispatch' && inputs.publish_play == true)
     outputs:
       prev_tag: ${{ steps.notes.outputs.prev_tag }}
       curr_tag: ${{ steps.notes.outputs.curr_tag }}
+      has_breaking: ${{ steps.notes.outputs.has_breaking }}
     steps:
       - name: Checkout (full history + tags)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Generate changelog from tag compare
-        id: notes
-        env:
-          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Resolve compare range
+        id: range
         run: |
           set -e
-          mkdir -p release-notes/whatsnew
-
-          # Tag courant: tag poussé OU dernier tag existant (cas dispatch manuel)
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
             CURR_TAG="${GITHUB_REF_NAME}"
           else
             CURR_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           fi
-          # Tag précédent (avant le courant)
           if [ -n "$CURR_TAG" ]; then
             PREV_TAG=$(git describe --tags --abbrev=0 "${CURR_TAG}^" 2>/dev/null || echo "")
-            RANGE="${PREV_TAG:+${PREV_TAG}..}${CURR_TAG}"
+            if [ -n "$PREV_TAG" ]; then
+              RANGE="${PREV_TAG}..${CURR_TAG}"
+            else
+              RANGE="${CURR_TAG}"
+            fi
+            REF_LABEL="$CURR_TAG"
           else
+            # Pas encore de tag (build manuel/branche): prendre les 50 derniers commits
             PREV_TAG=""
-            CURR_TAG="HEAD"
-            RANGE="HEAD"
+            CURR_TAG=""
+            RANGE="-n 50"
+            REF_LABEL="${GITHUB_REF_NAME}@${GITHUB_SHA::7}"
           fi
           echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
           echo "curr_tag=$CURR_TAG" >> $GITHUB_OUTPUT
-          echo "📝 Compare range: $RANGE"
+          echo "range=$RANGE" >> $GITHUB_OUTPUT
+          echo "ref_label=$REF_LABEL" >> $GITHUB_OUTPUT
+          echo "📝 Range: $RANGE | Label: $REF_LABEL"
 
-          # Récupère les commits du range
-          LOG=$(git log --no-merges --pretty=format:"%H%x09%s%x09%an" $RANGE || true)
+      - name: Dump commits (NUL-separated, full body)
+        env:
+          RANGE: ${{ steps.range.outputs.range }}
+        run: |
+          # Format: HASH \x1f SUBJECT \x1f AUTHOR \x1f BODY \x00
+          git log --no-merges \
+            --pretty=format:'%H%x1f%s%x1f%an%x1f%b%x00' \
+            $RANGE > commits.bin || true
+          echo "Bytes: $(wc -c < commits.bin)"
 
-          section() {
-            local title="$1"; local pattern="$2"
-            local lines
-            lines=$(echo "$LOG" | awk -F'\t' -v p="$pattern" '$2 ~ p { printf "- %s (%s)\n", $2, substr($1,1,7) }')
-            if [ -n "$lines" ]; then
-              echo "### $title"
-              echo "$lines"
-              echo ""
-            fi
-          }
+      - name: Generate notes (AAB + APK) with categorization
+        id: notes
+        env:
+          PREV_TAG: ${{ steps.range.outputs.prev_tag }}
+          CURR_TAG: ${{ steps.range.outputs.curr_tag }}
+          REF_LABEL: ${{ steps.range.outputs.ref_label }}
+          REPO_URL: ${{ github.server_url }}/${{ github.repository }}
+          RUN_NUMBER: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          mkdir -p release-notes/whatsnew
+          python3 <<'PY'
+          import os, re, pathlib
 
-          {
-            echo "## AfriKoin ${CURR_TAG}"
-            echo ""
-            if [ -n "$PREV_TAG" ]; then
-              echo "**Compare:** [\`${PREV_TAG}...${CURR_TAG}\`](${REPO_URL}/compare/${PREV_TAG}...${CURR_TAG})"
-            else
-              echo "**Première release**"
-            fi
-            echo ""
-            echo "- Build: #${GITHUB_RUN_NUMBER}"
-            echo "- Commit: ${GITHUB_SHA}"
-            echo ""
-            section "✨ Nouveautés" "^feat(\\(.*\\))?!?:"
-            section "🐛 Corrections" "^fix(\\(.*\\))?!?:"
-            section "⚡ Performance" "^perf(\\(.*\\))?!?:"
-            section "♻️ Refactor" "^refactor(\\(.*\\))?!?:"
-            section "📚 Docs" "^docs(\\(.*\\))?!?:"
-            section "🔧 Maintenance" "^(chore|build|ci|style|test)(\\(.*\\))?!?:"
+          raw = pathlib.Path("commits.bin").read_bytes().decode("utf-8", "replace")
+          entries = [e for e in raw.split("\x00") if e.strip()]
 
-            OTHERS=$(echo "$LOG" | awk -F'\t' '$2 !~ /^(feat|fix|perf|refactor|docs|chore|build|ci|style|test)(\(.*\))?!?:/ { printf "- %s (%s)\n", $2, substr($1,1,7) }')
-            if [ -n "$OTHERS" ]; then
-              echo "### 📦 Autres changements"
-              echo "$OTHERS"
-              echo ""
-            fi
-          } > release-notes/RELEASE_NOTES.md
+          # Conventional Commits — couvre feat, fix, perf, refactor, docs,
+          # chore, build, ci, style, test, revert + scope optionnel + "!" breaking.
+          CC_RE = re.compile(
+              r'^(?P<type>feat|fix|perf|refactor|docs|chore|build|ci|style|test|revert)'
+              r'(?:\((?P<scope>[^)]+)\))?'
+              r'(?P<bang>!)?:\s*(?P<desc>.+)$'
+          )
+          BREAKING_BODY_RE = re.compile(r'^BREAKING[ -]CHANGE:\s*(.+)', re.MULTILINE)
 
-          echo "----- RELEASE_NOTES.md -----"
-          cat release-notes/RELEASE_NOTES.md
+          CATEGORIES = [
+              ("breaking", "💥 Changements cassants (BREAKING)"),
+              ("feat",     "✨ Nouveautés"),
+              ("fix",      "🐛 Corrections"),
+              ("perf",     "⚡ Performance"),
+              ("refactor", "♻️ Refactor"),
+              ("docs",     "📚 Documentation"),
+              ("revert",   "⏪ Reverts"),
+              ("chore",    "🔧 Maintenance"),
+              ("build",    "🔧 Maintenance"),
+              ("ci",       "🔧 Maintenance"),
+              ("style",    "🔧 Maintenance"),
+              ("test",     "🔧 Maintenance"),
+              ("other",    "📦 Autres changements"),
+          ]
+          buckets = {key: [] for key, _ in CATEGORIES}
+          breaking_notes = []  # textes BREAKING CHANGE: ... extraits du body
 
-          # Notes Play Store: max 500 caractères, texte brut, par locale
-          # On extrait un résumé compact (titres de commits feat/fix uniquement)
-          {
-            echo "AfriKoin ${CURR_TAG}"
-            echo ""
-            echo "$LOG" | awk -F'\t' '$2 ~ /^(feat|fix)(\(.*\))?!?:/ { print "• " $2 }' | head -n 12
-          } > release-notes/whatsnew/whatsnew-fr-FR.tmp
+          for e in entries:
+              parts = e.split("\x1f")
+              if len(parts) < 4:
+                  continue
+              h, subject, author, body = parts[0], parts[1], parts[2], parts[3]
+              h = h.strip()
+              subject = subject.strip()
+              body = body.strip()
+              short = h[:7]
 
-          # Tronque à 480 caractères pour rester sous la limite Play (500)
-          head -c 480 release-notes/whatsnew/whatsnew-fr-FR.tmp > release-notes/whatsnew/whatsnew-fr-FR
-          rm release-notes/whatsnew/whatsnew-fr-FR.tmp
-          # Locale par défaut en-US (copie du fr-FR si absent)
-          cp release-notes/whatsnew/whatsnew-fr-FR release-notes/whatsnew/whatsnew-en-US
+              m = CC_RE.match(subject)
+              if m:
+                  ctype = m.group("type")
+                  scope = m.group("scope")
+                  bang  = bool(m.group("bang"))
+                  desc  = m.group("desc").strip()
+                  scope_str = f"**{scope}**: " if scope else ""
+                  line = f"- {scope_str}{desc} ([`{short}`]({os.environ['REPO_URL']}/commit/{h}))"
 
-          echo "----- whatsnew-fr-FR -----"
-          cat release-notes/whatsnew/whatsnew-fr-FR
+                  is_breaking = bang or BREAKING_BODY_RE.search(body) is not None
+                  if is_breaking:
+                      buckets["breaking"].append(line)
+                      for bm in BREAKING_BODY_RE.finditer(body):
+                          # Premier paragraphe seulement (multi-ligne propre)
+                          first_para = bm.group(1).strip().split("\n\n")[0].replace("\n", " ").strip()
+                          breaking_notes.append(f"  - _{first_para}_")
+                  else:
+                      buckets[ctype].append(line)
+              else:
+                  # Sujet non conventional: on garde la 1ère ligne uniquement
+                  first_line = subject.splitlines()[0] if subject else "(sans sujet)"
+                  buckets["other"].append(
+                      f"- {first_line} ([`{short}`]({os.environ['REPO_URL']}/commit/{h}))"
+                  )
+
+          prev_tag   = os.environ.get("PREV_TAG", "")
+          curr_tag   = os.environ.get("CURR_TAG", "")
+          ref_label  = os.environ.get("REF_LABEL", "")
+          repo_url   = os.environ["REPO_URL"]
+          run_number = os.environ.get("RUN_NUMBER", "")
+          sha        = os.environ.get("COMMIT_SHA", "")
+
+          title = f"AfriKoin {curr_tag or ref_label}"
+          compare_line = ""
+          if prev_tag and curr_tag:
+              compare_line = f"**Compare:** [`{prev_tag}...{curr_tag}`]({repo_url}/compare/{prev_tag}...{curr_tag})"
+          elif curr_tag:
+              compare_line = "**Première release**"
+          else:
+              compare_line = f"_Build manuel sur `{ref_label}` (50 derniers commits)._"
+
+          def render(header_extra=""):
+              out = [f"## {title}", ""]
+              if compare_line:
+                  out.append(compare_line)
+                  out.append("")
+              out.extend([
+                  f"- Build: #{run_number}",
+                  f"- Commit: `{sha[:7]}`",
+              ])
+              if header_extra:
+                  out.append("")
+                  out.append(header_extra)
+              out.append("")
+
+              seen_titles = set()
+              for key, label in CATEGORIES:
+                  lines = buckets[key]
+                  if not lines:
+                      continue
+                  # Fusionne maintenance (chore/build/ci/style/test) sous un seul titre
+                  if label in seen_titles:
+                      out.extend(lines)
+                      continue
+                  seen_titles.add(label)
+                  out.append(f"### {label}")
+                  out.extend(lines)
+                  if key == "breaking" and breaking_notes:
+                      out.extend(breaking_notes)
+                  out.append("")
+              return "\n".join(out).rstrip() + "\n"
+
+          # AAB: notes complètes, orientation Play Store
+          aab_notes = render("📦 **Artifact:** Android App Bundle (AAB) — Google Play Store")
+          # APK: notes + section installation manuelle
+          apk_extra = (
+              "📦 **Artifact:** Universal APK — installation manuelle / sideload\n\n"
+              "> ⚠️ Cet APK est signé avec la clé d'upload. Pour tests internes "
+              "uniquement — préférez l'AAB pour la distribution Play Store."
+          )
+          apk_notes = render(apk_extra)
+
+          pathlib.Path("release-notes/RELEASE_NOTES.md").write_text(aab_notes, encoding="utf-8")
+          pathlib.Path("release-notes/RELEASE_NOTES_APK.md").write_text(apk_notes, encoding="utf-8")
+
+          # Play Store whatsnew (max 500 chars). Inclut breaking + feat + fix.
+          play_lines = [title, ""]
+          for key in ("breaking", "feat", "fix"):
+              for line in buckets[key]:
+                  # Reformatte: "- desc (hash)" -> "• desc"
+                  m = re.match(r'-\s+(?:\*\*[^*]+\*\*:\s*)?(.+?)\s+\(\[`', line)
+                  if m:
+                      prefix = "⚠ " if key == "breaking" else ("• " if key == "feat" else "✓ ")
+                      play_lines.append(prefix + m.group(1))
+          play_text = "\n".join(play_lines)[:480]
+
+          for locale in ("fr-FR", "en-US"):
+              pathlib.Path(f"release-notes/whatsnew/whatsnew-{locale}").write_text(play_text, encoding="utf-8")
+
+          # Outputs GitHub Actions
+          has_breaking = "true" if buckets["breaking"] else "false"
+          gh_out = os.environ.get("GITHUB_OUTPUT")
+          if gh_out:
+              with open(gh_out, "a", encoding="utf-8") as f:
+                  f.write(f"prev_tag={prev_tag}\n")
+                  f.write(f"curr_tag={curr_tag}\n")
+                  f.write(f"has_breaking={has_breaking}\n")
+
+          print("----- RELEASE_NOTES.md -----")
+          print(aab_notes)
+          print("----- whatsnew-fr-FR -----")
+          print(play_text)
+          PY
 
       - name: Upload release notes artifact
         uses: actions/upload-artifact@v4
@@ -346,9 +469,10 @@ jobs:
           files: |
             dist/*.aab
             dist/*.apk
+            release-notes/RELEASE_NOTES_APK.md
           body_path: release-notes/RELEASE_NOTES.md
           draft: false
-          prerelease: false
+          prerelease: ${{ needs.changelog.outputs.has_breaking == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
