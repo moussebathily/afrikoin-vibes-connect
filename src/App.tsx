@@ -97,16 +97,16 @@ function App() {
             <Route path={ROUTES.AUTH} element={<AuthPage />} />
             <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<HomePage />} />
-              <Route path="culture" element={<CulturePage />} />
-              <Route path="sports" element={<SportsPage />} />
-              <Route path="markets" element={<MarketsPage />} />
-              <Route path="rankings" element={<RankingsPage />} />
-              <Route path="wallet" element={<WalletPage />} />
-              <Route path="call" element={<CallPage />} />
-              <Route path="tracking" element={<TrackingPage />} />
-              <Route path="jobs" element={<JobsPage />} />
-              <Route path="jobs/:id" element={<JobDetailPage />} />
-              <Route path="news" element={<NewsPage />} />
+              <Route path="culture" element={<LazyRoute><CulturePage /></LazyRoute>} />
+              <Route path="sports" element={<LazyRoute><SportsPage /></LazyRoute>} />
+              <Route path="markets" element={<LazyRoute><MarketsPage /></LazyRoute>} />
+              <Route path="rankings" element={<LazyRoute><RankingsPage /></LazyRoute>} />
+              <Route path="wallet" element={<LazyRoute><WalletPage /></LazyRoute>} />
+              <Route path="call" element={<LazyRoute><CallPage /></LazyRoute>} />
+              <Route path="tracking" element={<LazyRoute><TrackingPage /></LazyRoute>} />
+              <Route path="jobs" element={<LazyRoute><JobsPage /></LazyRoute>} />
+              <Route path="jobs/:id" element={<LazyRoute><JobDetailPage /></LazyRoute>} />
+              <Route path="news" element={<LazyRoute><NewsPage /></LazyRoute>} />
               <Route path="transport" element={<LazyRoute><TransportPage /></LazyRoute>} />
               <Route path="admin/transport" element={<LazyRoute><AdminTransportPage /></LazyRoute>} />
               <Route path="my-rentals" element={<LazyRoute><MyRentalsPage /></LazyRoute>} />
