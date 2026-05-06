@@ -363,6 +363,15 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
               )}
             </div>
 
+            {aiSuggestion && (
+              <AISuggestionPanel
+                suggestion={aiSuggestion}
+                onApplyField={applyAISuggestionField}
+                onApplyAll={applyAllAISuggestions}
+                onDismiss={() => setAiSuggestion(null)}
+              />
+            )}
+
             {/* Title */}
             <FormField
               control={form.control}
