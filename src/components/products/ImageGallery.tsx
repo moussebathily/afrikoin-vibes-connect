@@ -90,9 +90,11 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
                   : "border-transparent hover:border-muted-foreground/50"
               )}
             >
-              <img
+              <OptimizedImage
                 src={image}
                 alt={`${title} - Miniature ${index + 1}`}
+                widths={[64, 128]}
+                sizes="64px"
                 className="w-full h-full object-cover"
               />
             </button>
