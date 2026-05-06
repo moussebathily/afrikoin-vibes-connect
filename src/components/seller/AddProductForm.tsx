@@ -40,6 +40,7 @@ import {
   Layers,
   Sparkles
 } from "lucide-react";
+import { AISuggestionPanel, type AIProductSuggestion } from "./AISuggestionPanel";
 
 const productFormSchema = z.object({
   title: z.string().min(3, "Le titre doit contenir au moins 3 caractères"),
