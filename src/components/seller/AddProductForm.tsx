@@ -270,6 +270,7 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
 
       form.reset();
       setImages([]);
+      setAiSuggestion(null);
       onOpenChange(false);
       onSuccess?.();
     } catch (error: any) {
