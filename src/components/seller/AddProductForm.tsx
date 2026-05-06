@@ -189,23 +189,11 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
 
-      // Apply only to empty fields so we don't overwrite manual edits
-      if (!form.getValues('title') && data.title) {
-        form.setValue('title', data.title, { shouldValidate: true });
-      }
-      if (!form.getValues('description') && data.description) {
-        form.setValue('description', data.description, { shouldValidate: true });
-      }
-      if (!form.getValues('category') && data.category) {
-        form.setValue('category', data.category, { shouldValidate: true });
-      }
-      if ((!form.getValues('price') || form.getValues('price') === 0) && data.suggested_price) {
-        form.setValue('price', Math.round(data.suggested_price), { shouldValidate: true });
-      }
+      setAiSuggestion(data as AIProductSuggestion);
 
       toast({
-        title: "✨ IA appliquée",
-        description: `Suggestions générées (confiance: ${data.confidence ?? 'medium'})`,
+        title: "✨ Suggestions IA prêtes",
+        description: `Choisissez quels champs appliquer (confiance: ${data.confidence ?? 'medium'})`,
       });
     } catch (err: any) {
       console.error('AI generation error:', err);
@@ -217,6 +205,32 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
     } finally {
       setAiLoading(false);
     }
+  };
+
+  const applyAISuggestionField = (field: keyof AIProductSuggestion, value: any) => {
+    if (value === undefined || value === null) return;
+    if (field === 'suggested_price') {
+      form.setValue('price', Math.round(Number(value)), { shouldValidate: true });
+    } else if (field === 'title' || field === 'description' || field === 'category') {
+      form.setValue(field, String(value), { shouldValidate: true });
+    }
+  };
+
+  const applyAllAISuggestions = () => {
+    if (!aiSuggestion) return;
+    if (!form.getValues('title') && aiSuggestion.title) {
+      form.setValue('title', aiSuggestion.title, { shouldValidate: true });
+    }
+    if (!form.getValues('description') && aiSuggestion.description) {
+      form.setValue('description', aiSuggestion.description, { shouldValidate: true });
+    }
+    if (!form.getValues('category') && aiSuggestion.category) {
+      form.setValue('category', aiSuggestion.category, { shouldValidate: true });
+    }
+    if ((!form.getValues('price') || form.getValues('price') === 0) && aiSuggestion.suggested_price) {
+      form.setValue('price', Math.round(aiSuggestion.suggested_price), { shouldValidate: true });
+    }
+    toast({ title: "Champs vides remplis", description: "Vos saisies manuelles ont été préservées." });
   };
 
   const onSubmit = async (values: ProductFormValues) => {
