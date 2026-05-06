@@ -119,7 +119,11 @@ export function MessageBubble({ message, isOwn, onDelete, onReply, translationTa
         )}>
           {/* Text */}
           {message.message_type === 'text' && (
-            <p className="whitespace-pre-wrap break-words">{message.content}</p>
+            <TranslatedText
+              text={message.content ?? ''}
+              autoTranslate={!isOwn && translationTarget !== 'off'}
+              targetLang={translationTarget}
+            />
           )}
 
           {/* Image */}
