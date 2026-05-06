@@ -1,6 +1,7 @@
 import React from 'react'
 import { Heart, Download, Play, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { OptimizedImage } from '@/components/ui/optimized-image'
 import type { Wallpaper } from '@/pages/WallpapersPage'
 
 interface WallpaperGridProps {
