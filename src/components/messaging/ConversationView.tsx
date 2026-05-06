@@ -83,6 +83,7 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
+          <TranslationToggle value={targetLang} onChange={setTargetLang} />
           <button
             onClick={() => onCall?.('audio')}
             className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground"
