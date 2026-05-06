@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 interface ImageGalleryProps {
   images: string[];
@@ -36,9 +37,11 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
         className="relative aspect-square rounded-xl overflow-hidden bg-muted cursor-zoom-in group"
         onClick={() => setIsZoomed(!isZoomed)}
       >
-        <img
+        <OptimizedImage
           src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
+          priority={currentIndex === 0}
+          sizes="(max-width: 768px) 100vw, 50vw"
           className={cn(
             "w-full h-full object-cover transition-transform duration-500",
             isZoomed ? "scale-150 cursor-zoom-out" : "group-hover:scale-105"
@@ -87,9 +90,11 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
                   : "border-transparent hover:border-muted-foreground/50"
               )}
             >
-              <img
+              <OptimizedImage
                 src={image}
                 alt={`${title} - Miniature ${index + 1}`}
+                widths={[64, 128]}
+                sizes="64px"
                 className="w-full h-full object-cover"
               />
             </button>

@@ -4,6 +4,8 @@ import { useMessages, Conversation, Message } from '@/hooks/useMessaging'
 import { useAuth } from '@/contexts/AuthContext'
 import { MessageBubble } from './MessageBubble'
 import { MessageInput } from './MessageInput'
+import { TranslationToggle } from './TranslationToggle'
+import { useChatTranslation } from '@/hooks/useChatTranslation'
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -33,6 +35,7 @@ function getParticipantsText(conv: Conversation, currentUserId: string): string 
 export function ConversationView({ conversation, onBack, onCall }: Props) {
   const { user } = useAuth()
   const { messages, loading, sendMessage, deleteMessage } = useMessages(conversation.id)
+  const { targetLang, setTargetLang } = useChatTranslation()
   const [replyTo, setReplyTo] = useState<Message | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastCount = useRef(0)
@@ -80,6 +83,7 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
+          <TranslationToggle value={targetLang} onChange={setTargetLang} />
           <button
             onClick={() => onCall?.('audio')}
             className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground"
@@ -143,6 +147,7 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
                     isOwn={isOwn}
                     onDelete={isOwn ? deleteMessage : undefined}
                     onReply={setReplyTo}
+                    translationTarget={targetLang}
                   />
                 </React.Fragment>
               )

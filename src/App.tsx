@@ -7,18 +7,6 @@ import { LazyRoute } from '@/components/layout/LazyRoute'
 import { ROUTES } from '@/config/routes'
 import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
-import { WalletPage } from '@/pages/WalletPage'
-import { AboutPage } from '@/pages/AboutPage'
-import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
-import { CulturePage } from '@/pages/CulturePage'
-import { SportsPage } from '@/pages/SportsPage'
-import { RankingsPage } from '@/pages/RankingsPage'
-import { MarketsPage } from '@/pages/MarketsPage'
-import { CallPage } from '@/pages/CallPage'
-import { TrackingPage } from '@/pages/TrackingPage'
-import { JobsPage } from '@/pages/JobsPage'
-import { JobDetailPage } from '@/pages/JobDetailPage'
-import { NewsPage } from '@/pages/NewsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { SEOHead } from '@/components/seo/SEOHead'
 import { setupI18n } from '@/i18n/config'
@@ -28,7 +16,19 @@ import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
-// Lazy load heavy components
+// Lazy load all non-critical routes to keep initial bundle minimal
+const WalletPage = lazy(() => import('@/pages/WalletPage').then(m => ({ default: m.WalletPage })))
+const AboutPage = lazy(() => import('@/pages/AboutPage').then(m => ({ default: m.AboutPage })))
+const PaymentSuccessPage = lazy(() => import('@/pages/PaymentSuccessPage').then(m => ({ default: m.PaymentSuccessPage })))
+const CulturePage = lazy(() => import('@/pages/CulturePage').then(m => ({ default: m.CulturePage })))
+const SportsPage = lazy(() => import('@/pages/SportsPage').then(m => ({ default: m.SportsPage })))
+const RankingsPage = lazy(() => import('@/pages/RankingsPage').then(m => ({ default: m.RankingsPage })))
+const MarketsPage = lazy(() => import('@/pages/MarketsPage').then(m => ({ default: m.MarketsPage })))
+const CallPage = lazy(() => import('@/pages/CallPage').then(m => ({ default: m.CallPage })))
+const TrackingPage = lazy(() => import('@/pages/TrackingPage').then(m => ({ default: m.TrackingPage })))
+const JobsPage = lazy(() => import('@/pages/JobsPage').then(m => ({ default: m.JobsPage })))
+const JobDetailPage = lazy(() => import('@/pages/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
+const NewsPage = lazy(() => import('@/pages/NewsPage').then(m => ({ default: m.NewsPage })))
 const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
 const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
@@ -97,16 +97,16 @@ function App() {
             <Route path={ROUTES.AUTH} element={<AuthPage />} />
             <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<HomePage />} />
-              <Route path="culture" element={<CulturePage />} />
-              <Route path="sports" element={<SportsPage />} />
-              <Route path="markets" element={<MarketsPage />} />
-              <Route path="rankings" element={<RankingsPage />} />
-              <Route path="wallet" element={<WalletPage />} />
-              <Route path="call" element={<CallPage />} />
-              <Route path="tracking" element={<TrackingPage />} />
-              <Route path="jobs" element={<JobsPage />} />
-              <Route path="jobs/:id" element={<JobDetailPage />} />
-              <Route path="news" element={<NewsPage />} />
+              <Route path="culture" element={<LazyRoute><CulturePage /></LazyRoute>} />
+              <Route path="sports" element={<LazyRoute><SportsPage /></LazyRoute>} />
+              <Route path="markets" element={<LazyRoute><MarketsPage /></LazyRoute>} />
+              <Route path="rankings" element={<LazyRoute><RankingsPage /></LazyRoute>} />
+              <Route path="wallet" element={<LazyRoute><WalletPage /></LazyRoute>} />
+              <Route path="call" element={<LazyRoute><CallPage /></LazyRoute>} />
+              <Route path="tracking" element={<LazyRoute><TrackingPage /></LazyRoute>} />
+              <Route path="jobs" element={<LazyRoute><JobsPage /></LazyRoute>} />
+              <Route path="jobs/:id" element={<LazyRoute><JobDetailPage /></LazyRoute>} />
+              <Route path="news" element={<LazyRoute><NewsPage /></LazyRoute>} />
               <Route path="transport" element={<LazyRoute><TransportPage /></LazyRoute>} />
               <Route path="admin/transport" element={<LazyRoute><AdminTransportPage /></LazyRoute>} />
               <Route path="my-rentals" element={<LazyRoute><MyRentalsPage /></LazyRoute>} />
@@ -122,10 +122,10 @@ function App() {
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
               <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
               <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
-              <Route path="about" element={<AboutPage />} />
+              <Route path="about" element={<LazyRoute><AboutPage /></LazyRoute>} />
               <Route path="fonds-ecran" element={<LazyRoute><WallpapersPage /></LazyRoute>} />
               <Route path="messages" element={<LazyRoute><MessagingPage /></LazyRoute>} />
-              <Route path="payment-success" element={<PaymentSuccessPage />} />
+              <Route path="payment-success" element={<LazyRoute><PaymentSuccessPage /></LazyRoute>} />
               <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
             </Route>
           </Routes>
