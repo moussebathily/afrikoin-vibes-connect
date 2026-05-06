@@ -4,6 +4,8 @@ import { useMessages, Conversation, Message } from '@/hooks/useMessaging'
 import { useAuth } from '@/contexts/AuthContext'
 import { MessageBubble } from './MessageBubble'
 import { MessageInput } from './MessageInput'
+import { TranslationToggle } from './TranslationToggle'
+import { useChatTranslation } from '@/hooks/useChatTranslation'
 import { cn } from '@/lib/utils'
 
 interface Props {
