@@ -53,7 +53,7 @@ export function WallpaperGrid({ wallpapers, loading, favorites, onToggleFavorite
                 </div>
               </>
             ) : (
-              <img src={w.file_url} alt={w.title} className="w-full h-full object-cover transition-transform group-hover:scale-105" loading="lazy" />
+              <OptimizedImage src={w.file_url} alt={w.title} sizes="(max-width:768px) 50vw, 25vw" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
             )}
 
             {/* Overlay */}
