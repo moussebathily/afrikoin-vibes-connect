@@ -56,7 +56,7 @@ function AudioPlayer({ url }: { url: string }) {
   )
 }
 
-export function MessageBubble({ message, isOwn, onDelete, onReply }: Props) {
+export function MessageBubble({ message, isOwn, onDelete, onReply, translationTarget = 'off' }: Props) {
   const [showActions, setShowActions] = useState(false)
   const isRead = (message.reads?.length ?? 0) > 0
 
