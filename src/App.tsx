@@ -122,10 +122,10 @@ function App() {
               <Route path="profile" element={<div className="p-8 text-center">Page Profil - En construction</div>} />
               <Route path="likes" element={<div className="p-8 text-center">Page Likes - En construction</div>} />
               <Route path="holidays" element={<div className="p-8 text-center">Page Fêtes - En construction</div>} />
-              <Route path="about" element={<AboutPage />} />
+              <Route path="about" element={<LazyRoute><AboutPage /></LazyRoute>} />
               <Route path="fonds-ecran" element={<LazyRoute><WallpapersPage /></LazyRoute>} />
               <Route path="messages" element={<LazyRoute><MessagingPage /></LazyRoute>} />
-              <Route path="payment-success" element={<PaymentSuccessPage />} />
+              <Route path="payment-success" element={<LazyRoute><PaymentSuccessPage /></LazyRoute>} />
               <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
             </Route>
           </Routes>
