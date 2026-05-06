@@ -90,6 +90,7 @@ export function AddProductForm({ open, onOpenChange, onSuccess }: AddProductForm
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState<AIProductSuggestion | null>(null);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
