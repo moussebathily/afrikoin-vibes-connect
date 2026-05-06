@@ -147,6 +147,7 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
                     isOwn={isOwn}
                     onDelete={isOwn ? deleteMessage : undefined}
                     onReply={setReplyTo}
+                    translationTarget={targetLang}
                   />
                 </React.Fragment>
               )
