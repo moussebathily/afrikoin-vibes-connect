@@ -7,18 +7,6 @@ import { LazyRoute } from '@/components/layout/LazyRoute'
 import { ROUTES } from '@/config/routes'
 import { HomePage } from '@/pages/HomePage'
 import { AuthPage } from '@/pages/AuthPage'
-import { WalletPage } from '@/pages/WalletPage'
-import { AboutPage } from '@/pages/AboutPage'
-import { PaymentSuccessPage } from '@/pages/PaymentSuccessPage'
-import { CulturePage } from '@/pages/CulturePage'
-import { SportsPage } from '@/pages/SportsPage'
-import { RankingsPage } from '@/pages/RankingsPage'
-import { MarketsPage } from '@/pages/MarketsPage'
-import { CallPage } from '@/pages/CallPage'
-import { TrackingPage } from '@/pages/TrackingPage'
-import { JobsPage } from '@/pages/JobsPage'
-import { JobDetailPage } from '@/pages/JobDetailPage'
-import { NewsPage } from '@/pages/NewsPage'
 import { Toaster } from '@/components/ui/toaster'
 import { SEOHead } from '@/components/seo/SEOHead'
 import { setupI18n } from '@/i18n/config'
@@ -28,7 +16,19 @@ import { Capacitor } from '@capacitor/core'
 import { StatusBar, Style } from '@capacitor/status-bar'
 import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
-// Lazy load heavy components
+// Lazy load all non-critical routes to keep initial bundle minimal
+const WalletPage = lazy(() => import('@/pages/WalletPage').then(m => ({ default: m.WalletPage })))
+const AboutPage = lazy(() => import('@/pages/AboutPage').then(m => ({ default: m.AboutPage })))
+const PaymentSuccessPage = lazy(() => import('@/pages/PaymentSuccessPage').then(m => ({ default: m.PaymentSuccessPage })))
+const CulturePage = lazy(() => import('@/pages/CulturePage').then(m => ({ default: m.CulturePage })))
+const SportsPage = lazy(() => import('@/pages/SportsPage').then(m => ({ default: m.SportsPage })))
+const RankingsPage = lazy(() => import('@/pages/RankingsPage').then(m => ({ default: m.RankingsPage })))
+const MarketsPage = lazy(() => import('@/pages/MarketsPage').then(m => ({ default: m.MarketsPage })))
+const CallPage = lazy(() => import('@/pages/CallPage').then(m => ({ default: m.CallPage })))
+const TrackingPage = lazy(() => import('@/pages/TrackingPage').then(m => ({ default: m.TrackingPage })))
+const JobsPage = lazy(() => import('@/pages/JobsPage').then(m => ({ default: m.JobsPage })))
+const JobDetailPage = lazy(() => import('@/pages/JobDetailPage').then(m => ({ default: m.JobDetailPage })))
+const NewsPage = lazy(() => import('@/pages/NewsPage').then(m => ({ default: m.NewsPage })))
 const AIStudioDemo = lazy(() => import('@/components/ai/AIStudioDemo').then(m => ({ default: m.AIStudioDemo })))
 const MarketplacePage = lazy(() => import('@/pages/MarketplacePage'))
 const ProductDetailPage = lazy(() => import('@/pages/ProductDetailPage'))
