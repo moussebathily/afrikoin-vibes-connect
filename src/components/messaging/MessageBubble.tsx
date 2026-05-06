@@ -4,13 +4,15 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { Message } from '@/hooks/useMessaging'
-import { useAuth } from '@/contexts/AuthContext'
+import { TranslatedText } from './TranslatedText'
+import type { TranslationLang } from '@/hooks/useChatTranslation'
 
 interface Props {
   message: Message
   isOwn: boolean
   onDelete?: (id: string) => void
   onReply?: (msg: Message) => void
+  translationTarget?: TranslationLang
 }
 
 function formatBytes(bytes: number | null): string {
