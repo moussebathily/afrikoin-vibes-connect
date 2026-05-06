@@ -37,9 +37,11 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
         className="relative aspect-square rounded-xl overflow-hidden bg-muted cursor-zoom-in group"
         onClick={() => setIsZoomed(!isZoomed)}
       >
-        <img
+        <OptimizedImage
           src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
+          priority={currentIndex === 0}
+          sizes="(max-width: 768px) 100vw, 50vw"
           className={cn(
             "w-full h-full object-cover transition-transform duration-500",
             isZoomed ? "scale-150 cursor-zoom-out" : "group-hover:scale-105"
