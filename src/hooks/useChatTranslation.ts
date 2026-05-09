@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export type TranslationLang = "fr" | "wo" | "ha" | "en" | "ar" | "sw" | "yo" | "off";
@@ -13,6 +13,7 @@ const cache = new Map<string, CacheEntry>();
 const inflight = new Map<string, Promise<CacheEntry>>();
 
 const STORAGE_KEY = "afrikoin:chat-translate-lang";
+const STORAGE_KEY_OWN = "afrikoin:chat-translate-own";
 
 export function useChatTranslation() {
   const [targetLang, setTargetLangState] = useState<TranslationLang>(() => {
@@ -23,10 +24,25 @@ export function useChatTranslation() {
     }
   });
 
+  const [translateOwn, setTranslateOwnState] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY_OWN) === "1";
+    } catch {
+      return false;
+    }
+  });
+
   const setTargetLang = useCallback((lang: TranslationLang) => {
     setTargetLangState(lang);
     try {
       localStorage.setItem(STORAGE_KEY, lang);
+    } catch {}
+  }, []);
+
+  const setTranslateOwn = useCallback((value: boolean) => {
+    setTranslateOwnState(value);
+    try {
+      localStorage.setItem(STORAGE_KEY_OWN, value ? "1" : "0");
     } catch {}
   }, []);
 
@@ -75,7 +91,7 @@ export function useChatTranslation() {
     [targetLang],
   );
 
-  return { targetLang, setTargetLang, translate };
+  return { targetLang, setTargetLang, translateOwn, setTranslateOwn, translate };
 }
 
 export const TRANSLATION_LANGUAGES: { value: TranslationLang; label: string; flag: string }[] = [
@@ -88,3 +104,14 @@ export const TRANSLATION_LANGUAGES: { value: TranslationLang; label: string; fla
   { value: "sw", label: "Swahili", flag: "🇰🇪" },
   { value: "yo", label: "Yoruba", flag: "🇳🇬" },
 ];
+
+export const LANG_LABELS: Record<string, { label: string; flag: string }> = {
+  fr: { label: "Français", flag: "🇫🇷" },
+  wo: { label: "Wolof", flag: "🇸🇳" },
+  ha: { label: "Hausa", flag: "🇳🇪" },
+  en: { label: "English", flag: "🇬🇧" },
+  ar: { label: "Arabic", flag: "🇸🇦" },
+  sw: { label: "Swahili", flag: "🇰🇪" },
+  yo: { label: "Yoruba", flag: "🇳🇬" },
+  auto: { label: "Auto", flag: "🌐" },
+};
