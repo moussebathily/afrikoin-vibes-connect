@@ -122,7 +122,7 @@ export function MessageBubble({ message, isOwn, onDelete, onReply, translationTa
           {message.message_type === 'text' && (
             <TranslatedText
               text={message.content ?? ''}
-              autoTranslate={!isOwn && translationTarget !== 'off'}
+              autoTranslate={translationTarget !== 'off' && (!isOwn || translateOwn)}
               targetLang={translationTarget}
             />
           )}
