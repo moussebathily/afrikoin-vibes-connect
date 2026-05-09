@@ -78,11 +78,24 @@ export function TranslationToggle({
               Afficher la traduction de ce que vous envoyez
             </span>
           </div>
-          <Switch
-            checked={translateOwn}
-            onCheckedChange={onTranslateOwnChange}
+          <button
+            type="button"
+            role="switch"
+            aria-checked={translateOwn}
             disabled={!active}
-          />
+            onClick={() => onTranslateOwnChange(!translateOwn)}
+            className={cn(
+              "relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors",
+              translateOwn ? "bg-primary" : "bg-muted",
+            )}
+          >
+            <span
+              className={cn(
+                "inline-block h-4 w-4 transform rounded-full bg-background shadow transition-transform",
+                translateOwn ? "translate-x-4" : "translate-x-0.5",
+              )}
+            />
+          </button>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
