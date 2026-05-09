@@ -35,7 +35,7 @@ function getParticipantsText(conv: Conversation, currentUserId: string): string 
 export function ConversationView({ conversation, onBack, onCall }: Props) {
   const { user } = useAuth()
   const { messages, loading, sendMessage, deleteMessage } = useMessages(conversation.id)
-  const { targetLang, setTargetLang } = useChatTranslation()
+  const { targetLang, setTargetLang, translateOwn, setTranslateOwn } = useChatTranslation()
   const [replyTo, setReplyTo] = useState<Message | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastCount = useRef(0)
@@ -83,7 +83,12 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          <TranslationToggle value={targetLang} onChange={setTargetLang} />
+          <TranslationToggle
+            value={targetLang}
+            onChange={setTargetLang}
+            translateOwn={translateOwn}
+            onTranslateOwnChange={setTranslateOwn}
+          />
           <button
             onClick={() => onCall?.('audio')}
             className="p-2 hover:bg-muted rounded-xl transition-colors text-muted-foreground hover:text-foreground"
@@ -148,6 +153,7 @@ export function ConversationView({ conversation, onBack, onCall }: Props) {
                     onDelete={isOwn ? deleteMessage : undefined}
                     onReply={setReplyTo}
                     translationTarget={targetLang}
+                    translateOwn={translateOwn}
                   />
                 </React.Fragment>
               )

@@ -13,6 +13,7 @@ interface Props {
   onDelete?: (id: string) => void
   onReply?: (msg: Message) => void
   translationTarget?: TranslationLang
+  translateOwn?: boolean
 }
 
 function formatBytes(bytes: number | null): string {
@@ -56,7 +57,7 @@ function AudioPlayer({ url }: { url: string }) {
   )
 }
 
-export function MessageBubble({ message, isOwn, onDelete, onReply, translationTarget = 'off' }: Props) {
+export function MessageBubble({ message, isOwn, onDelete, onReply, translationTarget = 'off', translateOwn = false }: Props) {
   const [showActions, setShowActions] = useState(false)
   const isRead = (message.reads?.length ?? 0) > 0
 
@@ -121,7 +122,7 @@ export function MessageBubble({ message, isOwn, onDelete, onReply, translationTa
           {message.message_type === 'text' && (
             <TranslatedText
               text={message.content ?? ''}
-              autoTranslate={!isOwn && translationTarget !== 'off'}
+              autoTranslate={translationTarget !== 'off' && (!isOwn || translateOwn)}
               targetLang={translationTarget}
             />
           )}
