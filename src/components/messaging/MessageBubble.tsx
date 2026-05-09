@@ -13,6 +13,7 @@ interface Props {
   onDelete?: (id: string) => void
   onReply?: (msg: Message) => void
   translationTarget?: TranslationLang
+  translateOwn?: boolean
 }
 
 function formatBytes(bytes: number | null): string {
