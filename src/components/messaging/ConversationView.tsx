@@ -35,7 +35,7 @@ function getParticipantsText(conv: Conversation, currentUserId: string): string 
 export function ConversationView({ conversation, onBack, onCall }: Props) {
   const { user } = useAuth()
   const { messages, loading, sendMessage, deleteMessage } = useMessages(conversation.id)
-  const { targetLang, setTargetLang } = useChatTranslation()
+  const { targetLang, setTargetLang, translateOwn, setTranslateOwn } = useChatTranslation()
   const [replyTo, setReplyTo] = useState<Message | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const lastCount = useRef(0)
