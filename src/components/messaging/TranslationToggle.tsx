@@ -7,7 +7,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
 import { TRANSLATION_LANGUAGES, TranslationLang } from "@/hooks/useChatTranslation";
 import { cn } from "@/lib/utils";
 
