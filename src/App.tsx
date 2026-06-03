@@ -43,6 +43,12 @@ const StationsPage = lazy(() => import('@/pages/StationsPage'))
 const WallpapersPage = lazy(() => import('@/pages/WallpapersPage'))
 const MessagingPage = lazy(() => import('@/pages/MessagingPage'))
 const SellerPremiumPage = lazy(() => import('@/pages/SellerPremiumPage'))
+const HelpFaqPage = lazy(() => import('@/pages/HelpFaqPage'))
+const EviterArnaquesPage = lazy(() => import('@/pages/articles/EviterArnaquesPage'))
+const PayerMobileMoneyPage = lazy(() => import('@/pages/articles/PayerMobileMoneyPage'))
+const LivraisonAfriquePage = lazy(() => import('@/pages/articles/LivraisonAfriquePage'))
+const RetoursRemboursementsPage = lazy(() => import('@/pages/articles/RetoursRemboursementsPage'))
+const VendreEnConfiancePage = lazy(() => import('@/pages/articles/VendreEnConfiancePage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -95,6 +101,13 @@ function App() {
           <SEOHead />
           <Routes>
             <Route path={ROUTES.AUTH} element={<AuthPage />} />
+            {/* Public help pages — indexable, no auth required */}
+            <Route path="/aide" element={<LazyRoute><HelpFaqPage /></LazyRoute>} />
+            <Route path="/aide/articles/eviter-arnaques" element={<LazyRoute><EviterArnaquesPage /></LazyRoute>} />
+            <Route path="/aide/articles/paiement-mobile-money" element={<LazyRoute><PayerMobileMoneyPage /></LazyRoute>} />
+            <Route path="/aide/articles/livraison" element={<LazyRoute><LivraisonAfriquePage /></LazyRoute>} />
+            <Route path="/aide/articles/retours" element={<LazyRoute><RetoursRemboursementsPage /></LazyRoute>} />
+            <Route path="/aide/articles/vendre-en-confiance" element={<LazyRoute><VendreEnConfiancePage /></LazyRoute>} />
             <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<HomePage />} />
               <Route path="culture" element={<LazyRoute><CulturePage /></LazyRoute>} />
