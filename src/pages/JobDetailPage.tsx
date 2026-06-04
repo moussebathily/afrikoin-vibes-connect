@@ -25,6 +25,7 @@ import {
 import { supabase } from '@/integrations/supabase/client'
 import { JobApplicationForm } from '@/components/jobs/JobApplicationForm'
 import { useToast } from '@/hooks/use-toast'
+import { EntitySEO } from '@/components/seo/EntitySEO'
 
 interface JobDetails {
   id: string
@@ -182,8 +183,51 @@ export function JobDetailPage() {
 
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency)
 
+  const canonicalUrl = `https://afrikoin.online/jobs/${job.id}`
+  const jobLd: Record<string, any> = {
+    '@context': 'https://schema.org',
+    '@type': 'JobPosting',
+    title: job.title,
+    description: job.description,
+    datePosted: job.created_at,
+    ...(job.expires_at && { validThrough: job.expires_at }),
+    employmentType: (job.job_type || '').toUpperCase().replace('-', '_'),
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: job.company,
+      ...(job.company_logo_url && { logo: job.company_logo_url }),
+      ...(job.company_website && { sameAs: job.company_website }),
+    },
+    jobLocation: {
+      '@type': 'Place',
+      address: { '@type': 'PostalAddress', addressLocality: job.location },
+    },
+    ...(job.salary_min || job.salary_max
+      ? {
+          baseSalary: {
+            '@type': 'MonetaryAmount',
+            currency: job.salary_currency,
+            value: {
+              '@type': 'QuantitativeValue',
+              ...(job.salary_min && { minValue: job.salary_min }),
+              ...(job.salary_max && { maxValue: job.salary_max }),
+              unitText: 'YEAR',
+            },
+          },
+        }
+      : {}),
+  }
+
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <EntitySEO
+        title={`${job.title} — ${job.company}`}
+        description={job.description?.slice(0, 200)}
+        image={job.company_logo_url || undefined}
+        url={canonicalUrl}
+        type="article"
+        jsonLd={jobLd}
+      />
       {/* Back Button */}
       <Button 
         variant="ghost" 

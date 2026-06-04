@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from 'sonner';
 import type { Product } from '@/types/cart';
+import { EntitySEO } from '@/components/seo/EntitySEO';
 
 interface ExtendedProduct extends Product {
   average_rating?: number;
@@ -145,8 +146,47 @@ export default function ProductDetailPage() {
 
   if (!product) return null;
 
+  const canonicalUrl = `https://afrikoin.online/product/${product.id}`;
+  const productImage = product.images?.[0];
+  const productLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.title,
+    description: product.description || product.title,
+    image: product.images || [],
+    sku: product.id,
+    ...(product.category && { category: product.category }),
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: product.currency || 'XOF',
+      availability:
+        product.stock > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+      url: canonicalUrl,
+    },
+    ...(product.reviews_count && product.average_rating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: product.average_rating,
+            reviewCount: product.reviews_count,
+          },
+        }
+      : {}),
+  };
+
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6 space-y-8">
+      <EntitySEO
+        title={product.title}
+        description={product.description || `${product.title} sur AfriKoin`}
+        image={productImage}
+        url={canonicalUrl}
+        type="product"
+        jsonLd={productLd}
+      />
       {/* Back Button */}
       <Button variant="ghost" onClick={() => navigate(-1)} className="-ml-2">
         <ArrowLeft className="w-4 h-4 mr-2" />
