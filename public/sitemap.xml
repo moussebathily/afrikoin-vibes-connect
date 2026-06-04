@@ -1,154 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-  
-  <!-- Page principale -->
-  <url>
-    <loc>https://www.afrikoin.online/</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Marketplace -->
-  <url>
-    <loc>https://www.afrikoin.online/marketplace</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Actualités et Culture -->
-  <url>
-    <loc>https://www.afrikoin.online/culture</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Sports -->
-  <url>
-    <loc>https://www.afrikoin.online/sports</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Marchés financiers -->
-  <url>
-    <loc>https://www.afrikoin.online/markets</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Classements -->
-  <url>
-    <loc>https://www.afrikoin.online/rankings</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- Portefeuille -->
-  <url>
-    <loc>https://www.afrikoin.online/wallet</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Offres d'emploi -->
-  <url>
-    <loc>https://www.afrikoin.online/jobs</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Actualités -->
-  <url>
-    <loc>https://www.afrikoin.online/news</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>hourly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
-  <!-- Suivi de colis -->
-  <url>
-    <loc>https://www.afrikoin.online/tracking</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- À propos -->
-  <url>
-    <loc>https://www.afrikoin.online/about</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <!-- Authentification -->
-  <url>
-    <loc>https://www.afrikoin.online/auth</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <!-- Espace vendeur -->
-  <url>
-    <loc>https://www.afrikoin.online/seller</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  <url>
-    <loc>https://www.afrikoin.online/seller</loc>
-    <lastmod>2025-01-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Centre d'aide & contenu SEO -->
-  <url>
-    <loc>https://www.afrikoin.online/aide</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://www.afrikoin.online/aide/articles/eviter-arnaques</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.afrikoin.online/aide/articles/paiement-mobile-money</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.afrikoin.online/aide/articles/livraison</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.afrikoin.online/aide/articles/retours</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.afrikoin.online/aide/articles/vendre-en-confiance</loc>
-    <lastmod>2026-06-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://afrikoin.online/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://afrikoin.online/marketplace</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrikoin.online/culture</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/sports</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/markets</loc><changefreq>daily</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/rankings</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://afrikoin.online/wallet</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://afrikoin.online/jobs</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrikoin.online/news</loc><changefreq>hourly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrikoin.online/tracking</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://afrikoin.online/transport</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/stations</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://afrikoin.online/tabaski</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://afrikoin.online/call</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://afrikoin.online/fonds-ecran</loc><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://afrikoin.online/about</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://afrikoin.online/aide</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://afrikoin.online/aide/articles/eviter-arnaques</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/aide/articles/paiement-mobile-money</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/aide/articles/livraison</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/aide/articles/retours</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://afrikoin.online/aide/articles/vendre-en-confiance</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
