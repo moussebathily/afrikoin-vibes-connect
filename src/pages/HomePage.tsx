@@ -84,7 +84,7 @@ export function HomePage() {
   }
 
   return (
-    <main className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
       <WelcomeCard />
 
       <section aria-label={t('marketing.cta.getStarted')} className="rounded-lg border bg-card text-card-foreground p-4">
@@ -162,6 +162,6 @@ export function HomePage() {
         <Phone className="w-7 h-7" />
         <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
       </button>
-    </main>
+    </div>
   )
 }

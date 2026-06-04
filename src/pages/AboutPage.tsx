@@ -52,7 +52,7 @@ export function AboutPage() {
         <p className="text-muted-foreground max-w-2xl mx-auto">{t('marketing.hero.subtitle')}</p>
       </header>
 
-      <main>
+      <section aria-label="Contenu À propos">
         {/* Feature grid */}
         <section className="grid gap-4 sm:grid-cols-2">
           {features.map(({ icon: Icon, title, desc }, idx) => (
@@ -109,7 +109,7 @@ export function AboutPage() {
             <a href="/ai-studio" aria-label={t('marketing.cta.aiStudio') as string}>{t('marketing.cta.aiStudio')}</a>
           </Button>
         </section>
-      </main>
+      </section>
     </div>
   )
 }
