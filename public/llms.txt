@@ -1,0 +1,31 @@
+# AfriKoin
+
+> Marketplace panafricain : achat, vente, emplois, transport, actualités et paiements Mobile Money (Orange Money, Wave, MTN MoMo) partout en Afrique.
+
+AfriKoin est une plateforme tout-en-un pour les utilisateurs africains. Elle réunit une marketplace, des offres d'emploi, des actualités, du contenu culturel et sportif, du transport, le suivi de colis et un portefeuille Mobile Money.
+
+## Pages
+
+- [Accueil](/): Présentation de la plateforme et fil d'actualité.
+- [Marketplace](/marketplace): Achat et vente de produits en Afrique.
+- [Emplois](/jobs): Offres d'emploi à travers l'Afrique.
+- [Actualités](/news): Actualité africaine en temps réel.
+- [Culture](/culture): Musique, cinéma, art et traditions africaines.
+- [Sports](/sports): Compétitions et résultats sportifs africains.
+- [Marchés financiers](/markets): Cours et marchés africains.
+- [Classements](/rankings): Classements hebdomadaires.
+- [Transport](/transport): Réservation de trajets et location de véhicules.
+- [Stations-service](/stations): Stations-service et prix carburants.
+- [Suivi de colis](/tracking): Suivi des livraisons.
+- [Tabaski](/tabaski): Réservation de bétail pour la Tabaski.
+- [Fonds d'écran](/fonds-ecran): Galerie de fonds d'écran africains.
+- [À propos](/about): Mission et équipe AfriKoin.
+
+## Aide
+
+- [Centre d'aide](/aide): FAQ acheteurs et vendeurs (FR/WO/HA/EN).
+- [Éviter les arnaques](/aide/articles/eviter-arnaques): Acheter et vendre en sécurité.
+- [Paiement Mobile Money](/aide/articles/paiement-mobile-money): Orange Money, Wave, MTN MoMo.
+- [Livraison en Afrique](/aide/articles/livraison): Délais, frais et zones desservies.
+- [Retours et remboursements](/aide/articles/retours): Politique de retour AfriKoin.
+- [Vendre en confiance](/aide/articles/vendre-en-confiance): Guide vendeurs.

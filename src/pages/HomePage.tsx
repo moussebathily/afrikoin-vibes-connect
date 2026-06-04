@@ -84,13 +84,13 @@ export function HomePage() {
   }
 
   return (
-    <div className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <main className="container max-w-2xl mx-auto px-4 py-6 space-y-6">
       <WelcomeCard />
 
       <section aria-label={t('marketing.cta.getStarted')} className="rounded-lg border bg-card text-card-foreground p-4">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-base font-semibold">{t('marketing.hero.title')}</h2>
+            <h1 className="text-base font-semibold">{t('marketing.hero.title') || 'AfriKoin — la communauté panafricaine'}</h1>
             <p className="text-sm text-muted-foreground">{t('marketing.hero.tagline') || t('app.tagline')}</p>
           </div>
           <Button asChild variant="secondary">
@@ -162,6 +162,6 @@ export function HomePage() {
         <Phone className="w-7 h-7" />
         <span className="absolute inset-0 rounded-full bg-primary/30 animate-pulse-ring" />
       </button>
-    </div>
+    </main>
   )
 }
