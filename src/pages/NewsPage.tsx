@@ -20,6 +20,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
+import { EntitySEO } from '@/components/seo/EntitySEO'
+
 
 interface NewsItem {
   id: string
