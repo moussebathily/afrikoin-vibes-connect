@@ -3,12 +3,18 @@ import { Link } from "react-router-dom"
 import { ChevronRight, LifeBuoy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+interface FaqEntry {
+  q: string
+  a: string
+}
+
 interface Props {
   slug: string
   title: string
   description: string
   publishedAt: string
   readingMinutes: number
+  faqs?: FaqEntry[]
   children: React.ReactNode
 }
 
@@ -18,9 +24,10 @@ export function ArticleLayout({
   description,
   publishedAt,
   readingMinutes,
+  faqs,
   children,
 }: Props) {
-  const url = `https://www.afrikoin.online/aide/articles/${slug}`
+  const url = `https://afrikoin.online/aide/articles/${slug}`
 
   const articleLd = {
     "@context": "https://schema.org",
@@ -35,7 +42,7 @@ export function ArticleLayout({
       name: "AfriKoin",
       logo: {
         "@type": "ImageObject",
-        url: "https://www.afrikoin.online/og-image.png",
+        url: "https://afrikoin.online/og-image.png",
       },
     },
     mainEntityOfPage: url,
@@ -49,17 +56,29 @@ export function ArticleLayout({
         "@type": "ListItem",
         position: 1,
         name: "Accueil",
-        item: "https://www.afrikoin.online/",
+        item: "https://afrikoin.online/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Aide",
-        item: "https://www.afrikoin.online/aide",
+        item: "https://afrikoin.online/aide",
       },
       { "@type": "ListItem", position: 3, name: title, item: url },
     ],
   }
+
+  const faqLd = faqs?.length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null
 
   return (
     <>
@@ -75,6 +94,9 @@ export function ArticleLayout({
         <script type="application/ld+json">
           {JSON.stringify(breadcrumbLd)}
         </script>
+        {faqLd && (
+          <script type="application/ld+json">{JSON.stringify(faqLd)}</script>
+        )}
       </Helmet>
 
       <main className="mx-auto max-w-3xl px-4 py-8 pb-24">
@@ -107,6 +129,23 @@ export function ArticleLayout({
         <article className="prose prose-sm max-w-none dark:prose-invert prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary">
           {children}
         </article>
+
+        {faqs && faqs.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-xl font-semibold mb-4">Questions fréquentes</h2>
+            <div className="space-y-4">
+              {faqs.map((f, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-border/40 bg-background/40 p-4"
+                >
+                  <h3 className="font-medium text-foreground mb-1">{f.q}</h3>
+                  <p className="text-sm text-muted-foreground">{f.a}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <aside className="mt-12 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 p-6">
           <div className="mb-3 flex items-center gap-2">
