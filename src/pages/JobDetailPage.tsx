@@ -218,6 +218,16 @@ export function JobDetailPage() {
       : {}),
   }
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://afrikoin.online/' },
+      { '@type': 'ListItem', position: 2, name: 'Emplois', item: 'https://afrikoin.online/jobs' },
+      { '@type': 'ListItem', position: 3, name: job.title, item: canonicalUrl },
+    ],
+  }
+
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
       <EntitySEO
@@ -226,8 +236,9 @@ export function JobDetailPage() {
         image={job.company_logo_url || undefined}
         url={canonicalUrl}
         type="article"
-        jsonLd={jobLd}
+        jsonLd={[jobLd, breadcrumbLd]}
       />
+
       {/* Back Button */}
       <Button 
         variant="ghost" 
