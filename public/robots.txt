@@ -15,5 +15,6 @@ Disallow: /my-rentals
 Disallow: /my-tabaski-reservations
 
 Sitemap: https://afrikoin.online/sitemap.xml
+Sitemap: https://afrikoin.online/sitemap-news.xml
 
 Crawl-delay: 1
