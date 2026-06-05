@@ -8,6 +8,11 @@ export default function RetoursRemboursementsPage() {
       description="Tout sur les retours AfriKoin : 7 jours pour retourner, motifs acceptés, frais, remboursement Mobile Money en 24-72h et résolution des litiges."
       publishedAt="2026-06-03"
       readingMinutes={5}
+      faqs={[
+        { q: "Combien de temps ai-je pour retourner un article ?", a: "Vous disposez de 7 jours après réception pour signaler un défaut ou une non-conformité et demander un retour." },
+        { q: "Qui paie les frais de retour ?", a: "AfriKoin et/ou le vendeur prennent en charge les frais si le motif est recevable (défaut, non conforme). Sinon, ils sont à la charge de l'acheteur." },
+        { q: "En combien de temps suis-je remboursé ?", a: "Le remboursement est crédité sur votre Mobile Money entre 24 et 72h après réception du colis retourné par le vendeur." },
+      ]}
     >
       <p>
         Acheter en ligne sans pouvoir toucher le produit nécessite un filet de

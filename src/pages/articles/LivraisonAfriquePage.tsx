@@ -8,6 +8,11 @@ export default function LivraisonAfriquePage() {
       description="Comprendre la livraison AfriKoin : couverture 15 pays, délais express 24-48h, suivi GPS temps réel, livraison rurale et transport international CEDEAO."
       publishedAt="2026-06-03"
       readingMinutes={5}
+      faqs={[
+        { q: "Dans quels pays AfriKoin livre-t-il ?", a: "AfriKoin livre dans 15 pays d'Afrique de l'Ouest, centrale et de l'Est, capitales et grandes villes en express 24-48h." },
+        { q: "Comment suivre mon colis en temps réel ?", a: "Le suivi GPS s'active automatiquement dès l'enlèvement. Vous le consultez depuis l'onglet 'Suivi' ou via le lien reçu par SMS." },
+        { q: "La livraison rurale est-elle possible ?", a: "Oui, via nos partenaires locaux. Le délai passe à 3-7 jours et un supplément peut s'appliquer selon la distance." },
+      ]}
     >
       <p>
         Recevoir son colis vite et dans de bonnes conditions, c'est souvent le
