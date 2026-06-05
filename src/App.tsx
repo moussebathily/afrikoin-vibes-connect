@@ -49,6 +49,7 @@ const PayerMobileMoneyPage = lazy(() => import('@/pages/articles/PayerMobileMone
 const LivraisonAfriquePage = lazy(() => import('@/pages/articles/LivraisonAfriquePage'))
 const RetoursRemboursementsPage = lazy(() => import('@/pages/articles/RetoursRemboursementsPage'))
 const VendreEnConfiancePage = lazy(() => import('@/pages/articles/VendreEnConfiancePage'))
+const NewsDetailPage = lazy(() => import('@/pages/NewsDetailPage'))
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -108,6 +109,8 @@ function App() {
             <Route path="/aide/articles/livraison" element={<LazyRoute><LivraisonAfriquePage /></LazyRoute>} />
             <Route path="/aide/articles/retours" element={<LazyRoute><RetoursRemboursementsPage /></LazyRoute>} />
             <Route path="/aide/articles/vendre-en-confiance" element={<LazyRoute><VendreEnConfiancePage /></LazyRoute>} />
+            {/* Public news detail — indexable */}
+            <Route path="/news/:id" element={<LazyRoute><NewsDetailPage /></LazyRoute>} />
             <Route path={ROUTES.HOME} element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route index element={<HomePage />} />
               <Route path="culture" element={<LazyRoute><CulturePage /></LazyRoute>} />

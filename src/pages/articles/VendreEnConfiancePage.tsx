@@ -8,6 +8,11 @@ export default function VendreEnConfiancePage() {
       description="Guide vendeur AfriKoin : inscription gratuite, commission 5%, abonnement Premium 5000 FCFA/mois, badge Vérifié, boost produit et IA description automatique."
       publishedAt="2026-06-03"
       readingMinutes={6}
+      faqs={[
+        { q: "Combien coûte la vente sur AfriKoin ?", a: "L'inscription est gratuite. AfriKoin prélève une commission de 5% sur chaque vente confirmée." },
+        { q: "À quoi sert l'abonnement Premium ?", a: "5000 FCFA/mois pour le badge Vérifié, le boost visibilité, des statistiques avancées et la génération IA de fiches produit." },
+        { q: "Comment obtenir le badge Vérifié ?", a: "Soumettez votre pièce d'identité et un justificatif d'activité depuis votre tableau de bord. Validation sous 24-48h." },
+      ]}
     >
       <p>
         Lancer son activité d'e-commerce en Afrique n'a jamais été aussi simple.

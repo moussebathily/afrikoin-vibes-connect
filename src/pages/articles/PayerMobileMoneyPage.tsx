@@ -8,6 +8,12 @@ export default function PayerMobileMoneyPage() {
       description="Tout savoir sur le paiement Mobile Money en Afrique : opérateurs acceptés, frais, sécurité, cash à la livraison et délai de versement vendeur sur AfriKoin."
       publishedAt="2026-06-03"
       readingMinutes={5}
+      faqs={[
+        { q: "Quels opérateurs Mobile Money sont acceptés sur AfriKoin ?", a: "Orange Money, Wave, MTN MoMo et Moov Money sont supportés dans plus de 20 pays africains." },
+        { q: "AfriKoin facture-t-il des frais sur Mobile Money ?", a: "Non, AfriKoin ne prélève aucun frais supplémentaire côté acheteur. Seuls s'appliquent les frais de votre opérateur (souvent 1 % plafonné, gratuit sur Wave)." },
+        { q: "Quand le vendeur reçoit-il son paiement ?", a: "Les fonds sont libérés dès la confirmation de réception par l'acheteur, ou automatiquement 7 jours après livraison sans litige." },
+        { q: "Le paiement à la livraison est-il possible ?", a: "Oui, dans les grandes villes et pour les commandes inférieures à 100 000 FCFA si le vendeur a activé l'option." },
+      ]}
     >
       <p>
         Le <strong>Mobile Money</strong> est devenu le moyen de paiement n°1 en

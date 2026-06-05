@@ -84,7 +84,7 @@ export default function HelpFaqPage() {
           name="description"
           content="Toutes les réponses : éviter les arnaques, payer avec Orange Money / Wave / MTN MoMo, livraison en Afrique, retours et remboursements, vendre en confiance sur AfriKoin."
         />
-        <link rel="canonical" href="https://www.afrikoin.online/aide" />
+        <link rel="canonical" href="https://afrikoin.online/aide" />
         <meta
           property="og:title"
           content="Centre d'aide AfriKoin — Acheter et vendre en confiance"
@@ -93,7 +93,7 @@ export default function HelpFaqPage() {
           property="og:description"
           content="FAQ multilingue (FR/WO/HA/EN), articles SEO et assistant IA pour acheter et vendre sans risque en Afrique."
         />
-        <meta property="og:url" content="https://www.afrikoin.online/aide" />
+        <meta property="og:url" content="https://afrikoin.online/aide" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
       </Helmet>

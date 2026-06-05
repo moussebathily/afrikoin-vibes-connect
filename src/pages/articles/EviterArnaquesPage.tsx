@@ -8,6 +8,11 @@ export default function EviterArnaquesPage() {
       description="Guide complet pour reconnaître les vendeurs fiables, sécuriser vos paiements Mobile Money et réagir en cas de litige sur AfriKoin."
       publishedAt="2026-06-03"
       readingMinutes={6}
+      faqs={[
+        { q: "Comment reconnaître un vendeur fiable sur AfriKoin ?", a: "Vérifiez le badge Vérifié, l'ancienneté du compte, le nombre d'avis (>10 idéalement) et la note moyenne (>4/5)." },
+        { q: "Faut-il payer un vendeur en direct par Mobile Money ?", a: "Non. Ne payez jamais en dehors d'AfriKoin : seul le paiement intégré garantit la protection acheteur et le remboursement en cas de litige." },
+        { q: "Que faire si je suis victime d'une arnaque ?", a: "Ouvrez un litige dans l'application sous 7 jours, joignez photos et messages. Le support AfriKoin tranche sous 48-72h et rembourse via votre Mobile Money." },
+      ]}
     >
       <p>
         L'e-commerce explose en Afrique, mais les arnaques aussi. Voici les
