@@ -177,6 +177,16 @@ export default function ProductDetailPage() {
       : {}),
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://afrikoin.online/' },
+      { '@type': 'ListItem', position: 2, name: 'Marketplace', item: 'https://afrikoin.online/marketplace' },
+      { '@type': 'ListItem', position: 3, name: product.title, item: canonicalUrl },
+    ],
+  };
+
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6 space-y-8">
       <EntitySEO
@@ -185,8 +195,9 @@ export default function ProductDetailPage() {
         image={productImage}
         url={canonicalUrl}
         type="product"
-        jsonLd={productLd}
+        jsonLd={[productLd, breadcrumbLd]}
       />
+
       {/* Back Button */}
       <Button variant="ghost" onClick={() => navigate(-1)} className="-ml-2">
         <ArrowLeft className="w-4 h-4 mr-2" />

@@ -20,6 +20,8 @@ import { supabase } from '@/integrations/supabase/client'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { useTranslation } from 'react-i18next'
+import { EntitySEO } from '@/components/seo/EntitySEO'
+
 
 interface NewsItem {
   id: string
@@ -97,8 +99,47 @@ export function NewsPage() {
     culture: news.filter(n => n.category_slug === 'culture').length
   }
 
+  const pageUrl = 'https://afrikoin.online/news'
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://afrikoin.online/' },
+      { '@type': 'ListItem', position: 2, name: 'Actualités', item: pageUrl },
+    ],
+  }
+  const itemListLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: filteredNews.slice(0, 20).map((n, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: {
+        '@type': 'NewsArticle',
+        '@id': `${pageUrl}#${n.id}`,
+        headline: n.title,
+        ...(n.content && { description: n.content.slice(0, 200) }),
+        ...(n.image_url && { image: n.image_url }),
+        datePublished: n.published_at || n.created_at,
+        ...(n.source && {
+          author: { '@type': 'Organization', name: n.source },
+          publisher: { '@type': 'Organization', name: n.source },
+        }),
+        mainEntityOfPage: pageUrl,
+      },
+    })),
+  }
+
   return (
     <div className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <EntitySEO
+        title="Actualités africaines"
+        description="Actualités, sport, culture et business en Afrique en temps réel."
+        url={pageUrl}
+        type="website"
+        jsonLd={[breadcrumbLd, itemListLd]}
+      />
+
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold flex items-center gap-2">
