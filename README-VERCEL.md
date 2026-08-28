@@ -24,6 +24,8 @@
 
 ## 🚀 Utilisation
 
+Vous pouvez déployer de plusieurs manières : en connectant un dépôt Git (ce qui déclenche des déploiements automatiques à chaque envoi) ou via un déploiement manuel avec la CLI Vercel.
+
 ### Déploiement Automatique
 ```bash
 # Push vers main = déploiement production
